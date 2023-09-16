@@ -31,5 +31,3 @@ for dataset_dir in cfg.dataset_root.iterdir():
                 str(dst_dir),
             ]
         )
-
-    break

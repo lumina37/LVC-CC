@@ -5,14 +5,14 @@ from pathlib import Path
 from helper.configs.raytrix import RaytrixCfg
 from helper.configs.self import Cfg
 
-cfg = Cfg.from_file(Path('pipeline.toml'))
+cfg = Cfg.from_file(Path('pipeline_ref.toml'))
 render_cfg = cfg.render
 
 process_num = 3
 task_queue = asyncio.Queue(process_num - 2)
 
 
-async def task_generator():
+async def task_launcher():
     for dataset_dir in cfg.dataset_root.iterdir():
         for src_dir in (dataset_dir / render_cfg.src_dirs).iterdir():
             qp = int(src_dir.name)
@@ -25,8 +25,6 @@ async def task_generator():
             raytrix_cfg.Output_Path = str(dst_dir / "%03d")
             raytrix_cfg.to_file(dataset_dir / render_cfg.temp_param_file)
 
-            print(f"Processing: {dataset_dir.name}")
-
             dst_dir.mkdir(0o755, parents=True, exist_ok=True)
 
             process = subprocess.Popen(
@@ -35,7 +33,7 @@ async def task_generator():
                     str(dataset_dir / render_cfg.temp_param_file),
                 ]
             )
-            print(f"Gennerated: name={dataset_dir.name} qp={qp}")
+            print(f"Launched: name={dataset_dir.name} qp={qp}")
             await task_queue.put(process)
 
 
@@ -50,7 +48,7 @@ async def waiter():
 
 
 async def main():
-    await asyncio.gather(task_generator(), waiter())
+    await asyncio.gather(task_launcher(), waiter())
 
 
 asyncio.run(main())

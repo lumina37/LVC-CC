@@ -7,14 +7,14 @@ import cv2 as cv
 from helper.configs.self import Cfg
 from helper.configs.vtm import VTMCfg
 
-cfg = Cfg.from_file(Path('pipeline.toml'))
+cfg = Cfg.from_file(Path('pipeline_ref.toml'))
 codec_cfg = cfg.codec
 
-process_num = 8
-task_queue = asyncio.Queue(process_num - 2)
+process_num = 10
+task_queue: asyncio.Queue[subprocess.Popen] = asyncio.Queue(process_num - 2)
 
 
-async def task_generator():
+async def task_launcher():
     for dataset_dir in cfg.dataset_root.iterdir():
         ref_img = cv.imread(str(dataset_dir / codec_cfg.size_ref_img_file))
         height, width = ref_img.shape[:2]
@@ -60,7 +60,7 @@ async def task_generator():
                     stdout=out,
                     text=True,
                 )
-                print(f"Gennerated: name={dataset_dir.name} qp={qp}")
+                print(f"Launched: name={dataset_dir.name} qp={qp}")
                 await task_queue.put(process)
 
 
@@ -75,7 +75,7 @@ async def waiter():
 
 
 async def main():
-    await asyncio.gather(task_generator(), waiter())
+    await asyncio.gather(task_launcher(), waiter())
 
 
 asyncio.run(main())

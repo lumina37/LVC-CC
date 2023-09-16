@@ -7,13 +7,13 @@ import tomllib
 from ..base import CfgBase
 from .baseline_render import BaselineRenderCfg
 from .codec import CodecCfg
+from .computation import ComputationCfg
 from .dec2png import Dec2PNGCfg
 from .postprocess import PostprocessCfg
 from .pre2yuv import Pre2YUVCfg
 from .preprocess import PreprocessCfg
 from .raw2png import Raw2PNGCfg
 from .render import RenderCfg
-from .computation import ComputationCfg
 
 
 @dataclasses.dataclass

@@ -1,0 +1,67 @@
+dataset_root = "D:/Code/SIGS/230818_VVC/dataset/videos"
+ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
+
+[raw2png]
+param_file = "./rlc.cfg.bak"
+src_file = "./source.yuv"
+dst_dir = "./imgs/raw2png"
+
+[preprocess]
+program = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preprocess.exe"
+param_file = "./rlc.cfg.bak"
+calibration_file = "./calibration.xml"
+temp_param_file = "./.rlc.tmp"
+src_dir = "./imgs/raw2png"
+dst_dir = "./imgs/preprocessed"
+
+[pre2yuv]
+param_file = "./rlc.cfg.bak"
+src_dir = "./imgs/preprocessed"
+dst_file = "./imgs/pre2yuv.yuv"
+
+[codec]
+program = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
+encode_mode_cfg_file = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/cfg/encoder_intra_vtm.cfg"
+param_file = "./vtm.cfg.bak"
+temp_param_file = "./.vtm.tmp"
+size_ref_img_file = "./imgs/preprocessed/001.png"
+src_file = "./imgs/pre2yuv.yuv"
+dst_file_fstr = "./imgs/encoded/{qp}.bin"
+log_file_fstr = "./imgs/encoded/{qp}.log"
+recon_file_fstr = "./imgs/decoded/{qp}.yuv"
+
+[dec2png]
+size_ref_img_file = "./imgs/preprocessed/001.png"
+src_file_pattern = "./imgs/decoded/*.yuv"
+dst_dir_fstr = "./imgs/dec2png/{stem}"
+
+[postprocess]
+program = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postprocess.exe"
+param_file = "./rlc.cfg.bak"
+calibration_file = "./calibration.xml"
+temp_param_file = "./.rlc.tmp"
+src_dirs = "./imgs/dec2png"
+dst_dir_fstr = "./imgs/postprocessed/{qp}"
+
+[render]
+program = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+param_file = "./rlc.cfg.bak"
+calibration_file = "./calibration.xml"
+temp_param_file = "./.rlc.tmp"
+src_dirs = "./imgs/postprocessed"
+dst_dir_fstr = "./imgs/rendered/{qp}"
+
+[baseline_render]
+program = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+param_file = "./rlc.cfg.bak"
+calibration_file = "./calibration.xml"
+temp_param_file = "./.rlc.tmp"
+src_dir = "./imgs/raw2png"
+dst_dir = "./imgs/rendered_baseline"
+
+[computation]
+baseline_dir = "./imgs/rendered_baseline"
+render_dirs = "./imgs/rendered"
+render_ref_dirs = "./imgs/rendered_ref"
+log_file_fstr = "./imgs/encoded/{qp}.log"
+ref_log_file_fstr = "./imgs/encoded_ref/{qp}.log"

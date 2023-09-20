@@ -51,7 +51,7 @@ for dataset_dir in cfg.dataset_root.iterdir():
                     recon_file_str,
                     "--InternalBitDepth=8",
                     f"--QP={qp}",
-                    "--FramesToBeEncoded=1",
+                    "--FramesToBeEncoded=30",
                 ],
                 stdout=out,
                 text=True,

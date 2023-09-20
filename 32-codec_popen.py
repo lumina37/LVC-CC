@@ -7,10 +7,10 @@ import cv2 as cv
 from helper.configs.self import Cfg
 from helper.configs.vtm import VTMCfg
 
-cfg = Cfg.from_file(Path('pipeline_ref.toml'))
+cfg = Cfg.from_file(Path('pipeline.toml'))
 codec_cfg = cfg.codec
 
-process_num = 10
+process_num = 24
 task_queue: asyncio.Queue[subprocess.Popen] = asyncio.Queue(process_num - 2)
 
 

@@ -1,9 +1,9 @@
-dataset_root = "D:/Code/SIGS/230818_VVC/dataset/videos"
+dataset_root = "E:/Code/SIGS/230818_VVC/dataset/videos"
 ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
 
 [codec]
-program = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
-encode_mode_cfg_file = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/cfg/encoder_intra_vtm.cfg"
+program = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
+encode_mode_cfg_file = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/cfg/encoder_intra_vtm.cfg"
 param_file = "./vtm.cfg.bak"
 temp_param_file = "./.vtm.tmp"
 size_ref_img_file = "./imgs/raw2png/001.png"
@@ -18,7 +18,7 @@ src_file_pattern = "./imgs/decoded_ref/*.yuv"
 dst_dir_fstr = "./imgs/dec2png_ref/{stem}"
 
 [render]
-program = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+program = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
 param_file = "./rlc.cfg.bak"
 calibration_file = "./calibration.xml"
 temp_param_file = "./.rlc.tmp"

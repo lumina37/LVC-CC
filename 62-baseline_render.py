@@ -24,5 +24,3 @@ for dataset_dir in cfg.dataset_root.iterdir():
             str(dataset_dir / render_cfg.temp_param_file),
         ]
     )
-
-    break

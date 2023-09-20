@@ -4,7 +4,7 @@ from pathlib import Path
 from helper.configs.raytrix import RaytrixCfg
 from helper.configs.self import Cfg
 
-cfg = Cfg.from_file(Path('pipeline_ref.toml'))
+cfg = Cfg.from_file(Path('pipeline.toml'))
 render_cfg = cfg.render
 
 for dataset_dir in cfg.dataset_root.iterdir():

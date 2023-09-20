@@ -5,7 +5,7 @@ import cv2 as cv
 
 from helper.configs.self import Cfg
 
-cfg = Cfg.from_file(Path('pipeline_ref.toml'))
+cfg = Cfg.from_file(Path('pipeline.toml'))
 dec2png_cfg = cfg.dec2png
 
 for dataset_dir in cfg.dataset_root.iterdir():

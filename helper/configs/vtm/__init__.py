@@ -19,6 +19,7 @@ class VTMCfg(CfgBase):
 
     def dump(self, f: TextIOBase) -> None:
         f.writelines(f"{k}: {v}\n" for k, v in dataclasses.asdict(self).items())
+        f.flush()
 
     @staticmethod
     def load(f: TextIOBase) -> "VTMCfg":

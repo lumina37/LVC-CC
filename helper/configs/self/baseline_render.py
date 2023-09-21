@@ -9,7 +9,6 @@ class BaselineRenderCfg(CfgBase):
     program: Path = dataclasses.field(default_factory=Path)
     param_file: Path = dataclasses.field(default_factory=Path)
     calibration_file: Path = dataclasses.field(default_factory=Path)
-    temp_param_file: Path = dataclasses.field(default_factory=Path)
     src_dir: Path = dataclasses.field(default_factory=Path)
     dst_dir: Path = dataclasses.field(default_factory=Path)
 

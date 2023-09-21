@@ -29,6 +29,7 @@ class RaytrixCfg(object):
 
     def dump(self, f: TextIOBase) -> None:
         f.writelines(f"{k}\t{v}\n" for k, v in dataclasses.asdict(self).items())
+        f.flush()
 
     @staticmethod
     def load(f: TextIOBase) -> "RaytrixCfg":

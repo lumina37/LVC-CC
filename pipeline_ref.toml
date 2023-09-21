@@ -5,12 +5,20 @@ ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
 program = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
 encode_mode_cfg_file = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/cfg/encoder_intra_vtm.cfg"
 param_file = "./vtm.cfg.bak"
-temp_param_file = "./.vtm.tmp"
 size_ref_img_file = "./imgs/raw2png/001.png"
 src_file = "./source.yuv"
 dst_file_fstr = "./imgs/encoded_ref/{qp}.bin"
 log_file_fstr = "./imgs/encoded_ref/{qp}.log"
 recon_file_fstr = "./imgs/decoded_ref/{qp}.yuv"
+
+[codec.ctcqp]
+Boxer-IrishMan-Gladiator = [37, 41, 45, 49]
+chess = [37, 41, 45, 49]
+ChessPieces = [33, 40, 45, 49]
+NagoyaDataLeading = [38, 43, 49, 51]
+NagoyaFujita = [36, 40, 45, 49]
+NagoyaOrigami = [36, 40, 45, 49]
+Tunnel_Train = [35, 40, 45, 49]
 
 [dec2png]
 size_ref_img_file = "./imgs/raw2png/001.png"
@@ -21,6 +29,5 @@ dst_dir_fstr = "./imgs/dec2png_ref/{stem}"
 program = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
 param_file = "./rlc.cfg.bak"
 calibration_file = "./calibration.xml"
-temp_param_file = "./.rlc.tmp"
 src_dirs = "./imgs/dec2png_ref"
 dst_dir_fstr = "./imgs/rendered_ref/{qp}"

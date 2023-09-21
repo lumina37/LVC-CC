@@ -1,4 +1,5 @@
 import math
+import random
 import subprocess
 from pathlib import Path
 
@@ -12,7 +13,9 @@ for dataset_dir in cfg.dataset_root.iterdir():
     raytrix_cfg = RaytrixCfg.from_file(dataset_dir / pre_cfg.param_file)
     raytrix_cfg.Calibration_xml = str(dataset_dir / pre_cfg.calibration_file)
     raytrix_cfg.square_width_diam_ratio = 1 / math.sqrt(2)
-    raytrix_cfg.to_file(dataset_dir / pre_cfg.temp_param_file)
+
+    tmpf = dataset_dir / random.randbytes(4).hex()
+    raytrix_cfg.to_file(tmpf)
 
     print(f"Processing: {dataset_dir.name}")
 
@@ -21,8 +24,10 @@ for dataset_dir in cfg.dataset_root.iterdir():
     subprocess.run(
         [
             str(pre_cfg.program),
-            str(dataset_dir / pre_cfg.temp_param_file),
+            str(tmpf),
             str(dataset_dir / pre_cfg.src_dir),
             str(dataset_dir / pre_cfg.dst_dir),
         ]
     )
+
+    tmpf.unlink()

@@ -19,7 +19,7 @@ for dataset_dir in cfg.dataset_root.iterdir():
         raytrix_cfg.Calibration_xml = str(dataset_dir / post_cfg.calibration_file)
         raytrix_cfg.square_width_diam_ratio = 1 / math.sqrt(2)
 
-        tmpf = dataset_dir / random.randbytes(4).hex()
+        tmpf = (dataset_dir / random.randbytes(4).hex()).with_suffix('.tmpcfg')
         raytrix_cfg.to_file(tmpf)
 
         print(f"Processing: {dataset_dir.name}")

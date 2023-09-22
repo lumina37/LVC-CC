@@ -15,7 +15,7 @@ for dataset_dir in cfg.dataset_root.iterdir():
     raytrix_cfg.Output_Path = str(dataset_dir / render_cfg.dst_dir / "%03d")
     raytrix_cfg.end_frame = 5
 
-    tmpf = dataset_dir / random.randbytes(4).hex()
+    tmpf = (dataset_dir / random.randbytes(4).hex()).with_suffix('.tmpcfg')
     raytrix_cfg.to_file(tmpf)
 
     print(f"Processing: {dataset_dir.name}")

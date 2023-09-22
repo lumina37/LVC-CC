@@ -26,7 +26,7 @@ def iter_args(cfg: Cfg):
         vtm_cfg.SourceHeight = height
         vtm_cfg.SourceWidth = width
 
-        tmpf = dataset_dir / random.randbytes(4).hex()
+        tmpf = (dataset_dir / random.randbytes(4).hex()).with_suffix('.tmpcfg')
         vtm_cfg.to_file(tmpf)
         atexit.register(tmpf.unlink)
 

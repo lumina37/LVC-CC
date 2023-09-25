@@ -14,9 +14,6 @@ def iter_args(cfg: Cfg):
             dst_dir_str = render_cfg.dst_dir_fstr.format(qp=qp)
             dst_dir = dataset_dir / dst_dir_str
 
-            if dst_dir.exists() and list(dst_dir.iterdir()):
-                continue
-
             raytrix_cfg = RaytrixCfg.from_file(dataset_dir / render_cfg.param_file)
             raytrix_cfg.Calibration_xml = str(dataset_dir / render_cfg.calibration_file)
             raytrix_cfg.RawImage_Path = str(src_dir / "%03d.png")

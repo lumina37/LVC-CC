@@ -61,10 +61,10 @@ program = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-st
 param_file = "./rlc.cfg.bak"
 calibration_file = "./calibration.xml"
 src_dir = "./imgs/raw2png"
-dst_dir = "./imgs/rendered_baseline"
+dst_dir = "./imgs/rendered_base"
 
 [computation]
-baseline_dir = "./imgs/rendered_baseline"
+base_dir = "./imgs/rendered_base"
 render_dirs = "./imgs/rendered"
 render_ref_dirs = "./imgs/rendered_ref"
 log_file_fstr = "./imgs/encoded/{qp}.log"

@@ -44,14 +44,13 @@ def iter_args(cfg: Cfg):
 
             yield (
                 dataset_dir / log_file_str,
-                tmpf,
                 [
                     str(codec_cfg.program),
                     "-c",
                     str(codec_cfg.encode_mode_cfg_file),
                     "-c",
                     str(tmpf),
-                    "--InternalBitDepth=8",
+                    "--OutputBitDepth=8",
                     "--FramesToBeEncoded=5",
                     "--TemporalSubsampleRatio=1",
                     f"--QP={qp}",

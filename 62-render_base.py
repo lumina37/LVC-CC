@@ -6,7 +6,7 @@ from helper.configs.raytrix import RaytrixCfg
 from helper.configs.self import Cfg
 
 cfg = Cfg.from_file(Path('pipeline.toml'))
-render_cfg = cfg.baseline_render
+render_cfg = cfg.base_render
 
 for dataset_dir in cfg.dataset_root.iterdir():
     raytrix_cfg = RaytrixCfg.from_file(dataset_dir / render_cfg.param_file)

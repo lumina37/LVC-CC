@@ -5,7 +5,7 @@ from pathlib import Path
 import tomllib
 
 from ..base import CfgBase
-from .baseline_render import BaselineRenderCfg
+from .base_render import BaseRenderCfg
 from .codec import CodecCfg
 from .computation import ComputationCfg
 from .dec2png import Dec2PNGCfg
@@ -27,7 +27,7 @@ class Cfg(CfgBase):
     dec2png: Dec2PNGCfg = dataclasses.field(default_factory=Dec2PNGCfg)
     postprocess: PostprocessCfg = dataclasses.field(default_factory=PostprocessCfg)
     render: RenderCfg = dataclasses.field(default_factory=RenderCfg)
-    baseline_render: BaselineRenderCfg = dataclasses.field(default_factory=BaselineRenderCfg)
+    base_render: BaseRenderCfg = dataclasses.field(default_factory=BaseRenderCfg)
     computation: ComputationCfg = dataclasses.field(default_factory=ComputationCfg)
 
     @staticmethod

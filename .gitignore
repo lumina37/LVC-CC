@@ -162,5 +162,6 @@ cython_debug/
 .idea/
 .vscode/
 
+/figs
 *.png
 *.txt

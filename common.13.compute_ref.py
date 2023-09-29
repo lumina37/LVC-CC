@@ -4,7 +4,7 @@ from pathlib import Path
 
 import cv2 as cv
 
-from helper.configs.self import Cfg
+from vvchelper.config.self import Cfg
 
 
 def get_bitrate(fp: Path) -> float:
@@ -46,18 +46,16 @@ class ImgBase:
         self.y, self.u, self.v = cv.split(yuv)
 
 
-for dataset_dir in cfg.dataset_root.iterdir():
-    if not dataset_dir.name == 'Tunnel_Train':
-        continue
 
+for dataset_dir in cfg.dataset_root.iterdir():
     base_dir = dataset_dir / compute_cfg.base_dir
     print(f"Handling: {dataset_dir.name}")
 
     frame_count = len(list(base_dir.iterdir()))
+    real_count = 0
 
-    for frame_id in range(1, frame_count + 1):
-        frame_id_str = f"{frame_id:0>3}"
-        bases = [ImgBase(cv.imread(str(imgp))) for imgp in (base_dir / frame_id_str).glob("image*")]
+    for frame_dir in base_dir.iterdir():
+        bases = [ImgBase(cv.imread(str(imgp))) for imgp in frame_dir.glob("image*")]
         count = frame_count * len(bases)
 
         for render_dir in (dataset_dir / compute_cfg.render_dirs).iterdir():
@@ -68,11 +66,12 @@ for dataset_dir in cfg.dataset_root.iterdir():
             log_file_str = compute_cfg.log_file_fstr.format(qp=qp)
             metrics[task_name].bitrate = get_bitrate(dataset_dir / log_file_str)
 
-            for idx, img_path in enumerate((render_dir / frame_id_str).glob("image*")):
+            for idx, img_path in enumerate((render_dir / frame_dir.name).glob("image*")):
                 cmp = ImgBase(cv.imread(str(img_path)))
                 metrics[task_name].psnr.y += cv.quality.QualityPSNR_compute(bases[idx].y, cmp.y)[0][0] / count
                 metrics[task_name].psnr.u += cv.quality.QualityPSNR_compute(bases[idx].u, cmp.u)[0][0] / count
                 metrics[task_name].psnr.v += cv.quality.QualityPSNR_compute(bases[idx].v, cmp.v)[0][0] / count
+                real_count += 1
 
         for render_ref_dir in (dataset_dir / compute_cfg.render_ref_dirs).iterdir():
             qp = int(render_ref_dir.name)
@@ -82,7 +81,7 @@ for dataset_dir in cfg.dataset_root.iterdir():
             ref_log_file_str = compute_cfg.ref_log_file_fstr.format(qp=qp)
             metrics_ref[task_name].bitrate = get_bitrate(dataset_dir / ref_log_file_str)
 
-            for idx, img_path in enumerate((render_ref_dir / frame_id_str).glob("image*")):
+            for idx, img_path in enumerate((render_ref_dir / frame_dir.name).glob("image*")):
                 cmp = ImgBase(cv.imread(str(img_path)))
                 metrics_ref[task_name].psnr.y += cv.quality.QualityPSNR_compute(bases[idx].y, cmp.y)[0][0] / count
                 metrics_ref[task_name].psnr.u += cv.quality.QualityPSNR_compute(bases[idx].u, cmp.u)[0][0] / count

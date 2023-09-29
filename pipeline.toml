@@ -1,71 +1,63 @@
-dataset_root = "E:/Code/SIGS/230818_VVC/dataset/videos"
+root = "E:/Code/SIGS/230818_VVC/dataset"
+
+[program]
 ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
+encoder = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
+preprocess = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preprocess.exe"
+postprocess = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postprocess.exe"
+rlc = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
 
-[raw2png]
-param_file = "./rlc.cfg.bak"
-src_file = "./source.yuv"
-dst_dir = "./imgs/raw2png"
+[base.raw2png]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+dst = "./playground/base/raw2png"
 
-[preprocess]
-program = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preprocess.exe"
-param_file = "./rlc.cfg.bak"
-calibration_file = "./calibration.xml"
-src_dir = "./imgs/raw2png"
-dst_dir = "./imgs/preprocessed"
+[base.render]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+dst = "./playground/base/render"
 
-[pre2yuv]
-param_file = "./rlc.cfg.bak"
-src_dir = "./imgs/preprocessed"
-dst_file = "./imgs/pre2yuv.yuv"
+[wopre.raw2yuv]
+src = "./image"
+dst = "./playground/wopre/raw2yuv"
 
-[codec]
-program = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
-encode_mode_cfg_file = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/cfg/encoder_intra_vtm.cfg"
-param_file = "./vtm.cfg.bak"
-size_ref_img_file = "./imgs/preprocessed/001.png"
-src_file = "./imgs/pre2yuv.yuv"
-dst_file_fstr = "./imgs/encoded/{qp}.bin"
-log_file_fstr = "./imgs/encoded/{qp}.log"
-recon_file_fstr = "./imgs/decoded/{qp}.yuv"
+[wopre.codec]
+vtm_cfg = "./config/{seq_name}/vtm.cfg"
+dst = "./playground/wopre/codec"
 
-[codec.ctcqp]
-Boxer-IrishMan-Gladiator = [37, 41, 45, 49]
-chess = [37, 41, 45, 49]
-ChessPieces = [33, 40, 45, 49]
-NagoyaDataLeading = [38, 43, 49, 51]
-NagoyaFujita = [36, 40, 45, 49]
-NagoyaOrigami = [36, 40, 45, 49]
-Tunnel_Train = [35, 40, 45, 49]
+[wopre.dec2png]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+dst = "./playground/wopre/dec2png"
 
-[dec2png]
-size_ref_img_file = "./imgs/preprocessed/001.png"
-src_file_pattern = "./imgs/decoded/*.yuv"
-dst_dir_fstr = "./imgs/dec2png/{stem}"
+[wopre.render]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+dst = "./playground/wopre/render"
 
-[postprocess]
-program = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postprocess.exe"
-param_file = "./rlc.cfg.bak"
-calibration_file = "./calibration.xml"
-src_dirs = "./imgs/dec2png"
-dst_dir_fstr = "./imgs/postprocessed/{qp}"
+[pre.preprocess]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+src = "./image"
+dst = "./playground/pre/preprocess"
 
-[render]
-program = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
-param_file = "./rlc.cfg.bak"
-calibration_file = "./calibration.xml"
-src_dirs = "./imgs/postprocessed"
-dst_dir_fstr = "./imgs/rendered/{qp}"
+[pre.pre2yuv]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+dst = "./playground/pre/pre2yuv"
 
-[baseline_render]
-program = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
-param_file = "./rlc.cfg.bak"
-calibration_file = "./calibration.xml"
-src_dir = "./imgs/raw2png"
-dst_dir = "./imgs/rendered_base"
+[pre.codec]
+vtm_cfg = "./config/{seq_name}/vtm.cfg"
+dst = "./playground/pre/codec"
 
-[computation]
-base_dir = "./imgs/rendered_base"
-render_dirs = "./imgs/rendered"
-render_ref_dirs = "./imgs/rendered_ref"
-log_file_fstr = "./imgs/encoded/{qp}.log"
-ref_log_file_fstr = "./imgs/encoded_ref/{qp}.log"
+[pre.dec2png]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+dst = "./playground/pre/dec2png"
+
+[pre.postprocess]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+dst = "./playground/pre/postprocess"
+
+[pre.render]
+rlc_cfg = "./config/{seq_name}/rlc.cfg"
+dst = "./playground/pre/render"
+
+[common.compose]
+dst = "./playground/common/compose"
+
+[common.compute]
+dst = "./playground/common/compute"

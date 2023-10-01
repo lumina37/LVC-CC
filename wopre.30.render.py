@@ -9,11 +9,11 @@ from vvchelper.utils import get_QP, mkdir, path_from_root
 
 log = get_logger()
 
-all_cfg = from_file('pipeline.toml')
-cfg = all_cfg['wopre']['render']
+rootcfg = from_file('pipeline.toml')
+cfg = rootcfg['wopre']['render']
 
-src_dirs = path_from_root(all_cfg, all_cfg['wopre']['dec2png']['dst'])
-dst_dirs = path_from_root(all_cfg, cfg['dst'])
+src_dirs = path_from_root(rootcfg, rootcfg['wopre']['dec2png']['dst'])
+dst_dirs = path_from_root(rootcfg, cfg['dst'])
 
 
 def iter_args():
@@ -32,8 +32,8 @@ def iter_args():
             dst_dir = dst_dirs / seq_name / qp_dir.name
             mkdir(dst_dir)
 
-            rlc_cfg_rp = cfg['rlc_cfg'].format(seq_name=seq_name)
-            rlc_cfg_rp = path_from_root(all_cfg, rlc_cfg_rp)
+            rlc_cfg_rp = rootcfg['config']['rlc'].format(seq_name=seq_name)
+            rlc_cfg_rp = path_from_root(rootcfg, rlc_cfg_rp)
             rlc_cfg = RaytrixCfg.from_file(rlc_cfg_rp)
 
             rlc_cfg.Calibration_xml = str(rlc_cfg_rp.with_name('calibration.xml'))
@@ -46,7 +46,7 @@ def iter_args():
             rlc_cfg.to_file(rlc_cfg_wp)
 
             cmds = render.build(
-                all_cfg['program']['rlc'],
+                rootcfg['app']['rlc'],
                 rlc_cfg_wp,
             )
             yield cmds

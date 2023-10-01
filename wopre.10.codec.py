@@ -9,11 +9,11 @@ from vvchelper.utils import mkdir, path_from_root
 
 log = get_logger()
 
-all_cfg = from_file('pipeline.toml')
-cfg = all_cfg['wopre']['codec']
+rootcfg = from_file('pipeline.toml')
+cfg = rootcfg['wopre']['codec']
 
-src_dir = path_from_root(all_cfg, all_cfg['wopre']['raw2yuv']['dst'])
-dst_dirs = path_from_root(all_cfg, cfg['dst'])
+src_dir = path_from_root(rootcfg, rootcfg['wopre']['raw2yuv']['dst'])
+dst_dirs = path_from_root(rootcfg, cfg['dst'])
 
 ctcqp = {
     "Boxer-IrishMan-Gladiator": [37, 41, 45, 49],
@@ -25,7 +25,7 @@ ctcqp = {
     "Tunnel_Train": [35, 40, 45, 49],
 }
 
-vtm_intra_cfg_path = path_from_root(all_cfg, "./config/encoder_intra_vtm.cfg")
+vtm_intra_cfg_path = path_from_root(rootcfg, rootcfg['config']['vtm_mode'])
 
 
 def run(log_file: Path, args: list):
@@ -40,8 +40,8 @@ def iter_args():
         dst_dir = dst_dirs / seq_name
         mkdir(dst_dir)
 
-        vtm_cfg_p = cfg['vtm_cfg'].format(seq_name=seq_name)
-        vtm_cfg_p = path_from_root(all_cfg, vtm_cfg_p)
+        vtm_cfg_p = rootcfg['config']['vtm'].format(seq_name=seq_name)
+        vtm_cfg_p = path_from_root(rootcfg, vtm_cfg_p)
 
         for qp in ctcqp[seq_name]:
             log.debug(f"processing seq: {seq_name}. QP={qp}")
@@ -51,7 +51,7 @@ def iter_args():
             decoded_path = dst_dir / f'QP#{qp}.yuv'
 
             cmds = codec.build(
-                all_cfg['program']['encoder'],
+                rootcfg['app']['encoder'],
                 vtm_intra_cfg_path,
                 vtm_cfg_p,
                 qp,

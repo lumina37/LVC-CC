@@ -10,13 +10,13 @@ from vvchelper.utils import mkdir, path_from_root
 
 log = get_logger()
 
-all_cfg = from_file(Path('pipeline.toml'))
-cfg = all_cfg['pre']['dec2png']
+rootcfg = from_file(Path('pipeline.toml'))
+cfg = rootcfg['pre']['dec2png']
 
-src_dirs = path_from_root(all_cfg, all_cfg['pre']['codec']['dst'])
+src_dirs = path_from_root(rootcfg, rootcfg['pre']['codec']['dst'])
 log.debug(f"src_dirs: {src_dirs}")
-img_ref_dir = path_from_root(all_cfg, all_cfg['pre']['preprocess']['dst'])
-dst_dirs = path_from_root(all_cfg, cfg['dst'])
+img_ref_dir = path_from_root(rootcfg, rootcfg['pre']['preprocess']['dst'])
+dst_dirs = path_from_root(rootcfg, cfg['dst'])
 log.debug(f"dst_dirs: {dst_dirs}")
 
 for src_dir in src_dirs.iterdir():
@@ -36,7 +36,7 @@ for src_dir in src_dirs.iterdir():
         mkdir(dst_dir)
 
         cmds = yuv2png.build(
-            all_cfg['program']['ffmpeg'],
+            rootcfg['app']['ffmpeg'],
             width,
             height,
             yuv_path,

@@ -3,16 +3,17 @@ from pathlib import Path
 
 
 def mkdir(path: Path):
+    path = Path(path)
     path.mkdir(0o755, parents=True, exist_ok=True)
 
 
-def path_from_root(all_cfg: dict, path: Path):
+def path_from_root(rootcfg: dict, path: Path):
     if not isinstance(path, Path):
         path = Path(path)
 
     assert not path.is_absolute()
 
-    abs_path = Path(all_cfg['root']) / path
+    abs_path = Path(rootcfg['root']) / path
     return abs_path
 
 

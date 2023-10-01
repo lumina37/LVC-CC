@@ -9,21 +9,21 @@ from vvchelper.utils import mkdir, path_from_root
 
 log = get_logger()
 
-all_cfg = from_file(Path('pipeline.toml'))
-cfg = all_cfg['base']['raw2png']
+rootcfg = from_file(Path('pipeline.toml'))
+cfg = rootcfg['base']['raw2png']
 
-src_dir = path_from_root(all_cfg, all_cfg['wopre']['raw2yuv']['dst'])
+src_dir = path_from_root(rootcfg, rootcfg['wopre']['raw2yuv']['dst'])
 log.debug(f"src_dir: {src_dir}")
-dst_dirs = path_from_root(all_cfg, cfg['dst'])
+dst_dirs = path_from_root(rootcfg, cfg['dst'])
 log.debug(f"dst_dirs: {dst_dirs}")
 
 for yuv_path in src_dir.glob('*.yuv'):
     seq_name = yuv_path.stem
     log.debug(f"processing seq: {seq_name}")
 
-    rlc_cfg_path = cfg['rlc_cfg'].format(seq_name=seq_name)
-    rlc_cfg_path = path_from_root(all_cfg, rlc_cfg_path)
-    raytrix_cfg = RaytrixCfg.from_file(rlc_cfg_path)
+    rlc_cfg_p = rootcfg['config']['rlc'].format(seq_name=seq_name)
+    rlc_cfg_p = path_from_root(rootcfg, rlc_cfg_p)
+    raytrix_cfg = RaytrixCfg.from_file(rlc_cfg_p)
     width = raytrix_cfg.width
     height = raytrix_cfg.height
 
@@ -31,7 +31,7 @@ for yuv_path in src_dir.glob('*.yuv'):
     mkdir(dst_dir)
 
     cmds = yuv2png.build(
-        all_cfg['program']['ffmpeg'],
+        rootcfg['app']['ffmpeg'],
         width,
         height,
         yuv_path,

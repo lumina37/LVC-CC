@@ -7,10 +7,10 @@ from vvchelper.utils import get_QP, mkdir, path_from_root
 
 log = get_logger()
 
-all_cfg = from_file('pipeline.toml')
-cfg = all_cfg['common']['compose']
-base_src_dirs = path_from_root(all_cfg, all_cfg['base']['render']['dst'])
-dst_root = path_from_root(all_cfg, cfg['dst'])
+rootcfg = from_file('pipeline.toml')
+cfg = rootcfg['common']['compose']
+base_src_dirs = path_from_root(rootcfg, rootcfg['base']['render']['dst'])
+dst_root = path_from_root(rootcfg, cfg['dst'])
 
 for base_src_dir in base_src_dirs.iterdir():
     if not base_src_dir.is_dir():
@@ -29,13 +29,13 @@ for base_src_dir in base_src_dirs.iterdir():
         col_idx = (view_idx % 5) + 1
 
         cmds = png2yuv420.build(
-            all_cfg['program']['ffmpeg'],
+            rootcfg['app']['ffmpeg'],
             base_src_dir / "frame#%03d" / f"image_{view_idx+1:0>3}.png",
             dst_dir / f"MV_{row_idx}_{col_idx}.yuv",
         )
         subprocess.run(cmds)
 
-wopre_src_dirs = path_from_root(all_cfg, all_cfg['wopre']['render']['dst'])
+wopre_src_dirs = path_from_root(rootcfg, rootcfg['wopre']['render']['dst'])
 for wopre_src_dir in wopre_src_dirs.iterdir():
     if not wopre_src_dir.is_dir():
         continue
@@ -58,13 +58,13 @@ for wopre_src_dir in wopre_src_dirs.iterdir():
             col_idx = (view_idx % 5) + 1
 
             cmds = png2yuv420.build(
-                all_cfg['program']['ffmpeg'],
+                rootcfg['app']['ffmpeg'],
                 wopre_src_dir / qp_str.name / "frame#%03d" / f"image_{view_idx+1:0>3}.png",
                 dst_dir / f"Rec_MV_{row_idx}_{col_idx}.yuv",
             )
             subprocess.run(cmds)
 
-pre_src_dirs = path_from_root(all_cfg, all_cfg['pre']['render']['dst'])
+pre_src_dirs = path_from_root(rootcfg, rootcfg['pre']['render']['dst'])
 for pre_src_dir in pre_src_dirs.iterdir():
     if not pre_src_dir.is_dir():
         continue
@@ -87,7 +87,7 @@ for pre_src_dir in pre_src_dirs.iterdir():
             col_idx = (view_idx % 5) + 1
 
             cmds = png2yuv420.build(
-                all_cfg['program']['ffmpeg'],
+                rootcfg['app']['ffmpeg'],
                 pre_src_dir / qp_str.name / "frame#%03d" / f"image_{view_idx+1:0>3}.png",
                 dst_dir / f"Rec_MV_{row_idx}_{col_idx}.yuv",
             )

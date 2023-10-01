@@ -8,12 +8,12 @@ from vvchelper.utils import get_src_pattern, mkdir, path_from_root
 
 log = get_logger()
 
-all_cfg = from_file("pipeline.toml")
-cfg = all_cfg['wopre']['raw2yuv']
+rootcfg = from_file("pipeline.toml")
+cfg = rootcfg['wopre']['raw2yuv']
 
-src_dirs: Path = path_from_root(all_cfg, cfg['src'])
+src_dirs: Path = path_from_root(rootcfg, cfg['src'])
 log.debug(f"src_dirs: {src_dirs}")
-dst_dir: Path = path_from_root(all_cfg, cfg['dst'])
+dst_dir: Path = path_from_root(rootcfg, cfg['dst'])
 log.debug(f"dst_dir: {dst_dir}")
 mkdir(dst_dir)
 
@@ -28,7 +28,7 @@ for src_dir in src_dirs.iterdir():
     fname_sample = next(src_dir.glob('*.png')).name
 
     cmds = png2yuv420.build(
-        all_cfg['program']['ffmpeg'],
+        rootcfg['app']['ffmpeg'],
         src_dir / get_src_pattern(fname_sample),
         (dst_dir / seq_name).with_suffix('.yuv'),
     )

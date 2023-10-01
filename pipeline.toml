@@ -1,18 +1,21 @@
-root = "E:/Code/SIGS/230818_VVC/dataset"
+root = "D:/Code/SIGS/230818_VVC/dataset"
 
-[program]
+[app]
 ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
-encoder = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
-preprocess = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preprocess.exe"
-postprocess = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postprocess.exe"
-rlc = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+encoder = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
+preprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preprocess.exe"
+postprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postprocess.exe"
+rlc = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+
+[config]
+vtm_mode = "./config/encoder_intra_vtm.cfg"
+vtm = "./config/{seq_name}/vtm.cfg"
+rlc = "./config/{seq_name}/rlc.cfg"
 
 [base.raw2png]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 dst = "./playground/base/raw2png"
 
 [base.render]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 dst = "./playground/base/render"
 
 [wopre.raw2yuv]
@@ -20,44 +23,38 @@ src = "./image"
 dst = "./playground/wopre/raw2yuv"
 
 [wopre.codec]
-vtm_cfg = "./config/{seq_name}/vtm.cfg"
 dst = "./playground/wopre/codec"
 
 [wopre.dec2png]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 dst = "./playground/wopre/dec2png"
 
 [wopre.render]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 dst = "./playground/wopre/render"
 
 [pre.preprocess]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 src = "./image"
 dst = "./playground/pre/preprocess"
 
 [pre.pre2yuv]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 dst = "./playground/pre/pre2yuv"
 
 [pre.codec]
-vtm_cfg = "./config/{seq_name}/vtm.cfg"
 dst = "./playground/pre/codec"
 
 [pre.dec2png]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 dst = "./playground/pre/dec2png"
 
 [pre.postprocess]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 dst = "./playground/pre/postprocess"
 
 [pre.render]
-rlc_cfg = "./config/{seq_name}/rlc.cfg"
 dst = "./playground/pre/render"
 
 [common.compose]
 dst = "./playground/common/compose"
 
 [common.compute]
+dst = "./playground/common/compute"
+
+[common.visualize]
 dst = "./playground/common/compute"

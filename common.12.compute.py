@@ -21,10 +21,10 @@ class PSNR:
 
 log = get_logger()
 
-all_cfg = from_file('pipeline.toml')
-cfg = all_cfg['common']['compute']
+rootcfg = from_file('pipeline.toml')
+cfg = rootcfg['common']['compute']
 
-src_dirs = path_from_root(all_cfg, all_cfg['common']['compose']['dst'])
+src_dirs = path_from_root(rootcfg, rootcfg['common']['compose']['dst'])
 
 
 def get_bitrate(fp: Path) -> float:

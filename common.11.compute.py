@@ -4,11 +4,11 @@ from pathlib import Path
 
 import cv2 as cv
 
-from vvchelper.command import render
-from vvchelper.config.raytrix import RaytrixCfg
 from vvchelper.config.self import from_file
 from vvchelper.logging import get_logger
-from vvchelper.utils import get_QP, mkdir, path_from_root
+from vvchelper.utils import get_QP, path_from_root
+
+log = get_logger()
 
 
 def get_bitrate(fp: Path) -> float:
@@ -23,7 +23,7 @@ def get_bitrate(fp: Path) -> float:
                 return float(bitrate_str)
 
 
-all_cfg = from_file('pipeline.toml')
+rootcfg = from_file('pipeline.toml')
 
 
 @dataclasses.dataclass
@@ -49,24 +49,27 @@ class ImgBase:
         self.y, self.u, self.v = cv.split(yuv)
 
 
-base_dirs = path_from_root(all_cfg, all_cfg['base']['render']['dst'])
+base_dirs = path_from_root(rootcfg, rootcfg['base']['render']['dst'])
 for base_dir in base_dirs.iterdir():
     if not base_dir.is_dir():
         continue
 
     seq_name = base_dir.name
 
-    frame_count = len(list(base_dir.glob('frame#*')))
+    # frame_count = len(list(base_dir.glob('frame#*')))
+    frame_count = 1
 
     for frame_dir in base_dir.glob('frame#*'):
         if not frame_dir.is_dir():
             continue
 
+        log.debug(f"processing seq: {seq_name}. {frame_dir.name}")
+
         bases = [ImgBase(cv.imread(str(p))) for p in frame_dir.glob("image*")]
         count = frame_count * len(bases)
 
-        wopre_dir = path_from_root(all_cfg, all_cfg['pre']['render']['dst'])
-        for qp_dir in (wopre_dir / seq_name).glob('QP#*'):
+        pre_dir = path_from_root(rootcfg, rootcfg['pre']['render']['dst'])
+        for qp_dir in (pre_dir / seq_name).glob('QP#*'):
             if not qp_dir.is_dir():
                 continue
 
@@ -74,7 +77,7 @@ for base_dir in base_dirs.iterdir():
             task_name = f"{seq_name}_{qp}"
             metrics_pre.setdefault(task_name, Metric())
 
-            codec_dir = path_from_root(all_cfg, all_cfg['pre']['codec']['dst']) / seq_name
+            codec_dir = path_from_root(rootcfg, rootcfg['pre']['codec']['dst']) / seq_name
             log_path = codec_dir / f'{qp_dir.name}.log'
             metrics_pre[task_name].bitrate = get_bitrate(log_path)
 
@@ -84,7 +87,7 @@ for base_dir in base_dirs.iterdir():
                 metrics_pre[task_name].psnr.u += cv.quality.QualityPSNR_compute(bases[idx].u, cmp.u)[0][0] / count
                 metrics_pre[task_name].psnr.v += cv.quality.QualityPSNR_compute(bases[idx].v, cmp.v)[0][0] / count
 
-        wopre_dir = path_from_root(all_cfg, all_cfg['wopre']['render']['dst'])
+        wopre_dir = path_from_root(rootcfg, rootcfg['wopre']['render']['dst'])
         for qp_dir in (wopre_dir / seq_name).glob('QP#*'):
             if not qp_dir.is_dir():
                 continue
@@ -93,7 +96,7 @@ for base_dir in base_dirs.iterdir():
             task_name = f"{seq_name}_{qp}"
             metrics_wopre.setdefault(task_name, Metric())
 
-            codec_dir = path_from_root(all_cfg, all_cfg['wopre']['codec']['dst']) / seq_name
+            codec_dir = path_from_root(rootcfg, rootcfg['wopre']['codec']['dst']) / seq_name
             log_path = codec_dir / f'{qp_dir.name}.log'
             metrics_wopre[task_name].bitrate = get_bitrate(log_path)
 
@@ -102,6 +105,8 @@ for base_dir in base_dirs.iterdir():
                 metrics_wopre[task_name].psnr.y += cv.quality.QualityPSNR_compute(bases[idx].y, cmp.y)[0][0] / count
                 metrics_wopre[task_name].psnr.u += cv.quality.QualityPSNR_compute(bases[idx].u, cmp.u)[0][0] / count
                 metrics_wopre[task_name].psnr.v += cv.quality.QualityPSNR_compute(bases[idx].v, cmp.v)[0][0] / count
+
+        break
 
 with open("metrics_pre.txt", 'w') as f:
     for name, metric in metrics_pre.items():

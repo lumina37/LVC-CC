@@ -7,7 +7,7 @@ from matplotlib.axes import Axes
 
 from vvchelper.config.self import from_file
 from vvchelper.logging import get_logger
-from vvchelper.utils import path_from_root, mkdir
+from vvchelper.utils import mkdir, path_from_root
 
 
 def get_bitrate(fp: Path) -> float:

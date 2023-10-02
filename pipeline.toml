@@ -23,12 +23,14 @@ src = "./image"
 dst = "./playground/wopre/raw2yuv"
 
 [wopre.codec]
+parallel = 12
 dst = "./playground/wopre/codec"
 
 [wopre.dec2png]
 dst = "./playground/wopre/dec2png"
 
 [wopre.render]
+parallel = 2
 dst = "./playground/wopre/render"
 
 [pre.preprocess]
@@ -39,6 +41,7 @@ dst = "./playground/pre/preprocess"
 dst = "./playground/pre/pre2yuv"
 
 [pre.codec]
+parallel = 12
 dst = "./playground/pre/codec"
 
 [pre.dec2png]
@@ -48,6 +51,7 @@ dst = "./playground/pre/dec2png"
 dst = "./playground/pre/postprocess"
 
 [pre.render]
+parallel = 2
 dst = "./playground/pre/render"
 
 [common.compose]
@@ -57,4 +61,4 @@ dst = "./playground/common/compose"
 dst = "./playground/common/compute"
 
 [common.visualize]
-dst = "./playground/common/compute"
+dst = "./playground/common/visualize"

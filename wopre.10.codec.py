@@ -63,7 +63,7 @@ def iter_args():
 
 
 if __name__ == "__main__":
-    with mp.Pool(processes=12) as pool:
+    with mp.Pool(processes=cfg['parallel']) as pool:
         pool.starmap_async(run, iter_args())
         pool.close()
         pool.join()

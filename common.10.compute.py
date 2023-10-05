@@ -1,5 +1,5 @@
-import csv
 import dataclasses
+import json
 import re
 from pathlib import Path
 from typing import Tuple
@@ -17,15 +17,18 @@ class PSNR:
     y: float = 0.0
     u: float = 0.0
     v: float = 0.0
-    avg: float = 0.0
 
+    def __iadd__(self, rhs: "PSNR") -> "PSNR":
+        self.y += rhs.y
+        self.u += rhs.u
+        self.v += rhs.v
+        return self
 
-log = get_logger()
-
-rootcfg = from_file('pipeline.toml')
-cfg = rootcfg['common']['compute']
-
-src_dirs = path_from_root(rootcfg, rootcfg['common']['compose']['dst'])
+    def __itruediv__(self, d: float) -> "PSNR":
+        self.y /= d
+        self.u /= d
+        self.v /= d
+        return self
 
 
 def get_bitrate(fp: Path) -> float:
@@ -55,7 +58,7 @@ def compite_psnr_f64array(lhs: np.ndarray, rhs: np.ndarray) -> float:
     return psnr
 
 
-def compute_yuv(lhs: Path, rhs: Path, width: int, height: int):
+def compute_yuv(lhs: Path, rhs: Path, width: int, height: int) -> PSNR:
     lhs_size = lhs.stat().st_size
     rhs_size = rhs.stat().st_size
     assert lhs_size == rhs_size
@@ -65,9 +68,7 @@ def compute_yuv(lhs: Path, rhs: Path, width: int, height: int):
     frames = int(lhs_size / (ysize + uvsize * 2))
     assert frames == 30
 
-    ypsnr = 0.0
-    upsnr = 0.0
-    vpsnr = 0.0
+    psnr = PSNR()
 
     with lhs.open('rb', buffering=ysize) as lhs_file, rhs.open('rb', buffering=ysize) as rhs_file:
         for _ in range(frames):
@@ -75,29 +76,37 @@ def compute_yuv(lhs: Path, rhs: Path, width: int, height: int):
             rhs_buff = rhs_file.read(ysize)
             lhs_arr = np.frombuffer(lhs_buff, np.uint8).astype(np.float64) / 255.0
             rhs_arr = np.frombuffer(rhs_buff, np.uint8).astype(np.float64) / 255.0
-            ypsnr += compite_psnr_f64array(lhs_arr, rhs_arr)
+            psnr.y += compite_psnr_f64array(lhs_arr, rhs_arr)
 
             lhs_buff = lhs_file.read(uvsize)
             rhs_buff = rhs_file.read(uvsize)
             lhs_arr = np.frombuffer(lhs_buff, np.uint8).astype(np.float64) / 255.0
             rhs_arr = np.frombuffer(rhs_buff, np.uint8).astype(np.float64) / 255.0
-            upsnr += compite_psnr_f64array(lhs_arr, rhs_arr)
+            psnr.u += compite_psnr_f64array(lhs_arr, rhs_arr)
 
             lhs_buff = lhs_file.read(uvsize)
             rhs_buff = rhs_file.read(uvsize)
             lhs_arr = np.frombuffer(lhs_buff, np.uint8).astype(np.float64) / 255.0
             rhs_arr = np.frombuffer(rhs_buff, np.uint8).astype(np.float64) / 255.0
-            vpsnr += compite_psnr_f64array(lhs_arr, rhs_arr)
+            psnr.v += compite_psnr_f64array(lhs_arr, rhs_arr)
 
-    ypsnr /= frames
-    upsnr /= frames
-    vpsnr /= frames
+    psnr /= frames
 
-    return (ypsnr, upsnr, vpsnr)
+    return psnr
+
+
+log = get_logger()
+
+rootcfg = from_file('pipeline.toml')
+cfg = rootcfg['common']['compute']
+
+src_dirs = path_from_root(rootcfg, rootcfg['common']['compose']['dst'])
 
 
 dst_dir = path_from_root(rootcfg, cfg['dst'])
 mkdir(dst_dir)
+
+main_dic = {}
 
 for src_dir in src_dirs.iterdir():
     if not src_dir.is_dir():
@@ -105,39 +114,40 @@ for src_dir in src_dirs.iterdir():
 
     seq_name = src_dir.name
     width, height = get_wh(seq_name)
+    seq_dic: dict = main_dic.setdefault(seq_name, {})
 
-    def compute_type(tp: str):
-        with (dst_dir / f'metrics_{tp}.csv').open('w', encoding='utf-8', newline='') as f:
-            csv_writer = csv.writer(f)
-            header = ["name", "QP", "bitrate", "yPSNR", "uPSNR", "vPSNR"]
-            csv_writer.writerow(header)
+    for tp in ['pre', 'wopre']:
+        tp_dic: dict = seq_dic.setdefault(tp, {})
 
-            for qp_dir in (src_dir / tp).iterdir():
-                if not qp_dir.is_dir():
-                    continue
+        for qp_dir in (src_dir / tp).iterdir():
+            if not qp_dir.is_dir():
+                continue
 
-                qp = get_QP(qp_dir.name)
-                codec_dir = path_from_root(rootcfg, rootcfg[tp]['codec']['dst'])
-                codec_log_p = (codec_dir / seq_name / qp_dir.name).with_suffix('.log')
-                bitrate = get_bitrate(codec_log_p)
+            qp = get_QP(qp_dir.name)
+            log.debug(f"processing {tp} seq: {seq_name}. QP={qp}")
+            QPs: list = tp_dic.setdefault('QP', [])
+            QPs.append(qp)
 
-                ypsnr = 0.0
-                upsnr = 0.0
-                vpsnr = 0.0
-                count = 0
-                for pre_p in qp_dir.glob('*.yuv'):
-                    _ypsnr, _upsnr, _vpsnr = compute_yuv(src_dir / 'base' / pre_p.name, pre_p, width, height)
-                    ypsnr += _ypsnr
-                    upsnr += _upsnr
-                    vpsnr += _vpsnr
-                    count += 1
+            codec_dir = path_from_root(rootcfg, rootcfg[tp]['codec']['dst'])
+            codec_log_p = (codec_dir / seq_name / qp_dir.name).with_suffix('.log')
+            bitrate = get_bitrate(codec_log_p)
+            bitrates: list = tp_dic.setdefault('bitrate', [])
+            bitrates.append(bitrate)
 
-                assert count == 25  # Remove this as you like
-                ypsnr /= count
-                upsnr /= count
-                vpsnr /= count
+            psnr = PSNR()
+            count = 0
+            for pre_p in qp_dir.glob('*.yuv'):
+                psnr += compute_yuv(src_dir / 'base' / pre_p.name, pre_p, width, height)
+                count += 1
 
-                csv_writer.writerow([seq_name, qp, bitrate, ypsnr, upsnr, vpsnr])
+            psnr /= count
 
-    compute_type('pre')
-    compute_type('wopre')
+            ypsnrs: list = tp_dic.setdefault('Y-PSNR', [])
+            ypsnrs.append(psnr.y)
+            upsnrs: list = tp_dic.setdefault('U-PSNR', [])
+            upsnrs.append(psnr.u)
+            vpsnrs: list = tp_dic.setdefault('V-PSNR', [])
+            vpsnrs.append(psnr.v)
+
+with (dst_dir / 'psnr.json').open('w') as f:
+    json.dump(main_dic, f, indent=2)

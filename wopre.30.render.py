@@ -22,9 +22,14 @@ def iter_args():
             continue
 
         seq_name = src_dir.name
+        if seq_name != 'chess':
+            continue
 
         for qp_dir in src_dir.iterdir():
             if not qp_dir.is_dir():
+                continue
+
+            if get_QP(qp_dir.name) != 37:
                 continue
 
             log.debug(f"processing seq: {seq_name}. QP={get_QP(qp_dir.name)}")

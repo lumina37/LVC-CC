@@ -3,7 +3,7 @@ name = "VVC-Scripts"
 version = "0.0.0"
 description = ""
 authors = [{ name = "Starry-OvO", email = "starry.qvq@gmail.com" }]
-dependencies = ['opencv-contrib-python', 'matplotlib']
+dependencies = ['scipy', 'opencv-contrib-python', 'matplotlib']
 requires-python = ">=3.11"
 readme = "README.md"
 license = { text = "MIT" }

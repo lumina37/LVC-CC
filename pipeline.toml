@@ -8,7 +8,7 @@ postprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-st
 rlc = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
 
 [config]
-vtm_mode = "./config/encoder_intra_vtm.cfg"
+vtm_mode = "./config/encoder_randomaccess_vtm.cfg"
 vtm = "./config/{seq_name}/vtm.cfg"
 rlc = "./config/{seq_name}/rlc.cfg"
 
@@ -58,6 +58,9 @@ dst = "./playground/pre/render"
 dst = "./playground/common/compose"
 
 [common.compute]
+dst = "./playground/common/compute"
+
+[common.bdrate]
 dst = "./playground/common/compute"
 
 [common.visualize]

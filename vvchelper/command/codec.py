@@ -15,6 +15,7 @@ def build(encoder: str, mode_cfg: str, cfg: str, qp: int, src: str, encoded: str
         mode_cfg,
         "-c",
         cfg,
+        "--InteralBitDepth=10",
         "--OutputBitDepth=8",
         "--FramesToBeEncoded=30",
         "--TemporalSubsampleRatio=1",

@@ -29,7 +29,7 @@ ctcqp = {
     "Tunnel_Train": [30, 35, 40, 45],
 }
 
-vtm_intra_cfg_path = path_from_root(rootcfg, "./config/encoder_intra_vtm.cfg")
+vtm_mode_cfg_path = path_from_root(rootcfg, rootcfg['config']['vtm_mode'])
 
 
 def run(log_file: Path, args: list):
@@ -68,7 +68,7 @@ def iter_args():
 
             cmds = codec.build(
                 rootcfg['app']['encoder'],
-                vtm_intra_cfg_path,
+                vtm_mode_cfg_path,
                 vtm_cfg_wp,
                 qp,
                 src_path,

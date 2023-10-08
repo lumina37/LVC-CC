@@ -1,14 +1,15 @@
-root = "D:/Code/SIGS/230818_VVC/dataset"
+root = "E:/Code/SIGS/230818_VVC/dataset"
+frames = 1
 
 [app]
 ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
-encoder = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
-preprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preprocess.exe"
-postprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postprocess.exe"
-rlc = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+encoder = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
+preprocess = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preprocess.exe"
+postprocess = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postprocess.exe"
+rlc = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
 
 [config]
-vtm_mode = "./config/encoder_randomaccess_vtm.cfg"
+vtm_mode = "./config/encoder_intra_vtm.cfg"
 vtm = "./config/{seq_name}/vtm.cfg"
 rlc = "./config/{seq_name}/rlc.cfg"
 
@@ -23,7 +24,7 @@ src = "./image"
 dst = "./playground/wopre/raw2yuv"
 
 [wopre.codec]
-parallel = 12
+parallel = 4
 dst = "./playground/wopre/codec"
 
 [wopre.dec2png]
@@ -41,7 +42,7 @@ dst = "./playground/pre/preprocess"
 dst = "./playground/pre/pre2yuv"
 
 [pre.codec]
-parallel = 12
+parallel = 4
 dst = "./playground/pre/codec"
 
 [pre.dec2png]
@@ -58,9 +59,6 @@ dst = "./playground/pre/render"
 dst = "./playground/common/compose"
 
 [common.compute]
-dst = "./playground/common/compute"
-
-[common.bdrate]
 dst = "./playground/common/compute"
 
 [common.visualize]

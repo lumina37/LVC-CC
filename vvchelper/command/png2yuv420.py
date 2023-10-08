@@ -1,8 +1,9 @@
 from typing import List
 
 
-def build(ffmpeg: str, src: str, dst: str) -> List[str]:
+def build(ffmpeg: str, frames: int, src: str, dst: str) -> List[str]:
     ffmpeg = str(ffmpeg)
+    frames = int(frames)
     src = str(src)
     dst = str(dst)
 
@@ -12,6 +13,8 @@ def build(ffmpeg: str, src: str, dst: str) -> List[str]:
         src,
         "-vf",
         "format=yuv420p",
+        "-vframes",
+        str(frames),
         dst,
         "-v",
         "warning",

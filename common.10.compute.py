@@ -11,6 +11,11 @@ from vvchelper.config.self import from_file
 from vvchelper.logging import get_logger
 from vvchelper.utils import get_QP, mkdir, path_from_root
 
+log = get_logger()
+
+rootcfg = from_file('pipeline.toml')
+cfg = rootcfg['common']['compute']
+
 
 @dataclasses.dataclass
 class PSNR:
@@ -65,8 +70,7 @@ def compute_yuv(lhs: Path, rhs: Path, width: int, height: int) -> PSNR:
 
     ysize = width * height
     uvsize = int(ysize / 4)
-    frames = int(lhs_size / (ysize + uvsize * 2))
-    assert frames == 30
+    frames = rootcfg['frames']
 
     psnr = PSNR()
 
@@ -94,11 +98,6 @@ def compute_yuv(lhs: Path, rhs: Path, width: int, height: int) -> PSNR:
 
     return psnr
 
-
-log = get_logger()
-
-rootcfg = from_file('pipeline.toml')
-cfg = rootcfg['common']['compute']
 
 src_dirs = path_from_root(rootcfg, rootcfg['common']['compose']['dst'])
 

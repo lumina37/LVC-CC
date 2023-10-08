@@ -36,7 +36,7 @@ for src_dir in src_dirs.iterdir():
     rlc_cfg.RawImage_Path = str(src_dir / "frame#%03d.png")
     rlc_cfg.Output_Path = str(dst_dir / "frame#%03d")
     rlc_cfg.Isfiltering = 1
-    rlc_cfg.end_frame = 30
+    rlc_cfg.end_frame = rootcfg['frames']
 
     rlc_cfg_wp = dst_dir / 'rlc.cfg'
     rlc_cfg.to_file(rlc_cfg_wp)

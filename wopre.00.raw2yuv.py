@@ -29,6 +29,7 @@ for src_dir in src_dirs.iterdir():
 
     cmds = png2yuv420.build(
         rootcfg['app']['ffmpeg'],
+        rootcfg['frames'],
         src_dir / get_src_pattern(fname_sample),
         (dst_dir / seq_name).with_suffix('.yuv'),
     )

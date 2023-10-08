@@ -32,6 +32,7 @@ for yuv_path in src_dir.glob('*.yuv'):
 
     cmds = yuv2png.build(
         rootcfg['app']['ffmpeg'],
+        rootcfg['frames'],
         width,
         height,
         yuv_path,

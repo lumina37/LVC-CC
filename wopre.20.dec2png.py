@@ -38,6 +38,7 @@ for src_dir in src_dirs.iterdir():
 
         cmds = yuv2png.build(
             rootcfg['app']['ffmpeg'],
+            rootcfg['frames'],
             width,
             height,
             yuv_path,

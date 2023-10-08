@@ -52,6 +52,7 @@ def iter_args():
 
             cmds = codec.build(
                 rootcfg['app']['encoder'],
+                rootcfg['frames'],
                 vtm_mode_cfg_path,
                 vtm_cfg_p,
                 qp,

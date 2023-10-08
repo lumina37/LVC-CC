@@ -21,7 +21,7 @@ for base_src_dir in base_src_dirs.iterdir():
     log.debug(f"processing base seq: {seq_name}")
 
     view_count = len(list(next(base_src_dir.glob('frame#*')).glob('image*')))
-    dst_dir = dst_root / 'base' / f"{seq_name}_Ref_MV_YUV"
+    dst_dir = dst_root / seq_name / 'base'
     mkdir(dst_dir)
 
     for view_idx in range(view_count):
@@ -31,7 +31,7 @@ for base_src_dir in base_src_dirs.iterdir():
         cmds = png2yuv420.build(
             rootcfg['app']['ffmpeg'],
             base_src_dir / "frame#%03d" / f"image_{view_idx+1:0>3}.png",
-            dst_dir / f"MV_{row_idx}_{col_idx}.yuv",
+            dst_dir / f"{row_idx}-{col_idx}.yuv",
         )
         subprocess.run(cmds)
 
@@ -42,15 +42,14 @@ for wopre_src_dir in wopre_src_dirs.iterdir():
 
     seq_name = wopre_src_dir.name
 
-    for qp_str in wopre_src_dir.iterdir():
-        if not qp_str.is_dir():
+    for qp_dir in wopre_src_dir.iterdir():
+        if not qp_dir.is_dir():
             continue
 
-        qp = get_QP(qp_str.name)
-        log.debug(f"processing wopre seq: {seq_name}. QP={qp}")
+        log.debug(f"processing wopre seq: {seq_name}. QP={get_QP(qp_dir.name)}")
 
-        view_count = len(list(next(qp_str.glob('frame#*')).glob('image*')))
-        dst_dir = dst_root / 'wopre' / seq_name / "VVC" / str(qp) / "MV_YUV"
+        view_count = len(list(next(qp_dir.glob('frame#*')).glob('image*')))
+        dst_dir = dst_root / seq_name / 'wopre' / qp_dir.name
         mkdir(dst_dir)
 
         for view_idx in range(view_count):
@@ -59,8 +58,8 @@ for wopre_src_dir in wopre_src_dirs.iterdir():
 
             cmds = png2yuv420.build(
                 rootcfg['app']['ffmpeg'],
-                wopre_src_dir / qp_str.name / "frame#%03d" / f"image_{view_idx+1:0>3}.png",
-                dst_dir / f"Rec_MV_{row_idx}_{col_idx}.yuv",
+                wopre_src_dir / qp_dir.name / "frame#%03d" / f"image_{view_idx+1:0>3}.png",
+                dst_dir / f"{row_idx}-{col_idx}.yuv",
             )
             subprocess.run(cmds)
 
@@ -71,15 +70,14 @@ for pre_src_dir in pre_src_dirs.iterdir():
 
     seq_name = pre_src_dir.name
 
-    for qp_str in pre_src_dir.iterdir():
-        if not qp_str.is_dir():
+    for qp_dir in pre_src_dir.iterdir():
+        if not qp_dir.is_dir():
             continue
 
-        qp = get_QP(qp_str.name)
-        log.debug(f"processing pre seq: {seq_name}. QP={qp}")
+        log.debug(f"processing pre seq: {seq_name}. QP={get_QP(qp_dir.name)}")
 
-        view_count = len(list(next(qp_str.glob('frame#*')).glob('image*')))
-        dst_dir = dst_root / 'pre' / seq_name / "VVC" / str(qp) / "MV_YUV"
+        view_count = len(list(next(qp_dir.glob('frame#*')).glob('image*')))
+        dst_dir = dst_root / seq_name / 'pre' / qp_dir.name
         mkdir(dst_dir)
 
         for view_idx in range(view_count):
@@ -88,7 +86,7 @@ for pre_src_dir in pre_src_dirs.iterdir():
 
             cmds = png2yuv420.build(
                 rootcfg['app']['ffmpeg'],
-                pre_src_dir / qp_str.name / "frame#%03d" / f"image_{view_idx+1:0>3}.png",
-                dst_dir / f"Rec_MV_{row_idx}_{col_idx}.yuv",
+                pre_src_dir / qp_dir.name / "frame#%03d" / f"image_{view_idx+1:0>3}.png",
+                dst_dir / f"{row_idx}-{col_idx}.yuv",
             )
             subprocess.run(cmds)

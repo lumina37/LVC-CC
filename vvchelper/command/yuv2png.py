@@ -1,8 +1,9 @@
 from typing import List
 
 
-def build(ffmpeg: str, width: int, height: int, src: str, dst: str) -> List[str]:
+def build(ffmpeg: str, frames: int, width: int, height: int, src: str, dst: str) -> List[str]:
     ffmpeg = str(ffmpeg)
+    frames = int(frames)
     src = str(src)
     dst = str(dst)
 
@@ -10,6 +11,8 @@ def build(ffmpeg: str, width: int, height: int, src: str, dst: str) -> List[str]
         ffmpeg,
         "-s",
         f"{width}x{height}",
+        "-frames",
+        str(frames),
         "-i",
         src,
         "-vf",

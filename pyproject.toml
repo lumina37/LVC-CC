@@ -1,10 +1,10 @@
 [project]
-name = "VVC-Scripts"
+name = "MCA-Scripts"
 version = "0.0.0"
 description = ""
 authors = [{ name = "Starry-OvO", email = "starry.qvq@gmail.com" }]
 dependencies = ['scipy', 'opencv-contrib-python', 'matplotlib']
-requires-python = ">=3.11"
+requires-python = ">=3.10,<3.13"
 readme = "README.md"
 license = { text = "MIT" }
 
@@ -14,7 +14,7 @@ lint = ["ruff", "black"]
 [tool.black]
 line-length = 120
 skip-string-normalization = true
-target-version = ["py38", "py39", "py310", "py311"]
+target-version = ["py38", "py39", "py310", "py311", "py312"]
 
 [tool.ruff]
 line-length = 120

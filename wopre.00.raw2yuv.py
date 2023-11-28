@@ -1,20 +1,17 @@
 import subprocess
-from pathlib import Path
 
-from vvchelper.command import png2yuv420
-from vvchelper.config.self import from_file
-from vvchelper.logging import get_logger
-from vvchelper.utils import get_src_pattern, mkdir, path_from_root
+from mcahelper.command import png2yuv420
+from mcahelper.config import set_rootcfg
+from mcahelper.logging import get_logger
+from mcahelper.utils import get_root, get_src_pattern, mkdir
 
 log = get_logger()
 
-rootcfg = from_file("pipeline.toml")
-cfg = rootcfg['wopre']['raw2yuv']
 
-src_dirs: Path = path_from_root(rootcfg, cfg['src'])
-log.debug(f"src_dirs: {src_dirs}")
-dst_dir: Path = path_from_root(rootcfg, cfg['dst'])
-log.debug(f"dst_dir: {dst_dir}")
+rootcfg = set_rootcfg('pipeline.toml')
+
+src_dirs = get_root() / "image"
+dst_dir = get_root() / "playground/base/raw2yuv"
 mkdir(dst_dir)
 
 
@@ -29,7 +26,6 @@ for src_dir in src_dirs.iterdir():
 
     cmds = png2yuv420.build(
         rootcfg['app']['ffmpeg'],
-        rootcfg['frames'],
         src_dir / get_src_pattern(fname_sample),
         (dst_dir / seq_name).with_suffix('.yuv'),
     )

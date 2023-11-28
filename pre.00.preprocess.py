@@ -1,46 +1,37 @@
 import math
 import subprocess
-from pathlib import Path
 
-from vvchelper.command import preprocess
-from vvchelper.config.raytrix import RaytrixCfg
-from vvchelper.config.self import from_file
-from vvchelper.logging import get_logger
-from vvchelper.utils import mkdir, path_from_root
+from mcahelper.command import preproc
+from mcahelper.config import RaytrixCfg, set_rootcfg
+from mcahelper.logging import get_logger
+from mcahelper.utils import get_root, mkdir
 
 log = get_logger()
 
-rootcfg = from_file(Path('pipeline.toml'))
-cfg = rootcfg['pre']['preprocess']
+rootcfg = set_rootcfg('pipeline.toml')
 
-src_dirs = path_from_root(rootcfg, cfg['src'])
-log.debug(f"src_dirs: {src_dirs}")
-dst_dirs = path_from_root(rootcfg, cfg['dst'])
-log.debug(f"dst_dirs: {dst_dirs}")
+src_dirs = get_root() / "image"
+dst_dirs = get_root() / "playground/wMCA/preproc"
 
-for src_dir in src_dirs.iterdir():
-    if not src_dir.is_dir():
-        continue
+for seq_name in rootcfg['common']['seqs']:
+    seq_name: str = seq_name
+    log.debug(f"seq_name={seq_name}")
 
-    seq_name = src_dir.name
-    log.debug(f"processing seq: {seq_name}")
-
+    src_dir = src_dirs / seq_name
     dst_dir = dst_dirs / seq_name
     mkdir(dst_dir)
 
-    rlc_cfg_rp = rootcfg['config']['rlc'].format(seq_name=seq_name)
-    rlc_cfg_rp = path_from_root(rootcfg, rlc_cfg_rp)
-    rlc_cfg = RaytrixCfg.from_file(rlc_cfg_rp)
+    rlc_cfg_rpath = get_root() / "config" / seq_name / "rlc.cfg"
+    rlc_cfg = RaytrixCfg.from_file(rlc_cfg_rpath)
 
-    rlc_cfg.Calibration_xml = str(rlc_cfg_rp.with_name('calibration.xml'))
+    rlc_cfg.Calibration_xml = str(rlc_cfg_rpath.with_name('calibration.xml'))
     rlc_cfg.square_width_diam_ratio = 1 / math.sqrt(2)
 
-    rlc_cfg_wp = dst_dir / 'rlc.cfg'
-    rlc_cfg.to_file(rlc_cfg_wp)
+    rlc_cfg_wpath = dst_dir / "rlc.cfg"
+    rlc_cfg.to_file(rlc_cfg_wpath)
 
-    cmds = preprocess.build(
-        rootcfg['app']['preprocess'],
-        rlc_cfg_wp,
+    cmds = preproc.build(
+        rlc_cfg_wpath,
         src_dir,
         dst_dir,
     )

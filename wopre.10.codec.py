@@ -2,69 +2,60 @@ import multiprocessing as mp
 import subprocess
 from pathlib import Path
 
-from vvchelper.command import codec
-from vvchelper.config.self import from_file
-from vvchelper.logging import get_logger
-from vvchelper.utils import mkdir, path_from_root
+from mcahelper.command import codec
+from mcahelper.config import set_rootcfg
+from mcahelper.logging import get_logger
+from mcahelper.utils import get_root, mkdir
 
 log = get_logger()
 
-rootcfg = from_file('pipeline.toml')
-cfg = rootcfg['wopre']['codec']
+rootcfg = set_rootcfg('pipeline.toml')
 
-src_dir = path_from_root(rootcfg, rootcfg['wopre']['raw2yuv']['dst'])
-dst_dirs = path_from_root(rootcfg, cfg['dst'])
-
-ctcqp = {
-    "Boxer-IrishMan-Gladiator": [37, 41, 45, 49],
-    "chess": [37, 41, 45, 49],
-    "ChessPieces": [33, 40, 45, 49],
-    "NagoyaDataLeading": [38, 43, 49, 51],
-    "NagoyaFujita": [36, 40, 45, 49],
-    "NagoyaOrigami": [36, 40, 45, 49],
-    "Tunnel_Train": [35, 40, 45, 49],
-}
-
-vtm_mode_cfg_path = path_from_root(rootcfg, rootcfg['config']['vtm_mode'])
+src_dir = get_root() / "playground/base/raw2yuv"
+dst_dirs = get_root() / "playground/woMCA/codec"
 
 
-def run(log_file: Path, args: list):
+def run(args: list, log_file: Path, log_str: str):
     with log_file.open('w') as f:
         subprocess.run(args, stdout=f, text=True)
+    log.debug(f"Completed. {log_str}")
 
 
 def iter_args():
-    for yuv_path in src_dir.glob('*.yuv'):
-        seq_name = yuv_path.stem
-        src_path = (src_dir / seq_name).with_suffix('.yuv')
-        dst_dir = dst_dirs / seq_name
-        mkdir(dst_dir)
+    for vtm_type in rootcfg['common']['vtm_types']:
+        vtm_type: str = vtm_type
+        vtm_type_cfg_path = get_root() / f"config/encoder_{vtm_type}_vtm.cfg"
 
-        vtm_cfg_p = rootcfg['config']['vtm'].format(seq_name=seq_name)
-        vtm_cfg_p = path_from_root(rootcfg, vtm_cfg_p)
+        for seq_name in rootcfg['common']['seqs']:
+            seq_name: str = seq_name
 
-        for qp in ctcqp[seq_name]:
-            log.debug(f"processing seq: {seq_name}. QP={qp}")
+            src_path = src_dir / f"{seq_name}.yuv"
+            dst_dir = dst_dirs / vtm_type / seq_name
+            mkdir(dst_dir)
 
-            log_path = dst_dir / f'QP#{qp}.log'
-            encoded_path = dst_dir / f'QP#{qp}.bin'
-            decoded_path = dst_dir / f'QP#{qp}.yuv'
+            vtm_cfg_path = get_root() / "config" / seq_name / "vtm.cfg"
 
-            cmds = codec.build(
-                rootcfg['app']['encoder'],
-                rootcfg['frames'],
-                vtm_mode_cfg_path,
-                vtm_cfg_p,
-                qp,
-                src_path,
-                encoded_path,
-                decoded_path,
-            )
-            yield (log_path, cmds)
+            for qp in rootcfg['qp']['woMCA'][seq_name]:
+                log_str = f"vtm_type={vtm_type}, seq_name={seq_name}, QP={qp}"
+
+                qp_str = f"QP#{qp}"
+                log_path = (dst_dir / qp_str).with_suffix('.log')
+                encoded_path = (dst_dir / qp_str).with_suffix('.bin')
+                decoded_path = (dst_dir / qp_str).with_suffix('.yuv')
+
+                cmds = codec.build(
+                    vtm_type_cfg_path,
+                    vtm_cfg_path,
+                    qp,
+                    src_path,
+                    encoded_path,
+                    decoded_path,
+                )
+                yield (cmds, log_path, log_str)
 
 
 if __name__ == "__main__":
-    with mp.Pool(processes=cfg['parallel']) as pool:
+    with mp.Pool(processes=rootcfg['parallel']['woMCA']['codec']) as pool:
         pool.starmap_async(run, iter_args())
         pool.close()
         pool.join()

@@ -1,47 +1,41 @@
 import subprocess
-from pathlib import Path
 
-from vvchelper.command import yuv2png
-from vvchelper.config.raytrix import RaytrixCfg
-from vvchelper.config.self import from_file
-from vvchelper.logging import get_logger
-from vvchelper.utils import mkdir, path_from_root
+from mcahelper.command import yuv2png
+from mcahelper.config import RaytrixCfg, set_rootcfg
+from mcahelper.logging import get_logger
+from mcahelper.utils import get_root, mkdir
 
 log = get_logger()
 
-rootcfg = from_file(Path('pipeline.toml'))
-cfg = rootcfg['wopre']['dec2png']
+rootcfg = set_rootcfg('pipeline.toml')
 
-src_dirs = path_from_root(rootcfg, rootcfg['wopre']['codec']['dst'])
-log.debug(f"src_dirs: {src_dirs}")
-dst_dirs = path_from_root(rootcfg, cfg['dst'])
-log.debug(f"dst_dirs: {dst_dirs}")
+src_dirs = get_root() / "playground/woMCA/codec"
+dst_dirs = get_root() / "playground/woMCA/dec2png"
 
-for src_dir in src_dirs.iterdir():
-    if not src_dir.is_dir():
-        continue
 
-    seq_name = src_dir.name
+for vtm_type in rootcfg['common']['vtm_types']:
+    vtm_type: str = vtm_type
 
-    rlc_cfg_p = rootcfg['config']['rlc'].format(seq_name=seq_name)
-    rlc_cfg_p = path_from_root(rootcfg, rlc_cfg_p)
-    raytrix_cfg = RaytrixCfg.from_file(rlc_cfg_p)
+    for seq_name in rootcfg['common']['seqs']:
+        seq_name: str = seq_name
+        log.debug(f"seq_name={seq_name}")
 
-    width = raytrix_cfg.width
-    height = raytrix_cfg.height
+        rlc_cfg_rpath = get_root() / "config" / seq_name / "rlc.cfg"
+        rlc_cfg = RaytrixCfg.from_file(rlc_cfg_rpath)
+        width = rlc_cfg.width
+        height = rlc_cfg.height
 
-    for yuv_path in src_dir.glob('*.yuv'):
-        log.debug(f"processing yuv: {yuv_path}")
+        for qp in rootcfg['qp']['woMCA'][seq_name]:
+            log.debug(f"vtm_type={vtm_type}, seq_name={seq_name}, QP={qp}")
 
-        dst_dir = dst_dirs / seq_name / yuv_path.stem
-        mkdir(dst_dir)
+            yuv_path = src_dirs / vtm_type / seq_name / f"QP#{qp}.yuv"
+            dst_dir = dst_dirs / vtm_type / seq_name / yuv_path.stem
+            mkdir(dst_dir)
 
-        cmds = yuv2png.build(
-            rootcfg['app']['ffmpeg'],
-            rootcfg['frames'],
-            width,
-            height,
-            yuv_path,
-            dst_dir / "frame#%03d.png",
-        )
-        subprocess.run(cmds)
+            cmds = yuv2png.build(
+                width,
+                height,
+                yuv_path,
+                dst_dir / "frame#%03d.png",
+            )
+            subprocess.run(cmds)

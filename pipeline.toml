@@ -1,65 +1,46 @@
-root = "E:/Code/SIGS/230818_VVC/dataset"
-frames = 1
+# Avoid Auto Detect
+[common]
+root = "D:/Code/SIGS/230818_VVC/dataset"
+frames = 30
+vtm_modes = [
+    "AI",
+    "RA"
+]
+seqs = [
+    "Boxer-IrishMan-Gladiator",
+    "chess",
+    "ChessPieces",
+    "NagoyaDataLeading",
+    "NagoyaFujita",
+    "NagoyaOrigami",
+    "Tunnel_Train",
+]
 
 [app]
 ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
-encoder = "E:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
-preprocess = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preprocess.exe"
-postprocess = "E:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postprocess.exe"
-rlc = "E:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+encoder = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
+preprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preproc.exe"
+postprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postproc.exe"
+rlc = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
 
-[config]
-vtm_mode = "./config/encoder_intra_vtm.cfg"
-vtm = "./config/{seq_name}/vtm.cfg"
-rlc = "./config/{seq_name}/rlc.cfg"
+[parallel]
+wMCA = { "codec" = 4, "render" = 2 }
+woMCA = { "codec" = 4, "render" = 2 }
 
-[base.raw2png]
-dst = "./playground/base/raw2png"
+[qp.woMCA]
+"Boxer-IrishMan-Gladiator" = [37, 41, 45, 49]
+"chess" = [37, 41, 45, 49]
+"ChessPieces" = [33, 40, 45, 49]
+"NagoyaDataLeading" = [38, 43, 49, 51]
+"NagoyaFujita" = [36, 40, 45, 49]
+"NagoyaOrigami" = [36, 40, 45, 49]
+"Tunnel_Train" = [35, 40, 45, 49]
 
-[base.render]
-dst = "./playground/base/render"
-
-[wopre.raw2yuv]
-src = "./image"
-dst = "./playground/wopre/raw2yuv"
-
-[wopre.codec]
-parallel = 4
-dst = "./playground/wopre/codec"
-
-[wopre.dec2png]
-dst = "./playground/wopre/dec2png"
-
-[wopre.render]
-parallel = 2
-dst = "./playground/wopre/render"
-
-[pre.preprocess]
-src = "./image"
-dst = "./playground/pre/preprocess"
-
-[pre.pre2yuv]
-dst = "./playground/pre/pre2yuv"
-
-[pre.codec]
-parallel = 4
-dst = "./playground/pre/codec"
-
-[pre.dec2png]
-dst = "./playground/pre/dec2png"
-
-[pre.postprocess]
-dst = "./playground/pre/postprocess"
-
-[pre.render]
-parallel = 2
-dst = "./playground/pre/render"
-
-[common.compose]
-dst = "./playground/common/compose"
-
-[common.compute]
-dst = "./playground/common/compute"
-
-[common.visualize]
-dst = "./playground/common/visualize"
+[qp.wMCA]
+"Boxer-IrishMan-Gladiator" = [33, 37, 41, 45]
+"chess" = [34, 37, 41, 45]
+"ChessPieces" = [30, 36, 40, 45]
+"NagoyaDataLeading" = [33, 38, 44, 47]
+"NagoyaFujita" = [32, 36, 42, 46]
+"NagoyaOrigami" = [32, 37, 41, 45]
+"Tunnel_Train" = [30, 35, 40, 45]

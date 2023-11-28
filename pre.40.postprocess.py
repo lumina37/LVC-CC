@@ -1,55 +1,47 @@
 import math
 import subprocess
-from pathlib import Path
 
-from vvchelper.command import postprocess
-from vvchelper.config.raytrix import RaytrixCfg
-from vvchelper.config.self import from_file
-from vvchelper.logging import get_logger
-from vvchelper.utils import get_QP, mkdir, path_from_root
+from mcahelper.command import postproc
+from mcahelper.config import RaytrixCfg, set_rootcfg
+from mcahelper.logging import get_logger
+from mcahelper.utils import get_root, mkdir
 
 log = get_logger()
 
-rootcfg = from_file(Path('pipeline.toml'))
-cfg = rootcfg['pre']['postprocess']
+rootcfg = set_rootcfg('pipeline.toml')
 
-src_dirs = path_from_root(rootcfg, rootcfg['pre']['dec2png']['dst'])
-log.debug(f"src_dirs: {src_dirs}")
-dst_dirs = path_from_root(rootcfg, cfg['dst'])
-log.debug(f"dst_dirs: {dst_dirs}")
+src_dirs = get_root() / "playground/wMCA/dec2png"
+dst_dirs = get_root() / "playground/wMCA/postproc"
 
-for src_dir in src_dirs.iterdir():
-    if not src_dir.is_dir():
-        continue
+for vtm_type in rootcfg['common']['vtm_types']:
+    vtm_type: str = vtm_type
 
-    seq_name = src_dir.name
+    for seq_name in rootcfg['common']['seqs']:
+        seq_name: str = seq_name
 
-    seq_dir = dst_dirs / seq_name
-    mkdir(seq_dir)
-
-    rlc_cfg_rp = rootcfg['config']['rlc'].format(seq_name=seq_name)
-    rlc_cfg_rp = path_from_root(rootcfg, rlc_cfg_rp)
-    rlc_cfg = RaytrixCfg.from_file(rlc_cfg_rp)
-
-    rlc_cfg.Calibration_xml = str(rlc_cfg_rp.with_name('calibration.xml'))
-    rlc_cfg.square_width_diam_ratio = 1 / math.sqrt(2)
-
-    rlc_cfg_wp = seq_dir / 'rlc.cfg'
-    rlc_cfg.to_file(rlc_cfg_wp)
-
-    for qp_dir in src_dir.iterdir():
-        if not qp_dir.is_dir():
-            continue
-
-        log.debug(f"processing seq: {seq_name}. QP={get_QP(qp_dir.name)}")
-
-        dst_dir = dst_dirs / seq_name / qp_dir.name
+        dst_dir = dst_dirs / vtm_type / seq_name
         mkdir(dst_dir)
 
-        cmds = postprocess.build(
-            rootcfg['app']['postprocess'],
-            rlc_cfg_wp,
-            qp_dir,
-            dst_dir,
-        )
-        subprocess.run(cmds)
+        rlc_cfg_rpath = get_root() / "config" / seq_name / "rlc.cfg"
+        rlc_cfg = RaytrixCfg.from_file(rlc_cfg_rpath)
+
+        rlc_cfg.Calibration_xml = str(rlc_cfg_rpath.with_name('calibration.xml'))
+        rlc_cfg.square_width_diam_ratio = 1 / math.sqrt(2)
+
+        rlc_cfg_wp = dst_dir / 'rlc.cfg'
+        rlc_cfg.to_file(rlc_cfg_wp)
+
+        for qp in rootcfg['qp']['wMCA'][seq_name]:
+            log.debug(f"processing seq: {seq_name}. QP={qp}")
+
+            qp_str = f"QP#{qp}"
+            src_dir = src_dirs / vtm_type / seq_name / qp_str
+            dst_dir = dst_dirs / vtm_type / seq_name / qp_str
+            mkdir(dst_dir)
+
+            cmds = postproc.build(
+                rlc_cfg_wp,
+                src_dir,
+                dst_dir,
+            )
+            subprocess.run(cmds)

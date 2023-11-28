@@ -1,46 +1,43 @@
 import subprocess
-from pathlib import Path
 
 import cv2 as cv
 
-from vvchelper.command import yuv2png
-from vvchelper.config.self import from_file
-from vvchelper.logging import get_logger
-from vvchelper.utils import mkdir, path_from_root
+from mcahelper.command import yuv2png
+from mcahelper.config import set_rootcfg
+from mcahelper.logging import get_logger
+from mcahelper.utils import get_root, mkdir
 
 log = get_logger()
 
-rootcfg = from_file(Path('pipeline.toml'))
-cfg = rootcfg['pre']['dec2png']
+rootcfg = set_rootcfg('pipeline.toml')
 
-src_dirs = path_from_root(rootcfg, rootcfg['pre']['codec']['dst'])
-log.debug(f"src_dirs: {src_dirs}")
-img_ref_dir = path_from_root(rootcfg, rootcfg['pre']['preprocess']['dst'])
-dst_dirs = path_from_root(rootcfg, cfg['dst'])
-log.debug(f"dst_dirs: {dst_dirs}")
+src_dirs = get_root() / "playground/wMCA/codec"
+dst_dirs = get_root() / "playground/wMCA/dec2png"
+img_ref_dir = get_root() / "playground/wMCA/preproc"
 
-for src_dir in src_dirs.iterdir():
-    if not src_dir.is_dir():
-        continue
+for vtm_type in rootcfg['common']['vtm_types']:
+    vtm_type: str = vtm_type
 
-    seq_name = src_dir.name
+    for seq_name in rootcfg['common']['seqs']:
+        seq_name: str = seq_name
 
-    img_ref_path = next((img_ref_dir / seq_name).glob('*.png'))
-    img_ref = cv.imread(str(img_ref_path))
-    height, width = img_ref.shape[:2]
+        src_path = src_dirs / f"{seq_name}.yuv"
 
-    for yuv_path in src_dir.glob('*.yuv'):
-        log.debug(f"processing yuv: {yuv_path}")
+        img_ref_path = next((img_ref_dir / seq_name).glob('*.png'))
+        img_ref = cv.imread(str(img_ref_path))
+        height, width = img_ref.shape[:2]
 
-        dst_dir = dst_dirs / seq_name / yuv_path.stem
-        mkdir(dst_dir)
+        for qp in rootcfg['qp']['wMCA'][seq_name]:
+            log.debug(f"vtm_type={vtm_type}, seq_name={seq_name}, QP={qp}")
 
-        cmds = yuv2png.build(
-            rootcfg['app']['ffmpeg'],
-            rootcfg['frames'],
-            width,
-            height,
-            yuv_path,
-            dst_dir / "frame#%03d.png",
-        )
-        subprocess.run(cmds)
+            yuv_path = src_dirs / vtm_type / seq_name / f"QP#{qp}.yuv"
+            dst_dir = dst_dirs / vtm_type / seq_name / yuv_path.stem
+            mkdir(dst_dir)
+
+            cmds = yuv2png.build(
+                width,
+                height,
+                yuv_path,
+                dst_dir / "frame#%03d.png",
+            )
+            subprocess.run(cmds)

@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from ..cfg.node import get_node_cfg
 from ..logging import get_logger
-from ..utils import get_src_pattern, mkdir, run_cmds
+from ..utils import get_first_file, get_src_pattern, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 
@@ -29,14 +29,11 @@ class Png2yuvTask(BaseTask):
 
         if self.pretask:
             srcdir = query(self.pretask)
-            if not srcdir:
-                return
             srcdir = srcdir / "img"
         else:
             srcdir = node_cfg.path.dataset / "img" / self.seq_name
 
-        fname_sample = next(srcdir.glob('*.png')).name
-        fname_pattern = get_src_pattern(fname_sample)
+        fname_pattern = get_src_pattern(get_first_file(srcdir).name)
 
         mkdir(self.dstdir)
 

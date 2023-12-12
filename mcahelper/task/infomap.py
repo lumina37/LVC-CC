@@ -34,6 +34,6 @@ def get_infomap() -> TpInfomap:
     return INFOMAP
 
 
-def query(task) -> Path | None:
+def query(task) -> Path:
     infomap = get_infomap()
-    return infomap.get(task.hash, None)
+    return infomap[task.hash]

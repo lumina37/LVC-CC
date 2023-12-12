@@ -19,8 +19,8 @@ seqs = [
 [app]
 ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
 encoder = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
-preprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preproc.exe"
-postprocess = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postproc.exe"
+preproc = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_preproc.exe"
+postproc = "D:/Code/SIGS/230508_LVC/code/libLVC/cmake-build-release-visual-studio/apps/main_postproc.exe"
 rlc = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
 
 [parallel]

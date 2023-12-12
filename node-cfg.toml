@@ -1,0 +1,28 @@
+[cases]
+vtm_types = [
+    "AI",
+    "RA"
+]
+seqs = [
+    "Boxer-IrishMan-Gladiator",
+    "chess",
+    "ChessPieces",
+    "NagoyaDataLeading",
+    "NagoyaFujita",
+    "NagoyaOrigami",
+    "Tunnel_Train",
+]
+
+[path]
+dataset = "D:/Code/SIGS/230818_VVC/dataset"
+
+[app]
+ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
+encoder = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
+preproc = "D:/code/SIGS/230508_LVC/code/libMCA/cmake-build-release-visual-studio/apps/main_preproc.exe"
+postproc = "D:/code/SIGS/230508_LVC/code/libMCA/cmake-build-release-visual-studio/apps/main_postproc.exe"
+rlc = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+
+[parallel]
+codec = 4
+render = 2

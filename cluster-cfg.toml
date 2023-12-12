@@ -1,0 +1,12 @@
+[frames]
+test = 10
+prod = 30
+
+[stdQP]
+"Boxer-IrishMan-Gladiator" = [37, 41, 45, 49]
+"chess" = [37, 41, 45, 49]
+"ChessPieces" = [33, 40, 45, 49]
+"NagoyaDataLeading" = [38, 43, 49, 51]
+"NagoyaFujita" = [36, 40, 45, 49]
+"NagoyaOrigami" = [36, 40, 45, 49]
+"Tunnel_Train" = [35, 40, 45, 49]

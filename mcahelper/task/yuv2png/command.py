@@ -1,16 +1,14 @@
-from typing import List
-
-from ..config import get_rootcfg
+from ...cfg.node import get_node_cfg
 
 
-def build(width: int, height: int, src: str, dst: str) -> List[str]:
-    rootcfg = get_rootcfg()
+def build(width: int, height: int, src: str, dst: str) -> list[str]:
+    node_cfg = get_node_cfg()
 
     src = str(src)
     dst = str(dst)
 
     return [
-        rootcfg['app']['ffmpeg'],
+        node_cfg.app.ffmpeg,
         "-s",
         f"{width}x{height}",
         "-i",

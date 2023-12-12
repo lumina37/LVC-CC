@@ -1,26 +1,24 @@
-from typing import List
-
-from ..config import get_rootcfg
+from ...cfg.node import get_node_cfg
 
 
-def build(mode_cfg: str, cfg: str, qp: int, src: str, encoded: str, decoded: str) -> List[str]:
-    rootcfg = get_rootcfg()
+def build(vtm_type_cfg: str, cfg: str, frames: int, qp: int, src: str, encoded: str, decoded: str) -> list[str]:
+    node_cfg = get_node_cfg()
 
-    mode_cfg = str(mode_cfg)
+    vtm_type_cfg = str(vtm_type_cfg)
     cfg = str(cfg)
     src = str(src)
     encoded = str(encoded)
     decoded = str(decoded)
 
     return [
-        rootcfg['app']['encoder'],
+        node_cfg.app.encoder,
         "-c",
-        mode_cfg,
+        vtm_type_cfg,
         "-c",
         cfg,
         "--InternalBitDepth=10",
         "--OutputBitDepth=8",
-        f"--FramesToBeEncoded={rootcfg['common']['frames']}",
+        f"--FramesToBeEncoded={frames}",
         "--TemporalSubsampleRatio=1",
         f"--QP={qp}",
         "-i",

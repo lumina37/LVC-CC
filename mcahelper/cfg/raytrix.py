@@ -1,10 +1,11 @@
-import dataclasses
+import math
 from io import TextIOBase
 from pathlib import Path
 
+from pydantic import BaseModel
 
-@dataclasses.dataclass
-class RaytrixCfg(object):
+
+class RaytrixCfg(BaseModel):
     viewNum: int = 5
     rmode: int = 1
     pmode: int = 0
@@ -25,21 +26,21 @@ class RaytrixCfg(object):
     end_frame: int = 1
     height: int = 2048
     width: int = 2048
-    square_width_diam_ratio: float = 1.0
+    crop_ratio: float = 1 / math.sqrt(2)
 
     def dump(self, f: TextIOBase) -> None:
-        f.writelines(f"{k}\t{v}\n" for k, v in dataclasses.asdict(self).items())
+        f.writelines(f"{k}\t{v}\n" for k, v in self)
         f.flush()
 
     @staticmethod
     def load(f: TextIOBase) -> "RaytrixCfg":
-        def _values():
-            for field, row in zip(dataclasses.fields(RaytrixCfg), f.readlines()):
-                value = row.lstrip(field.name).lstrip(' ').rstrip('\n').lstrip('\t')
-                value = field.type(value)
-                yield value
+        def _items():
+            for row in f.readlines():
+                key, value = row.replace('\t', ' ').split(' ', maxsplit=1)
+                value = value.lstrip().rstrip('\n')
+                yield key, value
 
-        return RaytrixCfg(*list(_values()))
+        return RaytrixCfg(**dict(_items()))
 
     def to_file(self, path: Path) -> None:
         with path.open('w') as f:

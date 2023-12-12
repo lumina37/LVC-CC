@@ -1,12 +1,10 @@
-import dataclasses
 from io import TextIOBase
 from pathlib import Path
 
-from .base import CfgBase
+from pydantic import BaseModel
 
 
-@dataclasses.dataclass
-class VTMCfg(CfgBase):
+class VTMCfg(BaseModel):
     InputFile: str
     InputBitDepth: int
     FrameRate: int
@@ -18,7 +16,7 @@ class VTMCfg(CfgBase):
     Level: float
 
     def dump(self, f: TextIOBase) -> None:
-        f.writelines(f"{k}: {v}\n" for k, v in dataclasses.asdict(self).items())
+        f.writelines(f"{k}: {v}\n" for k, v in self)
         f.flush()
 
     @staticmethod

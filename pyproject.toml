@@ -3,7 +3,13 @@ name = "MCA-Scripts"
 version = "0.0.0"
 description = ""
 authors = [{ name = "Starry-OvO", email = "starry.qvq@gmail.com" }]
-dependencies = ['scipy', 'opencv-contrib-python', 'matplotlib']
+dependencies = [
+    'scipy',
+    'opencv-contrib-python',
+    'matplotlib',
+    "pydantic>=2.5.2",
+    "dataclasses-json>=0.6.3",
+]
 requires-python = ">=3.10,<3.13"
 readme = "README.md"
 license = { text = "MIT" }

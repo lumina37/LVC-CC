@@ -1,19 +1,15 @@
 import re
+import subprocess
 from pathlib import Path
-
-from .config.self import get_rootcfg
-
-
-def get_root() -> Path:
-    rootcfg = get_rootcfg()
-    root = rootcfg['common']['root'].rstrip('/').rstrip('\\')
-    root = Path(root)
-    return root
 
 
 def mkdir(path: Path):
     path = Path(path)
     path.mkdir(0o755, parents=True, exist_ok=True)
+
+
+def run_cmds(cmds: list):
+    return subprocess.run([str(cmd) for cmd in cmds])
 
 
 def get_src_pattern(sample: str) -> str:

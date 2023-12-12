@@ -7,12 +7,12 @@ logging.addLevelName(logging.FATAL, "FATAL")
 logging.addLevelName(logging.WARN, "WARN")
 
 logging.raiseExceptions = False
-logging.Formatter.default_msec_format = '%s.%03d'
+logging.Formatter.default_msec_format = None
 
 _FORMATTER = logging.Formatter("<{asctime}> [{levelname}] [{funcName}] {message}", style='{')
 
 
-class VVCLogger(logging.Logger):
+class MCALogger(logging.Logger):
     def __init__(self, name: str = '', stream_log_level: int = logging.DEBUG) -> None:
         if name == '':
             name = Path(sys.argv[0]).stem
@@ -24,14 +24,14 @@ class VVCLogger(logging.Logger):
         self.addHandler(stream_hd)
 
 
-LOGGER = VVCLogger()
+LOGGER = MCALogger()
 
 
-def get_logger() -> VVCLogger:
+def get_logger() -> MCALogger:
     global LOGGER
 
     if LOGGER is None:
-        LOGGER = VVCLogger()
+        LOGGER = MCALogger()
 
     return LOGGER
 

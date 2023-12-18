@@ -1,11 +1,11 @@
 import json
 from pathlib import Path
+from typing import Any
 
 from ..cfg.node import get_node_cfg
-from .base import BaseTask
 from .factory import TaskFactory
 
-TpInfomap = dict[BaseTask, Path]
+TpInfomap = dict[Any, Path]
 
 INFOMAP: TpInfomap = None
 
@@ -22,7 +22,8 @@ def init_infomap() -> None:
             continue
         with metainfo_path.open('r', encoding='utf-8') as f:
             metainfo = json.load(f)
-            INFOMAP[TaskFactory(**metainfo).hash] = metainfo_path.parent
+            task = TaskFactory(**metainfo)
+            INFOMAP[task.hash] = metainfo_path.parent
 
 
 def get_infomap() -> TpInfomap:
@@ -37,3 +38,8 @@ def get_infomap() -> TpInfomap:
 def query(task) -> Path:
     infomap = get_infomap()
     return infomap[task.hash]
+
+
+def append(task, path: Path) -> None:
+    infomap = get_infomap()
+    infomap[task.hash] = path

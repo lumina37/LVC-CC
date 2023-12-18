@@ -8,8 +8,14 @@ def mkdir(path: Path):
     path.mkdir(0o755, parents=True, exist_ok=True)
 
 
-def run_cmds(cmds: list):
-    return subprocess.run([str(cmd) for cmd in cmds])
+def run_cmds(cmds: list, stdout_fpath: Path | None = None):
+    strcmds = [str(cmd) for cmd in cmds]
+    if stdout_fpath:
+        with stdout_fpath.open('w') as f:
+            ret = subprocess.run(strcmds, stdout=f, text=True)
+    else:
+        ret = subprocess.run(strcmds)
+    return ret
 
 
 def get_first_file(d: Path, glob_pattern: str = '*.png') -> Path:

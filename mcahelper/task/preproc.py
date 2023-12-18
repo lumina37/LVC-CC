@@ -1,10 +1,8 @@
 import functools
 import math
 import shutil
-from dataclasses import dataclass
-from typing import ClassVar
 
-from dataclasses_json import dataclass_json
+from pydantic.dataclasses import dataclass
 
 from ..cfg import RaytrixCfg
 from ..cfg.node import get_node_cfg
@@ -13,17 +11,15 @@ from ..utils import mkdir, run_cmds
 from .base import BaseTask
 
 
-@dataclass_json
 @dataclass
 class PreprocTask(BaseTask):
-    task_name: ClassVar[str] = "preproc"
+    task: str = "preproc"
 
-    seq_name: str = ""
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property
     def dirname(self) -> str:
-        return f"{self.task_name}-{self.seq_name}-{self.crop_ratio:.3f}-{self.shorthash}"
+        return f"{self.task}-{self.seq_name}-{self.crop_ratio:.3f}-{self.shorthash}"
 
     def run(self) -> None:
         log = get_logger()
@@ -56,8 +52,8 @@ class PreprocTask(BaseTask):
             img_srcdir,
             img_dstdir,
         ]
-        log.info(cmds)
 
         run_cmds(cmds)
+        log.info(f"Completed! cmds={cmds}")
 
         self.dump_metainfo()

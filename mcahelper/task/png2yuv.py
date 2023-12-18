@@ -1,6 +1,7 @@
 import functools
-from dataclasses import dataclass
-from typing import ClassVar
+from pathlib import Path
+
+from pydantic.dataclasses import dataclass
 
 from ..cfg.node import get_node_cfg
 from ..logging import get_logger
@@ -11,36 +12,38 @@ from .infomap import query
 
 @dataclass
 class Png2yuvTask(BaseTask):
-    task_name: ClassVar[str] = "png2yuv"
+    task: str = "png2yuv"
 
-    seq_name: str = ""
     frames: int = 30
 
     @functools.cached_property
     def dirname(self) -> str:
         if self.pretask:
-            return f"{self.task_name}-{self.seq_name}-{self.pretask.shorthash}-{self.shorthash}"
+            return f"{self.task}-{self.seq_name}-{self.pretask.shorthash}-{self.shorthash}"
         else:
-            return f"{self.task_name}-{self.seq_name}-{self.shorthash}"
+            return f"{self.task}-{self.seq_name}-{self.shorthash}"
+
+    @functools.cached_property
+    def srcdir(self) -> Path:
+        if self.pretask:
+            srcdir = query(self.pretask) / "img"
+        else:
+            node_cfg = get_node_cfg()
+            srcdir = node_cfg.path.dataset / "img" / self.seq_name
+        return srcdir
 
     def run(self) -> None:
         log = get_logger()
         node_cfg = get_node_cfg()
 
-        if self.pretask:
-            srcdir = query(self.pretask)
-            srcdir = srcdir / "img"
-        else:
-            srcdir = node_cfg.path.dataset / "img" / self.seq_name
-
-        fname_pattern = get_src_pattern(get_first_file(srcdir).name)
+        fname_pattern = get_src_pattern(get_first_file(self.srcdir).name)
 
         mkdir(self.dstdir)
 
         cmds = [
             node_cfg.app.ffmpeg,
             "-i",
-            srcdir / fname_pattern,
+            self.srcdir / fname_pattern,
             "-vf",
             "format=yuv420p",
             "-vframes",
@@ -50,8 +53,8 @@ class Png2yuvTask(BaseTask):
             "warning",
             "-y",
         ]
-        log.info(cmds)
 
         run_cmds(cmds)
+        log.info(f"Completed! cmds={cmds}")
 
         self.dump_metainfo()

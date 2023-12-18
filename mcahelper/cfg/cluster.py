@@ -2,15 +2,17 @@ from io import IOBase
 from pathlib import Path
 
 import tomllib
-from pydantic import BaseModel
+from pydantic.dataclasses import dataclass
 
 
-class _Frames(BaseModel):
+@dataclass
+class _Frames:
     test: int
     prod: int
 
 
-class ClusterCfg(BaseModel):
+@dataclass
+class ClusterCfg:
     frames: _Frames
     stdQP: dict[str, list[int]]
 

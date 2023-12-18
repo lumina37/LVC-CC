@@ -5,7 +5,7 @@
 groups = ["default", "lint"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:2fd0e740e6a71e66f01864d0681cc6e48dc9129df6667683e988d4bb8222a82b"
+content_hash = "sha256:97d4a48c4f9bc4d5d9190c3af774756e6cfc144b4cf4bfee63998b4357185a3c"
 
 [[package]]
 name = "annotated-types"
@@ -123,20 +123,6 @@ files = [
 ]
 
 [[package]]
-name = "dataclasses-json"
-version = "0.6.3"
-requires_python = ">=3.7,<4.0"
-summary = "Easily serialize dataclasses to and from JSON."
-dependencies = [
-    "marshmallow<4.0.0,>=3.18.0",
-    "typing-inspect<1,>=0.4.0",
-]
-files = [
-    {file = "dataclasses_json-0.6.3-py3-none-any.whl", hash = "sha256:4aeb343357997396f6bca1acae64e486c3a723d8f5c76301888abeccf0c45176"},
-    {file = "dataclasses_json-0.6.3.tar.gz", hash = "sha256:35cb40aae824736fdf959801356641836365219cfe14caeb115c39136f775d2a"},
-]
-
-[[package]]
 name = "fonttools"
 version = "4.45.1"
 requires_python = ">=3.8"
@@ -237,19 +223,6 @@ files = [
     {file = "kiwisolver-1.4.5-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:210ef2c3a1f03272649aff1ef992df2e724748918c4bc2d5a90352849eb40bea"},
     {file = "kiwisolver-1.4.5-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:11d011a7574eb3b82bcc9c1a1d35c1d7075677fdd15de527d91b46bd35e935ee"},
     {file = "kiwisolver-1.4.5.tar.gz", hash = "sha256:e57e563a57fb22a142da34f38acc2fc1a5c864bc29ca1517a88abc963e60d6ec"},
-]
-
-[[package]]
-name = "marshmallow"
-version = "3.20.1"
-requires_python = ">=3.8"
-summary = "A lightweight library for converting complex datatypes to and from native Python datatypes."
-dependencies = [
-    "packaging>=17.0",
-]
-files = [
-    {file = "marshmallow-3.20.1-py3-none-any.whl", hash = "sha256:684939db93e80ad3561392f47be0230743131560a41c5110684c16e21ade0a5c"},
-    {file = "marshmallow-3.20.1.tar.gz", hash = "sha256:5d2371bbe42000f2b3fb5eaa065224df7d8f8597bc19a1bbfa5bfe7fba8da889"},
 ]
 
 [[package]]
@@ -638,17 +611,4 @@ summary = "Backported and Experimental Type Hints for Python 3.8+"
 files = [
     {file = "typing_extensions-4.8.0-py3-none-any.whl", hash = "sha256:8f92fc8806f9a6b641eaa5318da32b44d401efaac0f6678c9bc448ba3605faa0"},
     {file = "typing_extensions-4.8.0.tar.gz", hash = "sha256:df8e4339e9cb77357558cbdbceca33c303714cf861d1eef15e1070055ae8b7ef"},
-]
-
-[[package]]
-name = "typing-inspect"
-version = "0.9.0"
-summary = "Runtime inspection utilities for typing module."
-dependencies = [
-    "mypy-extensions>=0.3.0",
-    "typing-extensions>=3.7.4",
-]
-files = [
-    {file = "typing_inspect-0.9.0-py3-none-any.whl", hash = "sha256:9ee6fc59062311ef8547596ab6b955e1b8aa46242d854bfc78f4f6b0eff35f9f"},
-    {file = "typing_inspect-0.9.0.tar.gz", hash = "sha256:b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78"},
 ]

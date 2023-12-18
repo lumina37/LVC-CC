@@ -2,21 +2,24 @@ from io import IOBase
 from pathlib import Path
 
 import tomllib
-from pydantic import BaseModel
+from pydantic.dataclasses import dataclass
 
 from ..logging import get_logger
 
 
-class _Cases(BaseModel):
+@dataclass
+class _Cases:
     vtm_types: list[str]
     seqs: list[str]
 
 
-class _Path(BaseModel):
+@dataclass
+class _Path:
     dataset: Path
 
 
-class _App(BaseModel):
+@dataclass
+class _App:
     ffmpeg: str
     encoder: str
     preproc: str
@@ -24,12 +27,14 @@ class _App(BaseModel):
     rlc: str
 
 
-class _Parallel(BaseModel):
+@dataclass
+class _Parallel:
     codec: int
     render: int
 
 
-class NodeCfg(BaseModel):
+@dataclass
+class NodeCfg:
     cases: _Cases
     path: _Path
     app: _App

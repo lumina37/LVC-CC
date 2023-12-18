@@ -1,11 +1,13 @@
+import dataclasses as dcs
 import math
 from io import TextIOBase
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic.dataclasses import dataclass
 
 
-class RaytrixCfg(BaseModel):
+@dataclass
+class RaytrixCfg:
     viewNum: int = 5
     rmode: int = 1
     pmode: int = 0
@@ -29,7 +31,7 @@ class RaytrixCfg(BaseModel):
     crop_ratio: float = 1 / math.sqrt(2)
 
     def dump(self, f: TextIOBase) -> None:
-        f.writelines(f"{k}\t{v}\n" for k, v in self)
+        f.writelines(f"{k}\t{v}\n" for k, v in dcs.asdict(self).items())
         f.flush()
 
     @staticmethod

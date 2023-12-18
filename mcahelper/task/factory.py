@@ -3,7 +3,7 @@ _TASKMAP = {}
 
 def register(task_tp):
     global _TASKMAP
-    _TASKMAP[task_tp.task_name] = task_tp
+    _TASKMAP[task_tp.task] = task_tp
 
 
 class TaskFactory:

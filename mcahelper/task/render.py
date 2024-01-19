@@ -7,7 +7,7 @@ from pydantic.dataclasses import dataclass
 from ..cfg import RaytrixCfg
 from ..cfg.node import get_node_cfg
 from ..logging import get_logger
-from ..utils import mkdir, run_cmds
+from ..utils import get_first_file, get_src_pattern, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 
@@ -49,7 +49,8 @@ class RenderTask(BaseTask):
         rlccfg = RaytrixCfg.from_file(rlccfg_srcpath)
 
         rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
-        rlccfg.RawImage_Path = str(self.srcdir / "frame#%03d.png")
+        fname_pattern = get_src_pattern(get_first_file(self.srcdir).name)
+        rlccfg.RawImage_Path = str(self.srcdir / fname_pattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
         rlccfg.Output_Path = str(img_dstdir / "frame#%03d")

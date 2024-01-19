@@ -21,7 +21,7 @@ class CodecTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
-        return f"{self.task}-{self.seq_name}-{self.pretask.shorthash}-{self.shorthash}"
+        return f"{self.task}-{self.seq_name}-{self.vtm_type}-{self.QP}-{self.pretask.shorthash}-{self.shorthash}"
 
     def run(self) -> None:
         log = get_logger()

@@ -4,18 +4,18 @@ from typing import Dict
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
-from mcahelper.config import set_rootcfg
+from mcahelper.cfg import node
 from mcahelper.logging import get_logger
-from mcahelper.utils import get_root, mkdir
+from mcahelper.utils import mkdir
 
 plt.rcParams['font.sans-serif'] = ['Times New Roman']
 
 log = get_logger()
 
-rootcfg = set_rootcfg('pipeline.toml')
+rootcfg = node.set_node_cfg('node-cfg.toml')
 
-src_dir = get_root() / "playground/summary/compute"
-dst_dir = get_root() / "playground/summary/visualize"
+src_dir = rootcfg.path.dataset / 'summary'
+dst_dir = src_dir / 'figs'
 mkdir(dst_dir)
 
 with (src_dir / 'psnr.json').open('r') as f:

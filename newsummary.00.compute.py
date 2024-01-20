@@ -6,22 +6,19 @@ from typing import Tuple
 import cv2 as cv
 import numpy as np
 
-from mcahelper.cfg import cluster, node
+from mcahelper.cfg import node
 from mcahelper.logging import get_logger
 from mcahelper.task import CodecTask, PreprocTask, RenderTask, iterator
 from mcahelper.task.infomap import query
 from mcahelper.utils import get_first_file, mkdir, run_cmds
 
-node.set_node_cfg('node-cfg.toml')
-cluster.set_cluster_cfg('cluster-cfg.toml')
-
-node_cfg = node.get_node_cfg()
-cluster_cfg = cluster.get_cluster_cfg()
+node_cfg = node.set_node_cfg('node-cfg.toml')
 
 log = get_logger()
 
 
 BASES: dict[str, Path] = {}
+FRAMES = 1
 
 
 def compose(task: RenderTask):
@@ -136,9 +133,12 @@ def compute_psnr_task(task: RenderTask) -> np.ndarray:
 
 
 for task in iterator.tasks(RenderTask, lambda t: not t.chains):
+    if task.frames != FRAMES:
+        continue
     if task.seq_name not in node_cfg.cases.seqs:
         continue
 
+    log.info(f"Handling {task}")
     compose(task)
     dstdir = query(task) / "yuv"
     BASES[task.seq_name] = dstdir
@@ -146,9 +146,12 @@ for task in iterator.tasks(RenderTask, lambda t: not t.chains):
 main_dic = {}
 
 for task in iterator.tasks(RenderTask, lambda t: t.chains):
+    if task.frames != FRAMES:
+        continue
     if task.seq_name not in node_cfg.cases.seqs:
         continue
 
+    log.info(f"Handling {task}")
     compose(task)
 
     seq_dic: dict = main_dic.setdefault(task.seq_name, {})

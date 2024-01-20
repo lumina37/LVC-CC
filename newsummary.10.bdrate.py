@@ -4,9 +4,8 @@ import json
 import numpy as np
 import scipy.interpolate
 
-from mcahelper.config import set_rootcfg
+from mcahelper.cfg import node
 from mcahelper.logging import get_logger
-from mcahelper.utils import get_root
 
 
 def BD_PSNR(R1, PSNR1, R2, PSNR2, piecewise=0):
@@ -84,9 +83,9 @@ def BD_RATE(R1, PSNR1, R2, PSNR2, piecewise=0):
 
 log = get_logger()
 
-rootcfg = set_rootcfg('pipeline.toml')
+node_cfg = node.set_node_cfg('node-cfg.toml')
 
-src_dir = get_root() / "playground/summary/compute"
+src_dir = node_cfg.path.dataset / 'summary'
 dst_dir = src_dir
 dst_p = dst_dir / 'bdrate.csv'
 
@@ -96,13 +95,13 @@ with (src_dir / 'psnr.json').open('r') as f:
 with dst_p.open('w', encoding='utf-8', newline='') as csv_f:
     csv_writer = csv.writer(csv_f)
     headers = ['seq.']
-    headers.extend(f'{vtm_type}-BD-rate' for vtm_type in rootcfg['common']['vtm_types'])
+    headers.extend(f'{vtm_type}-BD-rate' for vtm_type in node_cfg['common']['vtm_types'])
     csv_writer.writerow(headers)
 
     for seq_name, pre_type_dic in main_dic.items():
         row = [seq_name]
 
-        for vtm_type in rootcfg['common']['vtm_types']:
+        for vtm_type in node_cfg['common']['vtm_types']:
             bdrate = BD_RATE(
                 pre_type_dic['woMCA'][vtm_type]['bitrate'],
                 pre_type_dic['woMCA'][vtm_type]['Y-PSNR'],

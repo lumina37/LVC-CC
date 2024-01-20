@@ -1,7 +1,7 @@
 [cases]
 vtm_types = [
     "AI",
-    # "RA"
+    "RA"
 ]
 seqs = [
     # "Boxer-IrishMan-Gladiator",
@@ -9,7 +9,7 @@ seqs = [
     # "ChessPieces",
     # "NagoyaDataLeading",
     # "NagoyaFujita",
-    # "NagoyaOrigami",
+    "NagoyaOrigami",
     "Tunnel_Train",
 ]
 

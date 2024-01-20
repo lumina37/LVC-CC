@@ -6,15 +6,8 @@ from pydantic.dataclasses import dataclass
 
 
 @dataclass
-class _Frames:
-    test: int
-    prod: int
-
-
-@dataclass
 class ClusterCfg:
-    frames: _Frames
-    stdQP: dict[str, list[int]]
+    ...
 
 
 _CLUSTER_CFG = None

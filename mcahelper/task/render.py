@@ -17,13 +17,14 @@ class RenderTask(BaseTask):
     task: str = "render"
 
     frames: int = 30
+    views: int = 5
 
     @functools.cached_property
     def dirname(self) -> str:
         if self.pretask:
-            return f"{self.task}-{self.seq_name}-{self.pretask.shorthash}-{self.shorthash}"
+            return f"{self.task}-{self.seq_name}-{self.views}-{self.pretask.shorthash}-{self.shorthash}"
         else:
-            return f"{self.task}-{self.seq_name}-{self.shorthash}"
+            return f"{self.task}-{self.seq_name}-{self.views}-{self.shorthash}"
 
     @functools.cached_property
     def srcdir(self) -> Path:

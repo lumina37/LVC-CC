@@ -16,13 +16,12 @@ class Yuv2pngTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
+        assert self.pretask is not None
         return f"{self.task}-{self.seq_name}-{self.pretask.shorthash}-{self.shorthash}"
 
     def run(self) -> None:
         log = get_logger()
         node_cfg = get_node_cfg()
-
-        assert self.pretask is not None
 
         refimg_path = get_first_file(self.pretask.pretask.srcdir)
         refimg = cv.imread(str(refimg_path))

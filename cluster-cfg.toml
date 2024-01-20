@@ -1,6 +1,6 @@
 [frames]
-test = 10
-prod = 30
+test = 1
+prod = 1
 
 [stdQP]
 "Boxer-IrishMan-Gladiator" = [37, 41, 45, 49]

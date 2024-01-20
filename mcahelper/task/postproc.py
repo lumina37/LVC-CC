@@ -21,6 +21,7 @@ class PostprocTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
+        assert self.pretask is not None
         return f"{self.task}-{self.seq_name}-{self.crop_ratio:.3f}-{self.pretask.shorthash}-{self.shorthash}"
 
     @functools.cached_property

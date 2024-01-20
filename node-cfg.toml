@@ -1,15 +1,15 @@
 [cases]
 vtm_types = [
     "AI",
-    "RA"
+    # "RA"
 ]
 seqs = [
-    "Boxer-IrishMan-Gladiator",
-    "chess",
-    "ChessPieces",
-    "NagoyaDataLeading",
-    "NagoyaFujita",
-    "NagoyaOrigami",
+    # "Boxer-IrishMan-Gladiator",
+    # "chess",
+    # "ChessPieces",
+    # "NagoyaDataLeading",
+    # "NagoyaFujita",
+    # "NagoyaOrigami",
     "Tunnel_Train",
 ]
 

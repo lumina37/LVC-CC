@@ -1,71 +1,62 @@
 import abc
+import copy
 import dataclasses as dcs
 import functools
 import hashlib
 import json
 from pathlib import Path
-from typing import ClassVar, Optional
+from typing import Optional
 
 from pydantic.dataclasses import dataclass
 
 from ..cfg.node import get_node_cfg
+from ..helper import DataclsCfg
+from .chains import Chains
 from .infomap import append
-
-
-@dataclass
-class DataclsCfg:
-    KEY: ClassVar[str] = 'mca'
-
-    meta_ex: bool = False
-    hash_ex: bool = False
-    meta_rootonly: bool = False
-
-    def to_dict(self) -> dict[str, bool]:
-        return {self.KEY: dcs.asdict(self)}
 
 
 @dataclass
 class BaseTask:
     task: str = ""
-    seq_name: str = dcs.field(default="", metadata=DataclsCfg(meta_rootonly=True).to_dict())
+    seq_name: str = ""
 
-    pretask: Optional["BaseTask"] = dcs.field(
-        default=None, hash=False, metadata=DataclsCfg(meta_ex=True, hash_ex=True).to_dict(), kw_only=True
-    )
-    chains: list[dict] = dcs.field(default_factory=list)
+    pretask: Optional["BaseTask"] = dcs.field(default=None, hash=False, kw_only=True)
+    posttasks: list["BaseTask"] = dcs.field(default_factory=list, hash=False, kw_only=True)
+    chains: Chains = dcs.field(default_factory=Chains, metadata=DataclsCfg(ex_if_empty=True).to_dict())
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if pretask := self.pretask:
             chains = pretask.chains.copy()
-            pretask_dic = pretask.metainfo_dic.copy()
-            pretask_dic.pop('chains')
-            chains.append(pretask_dic)
+            pretask = copy.copy(pretask)
+            pretask.chains = Chains()
+            chains.tasks.append(pretask)
             self.chains = chains
-        if not self.seq_name:
-            if not self.chains:
-                raise RuntimeError("We cannot infer `seq_name` from chains. Please enter a `seq_name`")
-            self.seq_name = self.chains[0]['seq_name']
 
     @classmethod
     def from_dict(cls, dic: dict):
+        if 'chains' in dic:
+            dic['chains'] = Chains.from_dict(dic['chains'])
         kwargs = {field.name: val for field in dcs.fields(cls) if field.init and (val := dic.get(field.name, None))}
         return cls(**kwargs)
 
     @functools.cached_property
-    def metainfo_dic(self) -> dict:
+    def dic(self) -> dict:
         dic = {}
 
         for field in dcs.fields(self):
-            metacfg = DataclsCfg(**field.metadata.get(DataclsCfg.KEY, {}))
-            if metacfg.meta_ex:
+            if field.hash is False:
                 continue
 
+            metacfg = DataclsCfg(**field.metadata.get(DataclsCfg.KEY, {}))
+
             val = getattr(self, field.name)
+
+            if metacfg.ex_if_empty and len(val) == 0:
+                continue
+
             if hasattr(val, "to_dict"):
                 dic[field.name] = val.to_dict()
             else:
-                if metacfg.meta_rootonly and self.chains:
-                    continue
                 dic[field.name] = val
 
         return dic
@@ -73,30 +64,13 @@ class BaseTask:
     @functools.cached_property
     def metainfo(self, pretty: bool = True) -> str:
         if pretty:
-            return json.dumps(self.metainfo_dic, indent=4)
+            return json.dumps(self.dic, indent=4)
         else:
-            return json.dumps(self.metainfo_dic, separators=(',', ':'))
-
-    @functools.cached_property
-    def hash_dic(self) -> dict:
-        dic = {}
-
-        for field in dcs.fields(self):
-            metacfg = DataclsCfg(**field.metadata.get(DataclsCfg.KEY, {}))
-            if metacfg.hash_ex:
-                continue
-
-            val = getattr(self, field.name)
-            if hasattr(val, "to_dict"):
-                dic[field.name] = val.to_dict()
-            else:
-                dic[field.name] = val
-
-        return dic
+            return json.dumps(self.dic, separators=(',', ':'))
 
     @functools.cached_property
     def hash(self) -> str:
-        hashdic_bytes = json.dumps(self.hash_dic, separators=(',', ':')).encode('utf-8')
+        hashdic_bytes = json.dumps(self.dic, separators=(',', ':')).encode('utf-8')
         hsh = hashlib.sha1(hashdic_bytes, usedforsecurity=False)
         return hsh.hexdigest()
 
@@ -106,8 +80,7 @@ class BaseTask:
 
     @abc.abstractmethod
     @functools.cached_property
-    def dirname(self) -> str:
-        ...
+    def dirname(self) -> str: ...
 
     @functools.cached_property
     def dstdir(self) -> Path:
@@ -120,5 +93,4 @@ class BaseTask:
         append(self, self.dstdir)
 
     @abc.abstractmethod
-    def run(self) -> None:
-        ...
+    def run(self) -> None: ...

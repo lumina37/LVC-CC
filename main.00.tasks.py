@@ -1,7 +1,7 @@
 import tomllib
 
 from mcahelper.cfg import node
-from mcahelper.executer import Executer
+from mcahelper.executor import Executor
 from mcahelper.task import CodecTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
 
 node_cfg = node.set_node_cfg('node-cfg.toml')
@@ -42,5 +42,5 @@ for seq_name in node_cfg.cases.seqs:
 
 
 if __name__ == "__main__":
-    executer = Executer(roots, process_num=2)
-    executer.run()
+    executor = Executor(roots, process_num=2)
+    executor.run()

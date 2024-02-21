@@ -1,5 +1,5 @@
 from mcahelper.cfg import node
-from mcahelper.executer import Executer
+from mcahelper.executor import Executor
 from mcahelper.task import CodecTask, Png2yuvTask, RenderTask, Yuv2pngTask
 
 node.set_node_cfg('node-cfg.toml')
@@ -16,5 +16,5 @@ task4 = RenderTask(seq_name=seq_name, frames=1, parent=task3)
 # task4.run()
 
 if __name__ == "__main__":
-    executer = Executer([task1], process_num=1)
-    executer.run()
+    executor = Executor([task1], process_num=1)
+    executor.run()

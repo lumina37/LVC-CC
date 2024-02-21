@@ -5,7 +5,7 @@ from .task import BaseTask
 
 
 @dcs.dataclass
-class Executer:
+class Executor:
 
     anytasks: list[BaseTask]
     process_num: int = 2

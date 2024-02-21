@@ -16,5 +16,5 @@ task4 = RenderTask(seq_name=seq_name, frames=1, parent=task3)
 # task4.run()
 
 if __name__ == "__main__":
-    scheduler = Executer(task4, process_num=1)
-    scheduler.run()
+    executer = Executer([task1], process_num=1)
+    executer.run()

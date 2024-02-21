@@ -1,5 +1,4 @@
 import abc
-import copy
 import dataclasses as dcs
 import functools
 import hashlib
@@ -25,12 +24,12 @@ class BaseTask:
         default=None, repr=False, metadata=DataclsCfg(no_meta=True, no_hash=True).D
     )
     children: list["BaseTask"] = dcs.field(
-        default_factory=list, repr=False, metadata=DataclsCfg(no_meta=True, no_hash=True).D
+        default_factory=list, init=False, repr=False, metadata=DataclsCfg(no_meta=True, no_hash=True).D
     )
     chains: Chains = dcs.field(default_factory=Chains, repr=False)
 
     def __post_init__(self) -> None:
-        if parent := self.parent:
+        if (parent := self.parent) is not None:
             # Generate `self.chains` following `parent`
             chains = parent.chains.copy()
             chains.objs.append(parent)

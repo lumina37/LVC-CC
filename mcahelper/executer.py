@@ -7,7 +7,7 @@ from .task import BaseTask
 @dcs.dataclass
 class Executer:
 
-    anytask: BaseTask
+    anytasks: list[BaseTask]
     process_num: int = 2
 
     @staticmethod
@@ -40,10 +40,13 @@ class Executer:
                     break
 
     def run(self) -> None:
-        root = self.find_root(self.anytask)
+        roots = {}
+        for t in self.anytasks:
+            roots[t.hash] = t
 
         queue = mp.Queue()
-        queue.put(root)
+        for root in roots.values():
+            queue.put(root)
 
         active_count = mp.Value('Q', 0)
 

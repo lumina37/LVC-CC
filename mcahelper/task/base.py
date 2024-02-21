@@ -21,17 +21,22 @@ class BaseTask:
     task: str = ""
     seq_name: str = ""
 
-    pretask: Optional["BaseTask"] = dcs.field(default=None, metadata=DataclsCfg(no_meta=True, no_hash=True).D)
-    posttasks: list["BaseTask"] = dcs.field(default_factory=list, metadata=DataclsCfg(no_meta=True, no_hash=True).D)
-    chains: Chains = dcs.field(default_factory=Chains)
+    parent: Optional["BaseTask"] = dcs.field(
+        default=None, repr=False, metadata=DataclsCfg(no_meta=True, no_hash=True).D
+    )
+    children: list["BaseTask"] = dcs.field(
+        default_factory=list, repr=False, metadata=DataclsCfg(no_meta=True, no_hash=True).D
+    )
+    chains: Chains = dcs.field(default_factory=Chains, repr=False)
 
     def __post_init__(self) -> None:
-        if pretask := self.pretask:
-            chains = pretask.chains.copy()
-            pretask = copy.copy(pretask)
-            pretask.chains = Chains()
-            chains.objs.append(pretask)
+        if parent := self.parent:
+            # Generate `self.chains` following `parent`
+            chains = parent.chains.copy()
+            chains.objs.append(parent)
             self.chains = chains
+            # Appending reverse hooks to `parent`
+            parent.children.append(self)
 
     @classmethod
     def unmarshal(cls, dic: dict):

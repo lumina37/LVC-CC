@@ -21,8 +21,8 @@ class CodecTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
-        assert self.pretask is not None
-        return f"{self.task}-{self.seq_name}-{self.vtm_type}-{self.QP}-{self.pretask.shorthash}-{self.shorthash}"
+        assert self.parent is not None
+        return f"{self.task}-{self.seq_name}-{self.vtm_type}-{self.QP}-{self.parent.shorthash}-{self.shorthash}"
 
     def run(self) -> None:
         log = get_logger()
@@ -31,7 +31,7 @@ class CodecTask(BaseTask):
         assert self.vtm_type in ['AI', 'RA']
         vtm_type_cfg_path = node_cfg.path.dataset / "cfg" / f"vtm_{self.vtm_type}.cfg"
 
-        refimg_path = get_first_file(self.pretask.srcdir)
+        refimg_path = get_first_file(self.parent.srcdir)
         refimg = cv.imread(str(refimg_path))
         height, width = refimg.shape[:2]
 
@@ -44,7 +44,7 @@ class CodecTask(BaseTask):
         vtmcfg_dstpath = self.dstdir / 'vtm.cfg'
         vtm_cfg.to_file(vtmcfg_dstpath)
 
-        srcdir = query(self.pretask)
+        srcdir = query(self.parent)
         srcpath = srcdir / "out.yuv"
 
         log_path = self.dstdir / "out.log"

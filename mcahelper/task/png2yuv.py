@@ -18,15 +18,15 @@ class Png2yuvTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
-        if self.pretask:
-            return f"{self.task}-{self.seq_name}-{self.pretask.shorthash}-{self.shorthash}"
+        if self.parent:
+            return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
         else:
             return f"{self.task}-{self.seq_name}-{self.shorthash}"
 
     @functools.cached_property
     def srcdir(self) -> Path:
-        if self.pretask:
-            srcdir = query(self.pretask) / "img"
+        if self.parent:
+            srcdir = query(self.parent) / "img"
         else:
             node_cfg = get_node_cfg()
             srcdir = node_cfg.path.dataset / "img" / self.seq_name

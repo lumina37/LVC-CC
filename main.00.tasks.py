@@ -30,28 +30,28 @@ def task_generator():
             yield task1
 
             for qp in QPs['woMCA'][seq_name]:
-                task2 = CodecTask(vtm_type=vtm_type, frames=FRAMES, QP=qp, pretask=task1)
+                task2 = CodecTask(vtm_type=vtm_type, frames=FRAMES, QP=qp, parent=task1)
                 yield task2
-                task3 = Yuv2pngTask(pretask=task2)
+                task3 = Yuv2pngTask(parent=task2)
                 yield task3
-                task4 = RenderTask(frames=FRAMES, pretask=task3)
+                task4 = RenderTask(frames=FRAMES, parent=task3)
                 yield task4
 
     for seq_name in node_cfg.cases.seqs:
         for vtm_type in node_cfg.cases.vtm_types:
             task1 = PreprocTask(seq_name=seq_name)
             yield task1
-            task2 = Png2yuvTask(frames=FRAMES, pretask=task1)
+            task2 = Png2yuvTask(frames=FRAMES, parent=task1)
             yield task2
 
             for qp in QPs['wMCA'][seq_name]:
-                task3 = CodecTask(vtm_type=vtm_type, frames=FRAMES, QP=qp, pretask=task2)
+                task3 = CodecTask(vtm_type=vtm_type, frames=FRAMES, QP=qp, parent=task2)
                 yield task3
-                task4 = Yuv2pngTask(pretask=task3)
+                task4 = Yuv2pngTask(parent=task3)
                 yield task4
-                task5 = PostprocTask(pretask=task4)
+                task5 = PostprocTask(parent=task4)
                 yield task5
-                task6 = RenderTask(frames=FRAMES, pretask=task5)
+                task6 = RenderTask(frames=FRAMES, parent=task5)
                 yield task6
 
 

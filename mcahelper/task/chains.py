@@ -18,11 +18,13 @@ class Chains:
     @overload
     def __getitem__(self, idx: SupportsIndex) -> Marshalable: ...
 
-    @overload
-    def __getitem__(self, idx: slice) -> list[Marshalable]: ...
+    # @overload
+    # def __getitem__(self, idx: slice) -> list[Marshalable]: ...
 
     def __getitem__(self, idx):
-        return self.objs.__getitem__(idx)
+        item = self.objs[idx]
+        item.chains.objs = self.objs[:idx]
+        return item
 
     @staticmethod
     def unmarshal(objs: list[dict]) -> "Chains":

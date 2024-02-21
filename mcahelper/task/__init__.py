@@ -1,4 +1,5 @@
 from . import factory, iterator
+from .base import BaseTask
 from .codec import CodecTask
 from .png2yuv import Png2yuvTask
 from .postproc import PostprocTask

@@ -10,11 +10,6 @@ task2 = CodecTask(seq_name=seq_name, vtm_type='AI', frames=1, QP=46, parent=task
 task3 = Yuv2pngTask(seq_name=seq_name, parent=task2)
 task4 = RenderTask(seq_name=seq_name, frames=1, parent=task3)
 
-# task1.run()
-# task2.run()
-# task3.run()
-# task4.run()
-
 if __name__ == "__main__":
     executor = Executor([task1], process_num=1)
     executor.run()

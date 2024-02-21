@@ -22,7 +22,3 @@ encoder = "D:/Code/SIGS/230818_VVC/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86
 preproc = "D:/code/SIGS/230508_LVC/code/libMCA/cmake-build-release-visual-studio/apps/main_preproc.exe"
 postproc = "D:/code/SIGS/230508_LVC/code/libMCA/cmake-build-release-visual-studio/apps/main_postproc.exe"
 rlc = "D:/Code/SIGS/230508_LVC/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
-
-[parallel]
-codec = 4
-render = 2

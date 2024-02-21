@@ -28,17 +28,10 @@ class _App:
 
 
 @dataclass
-class _Parallel:
-    codec: int
-    render: int
-
-
-@dataclass
 class NodeCfg:
     cases: _Cases
     path: _Path
     app: _App
-    parallel: _Parallel
 
 
 _NODE_CFG = None

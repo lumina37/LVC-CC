@@ -62,7 +62,6 @@ class RenderTask(BaseTask):
         rlccfg.to_file(rlccfg_dstpath)
 
         # Prepare and run command
-
         cmds = [
             node_cfg.app.rlc,
             rlccfg_dstpath,

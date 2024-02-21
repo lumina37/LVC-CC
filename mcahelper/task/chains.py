@@ -1,42 +1,47 @@
 import dataclasses as dcs
-import functools
-from typing import Protocol, SupportsIndex, overload
+from typing import SupportsIndex, overload
 
 from pydantic.dataclasses import dataclass
 
+from ..helper import DataclsCfg
 from .factory import TaskFactory
-
-
-@dataclass
-class HasDic(Protocol):
-    @functools.cached_property
-    def dic(self) -> dict: ...
+from .typing import Marshalable
 
 
 @dataclass
 class Chains:
-    tasks: list = dcs.field(default_factory=list)
+    objs: list = dcs.field(default_factory=list)
 
     def __len__(self) -> int:
-        return len(self.tasks)
+        return len(self.objs)
 
     @overload
-    def __getitem__(self, idx: SupportsIndex) -> HasDic: ...
+    def __getitem__(self, idx: SupportsIndex) -> Marshalable: ...
 
     @overload
-    def __getitem__(self, idx: slice) -> list[HasDic]: ...
+    def __getitem__(self, idx: slice) -> list[Marshalable]: ...
 
     def __getitem__(self, idx):
-        return self.tasks.__getitem__(idx)
+        return self.objs.__getitem__(idx)
 
     @staticmethod
-    def from_dict(dic: dict) -> "Chains":
-        tasks = [TaskFactory(**d) for d in dic]
-        chains = Chains(tasks=tasks)
+    def unmarshal(objs: list[dict]) -> "Chains":
+        objs = [TaskFactory(**d) for d in objs]
+        chains = Chains(objs=objs)
         return chains
 
-    def to_dict(self) -> list[dict]:
-        return [t.dic for t in self.tasks]
+    def marshal(self) -> list[dict]:
+        def exclude_if(field: dcs.Field) -> bool:
+            if field.name == 'chains':
+                return True
+            if DataclsCfg.getval_from_meta(field.metadata, 'no_meta'):
+                return True
+            return False
+
+        objs: list[Marshalable] = self.objs
+        dics = [t.marshal(exclude_if) for t in objs]
+
+        return dics
 
     def copy(self) -> "Chains":
-        return Chains(self.tasks.copy())
+        return Chains(self.objs.copy())

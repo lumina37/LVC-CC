@@ -4,11 +4,11 @@ vtm_types = [
     "RA"
 ]
 seqs = [
-    # "Boxer-IrishMan-Gladiator",
-    # "chess",
-    # "ChessPieces",
-    # "NagoyaDataLeading",
-    # "NagoyaFujita",
+    "Boxer-IrishMan-Gladiator",
+    "chess",
+    "ChessPieces",
+    "NagoyaDataLeading",
+    "NagoyaFujita",
     "NagoyaOrigami",
     "Tunnel_Train",
 ]

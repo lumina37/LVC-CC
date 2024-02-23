@@ -33,11 +33,11 @@ class Executor:
             if task.children:
                 for child in task.children:
                     queue.put(child)
-            else:
+
+            if queue.empty() and active_count.value == 0:
                 # Quit if there is no more tasks and no active worker
-                if active_count.value == 0:
-                    queue.close()
-                    break
+                queue.close()
+                break
 
     def run(self) -> None:
         roots = {}

@@ -19,21 +19,21 @@ for seq_name in node_cfg.cases.seqs:
     roots.append(task)
 
 for seq_name in node_cfg.cases.seqs:
-    for vtm_type in node_cfg.cases.vtm_types:
-        task1 = Png2yuvTask(seq_name=seq_name, frames=1)
-        roots.append(task1)
+    task1 = Png2yuvTask(seq_name=seq_name, frames=1)
+    roots.append(task1)
 
+    for vtm_type in node_cfg.cases.vtm_types:
         for qp in QPs['woMCA'][seq_name]:
             task2 = CodecTask(seq_name=seq_name, vtm_type=vtm_type, frames=FRAMES, QP=qp, parent=task1)
             task3 = Yuv2pngTask(seq_name=seq_name, parent=task2)
             task4 = RenderTask(seq_name=seq_name, frames=FRAMES, parent=task3)
 
 for seq_name in node_cfg.cases.seqs:
-    for vtm_type in node_cfg.cases.vtm_types:
-        task1 = PreprocTask(seq_name=seq_name)
-        roots.append(task1)
-        task2 = Png2yuvTask(seq_name=seq_name, frames=FRAMES, parent=task1)
+    task1 = PreprocTask(seq_name=seq_name)
+    roots.append(task1)
+    task2 = Png2yuvTask(seq_name=seq_name, frames=FRAMES, parent=task1)
 
+    for vtm_type in node_cfg.cases.vtm_types:
         for qp in QPs['wMCA'][seq_name]:
             task3 = CodecTask(seq_name=seq_name, vtm_type=vtm_type, frames=FRAMES, QP=qp, parent=task2)
             task4 = Yuv2pngTask(seq_name=seq_name, parent=task3)

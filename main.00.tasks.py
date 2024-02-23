@@ -42,5 +42,5 @@ for seq_name in node_cfg.cases.seqs:
 
 
 if __name__ == "__main__":
-    executor = Executor(roots, process_num=2)
+    executor = Executor(roots, process_num=6)
     executor.run()

@@ -6,14 +6,15 @@ from ..cfg.node import get_node_cfg
 from .factory import TaskFactory
 
 _INFOMAP_MANAGER = None
+_INFOMAP_LOCK = mp.Lock()
 _INFOMAP = None
 
 
 def init_infomap() -> None:
-    global _INFOMAP
-    global _INFOMAP_MANAGER
-
     node_cfg = get_node_cfg()
+
+    global _INFOMAP_MANAGER
+    global _INFOMAP
 
     _INFOMAP_MANAGER = mp.Manager()
     _INFOMAP = _INFOMAP_MANAGER.dict()
@@ -38,10 +39,13 @@ def get_infomap():
 
 
 def query(task) -> Path:
-    infomap = get_infomap()
-    return infomap[task.hash]
+    with _INFOMAP_LOCK:
+        infomap = get_infomap()
+        path = infomap[task.hash]
+    return path
 
 
 def append(task, path: Path) -> None:
-    infomap = get_infomap()
-    infomap[task.hash] = path
+    with _INFOMAP_LOCK:
+        infomap = get_infomap()
+        infomap[task.hash] = path

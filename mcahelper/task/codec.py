@@ -5,7 +5,6 @@ from pydantic.dataclasses import dataclass
 
 from ..cfg.node import get_node_cfg
 from ..cfg.vtm import VTMCfg
-from ..logging import get_logger
 from ..utils import get_first_file, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -24,8 +23,7 @@ class CodecTask(BaseTask):
         assert self.parent is not None
         return f"{self.task}-{self.seq_name}-{self.vtm_type}-{self.QP}-{self.parent.shorthash}-{self.shorthash}"
 
-    def run(self) -> None:
-        log = get_logger()
+    def _run(self) -> None:
         node_cfg = get_node_cfg()
 
         assert self.vtm_type in ['AI', 'RA']
@@ -71,6 +69,3 @@ class CodecTask(BaseTask):
         ]
 
         run_cmds(cmds, log_path)
-        log.info(f"Completed! cmds={cmds}")
-
-        self.dump_metainfo()

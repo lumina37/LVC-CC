@@ -36,7 +36,7 @@ class Chains:
         def exclude_if(field: dcs.Field) -> bool:
             if field.name == 'chains':
                 return True
-            if DataclsCfg.getval_from_meta(field.metadata, 'no_meta'):
+            if DataclsCfg.from_meta(field.metadata).no_meta:
                 return True
             return False
 

@@ -4,7 +4,6 @@ import cv2 as cv
 from pydantic.dataclasses import dataclass
 
 from ..cfg.node import get_node_cfg
-from ..logging import get_logger
 from ..utils import get_first_file, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -19,8 +18,7 @@ class Yuv2pngTask(BaseTask):
         assert self.parent is not None
         return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
 
-    def run(self) -> None:
-        log = get_logger()
+    def _run(self) -> None:
         node_cfg = get_node_cfg()
 
         refimg_path = get_first_file(self.parent.parent.srcdir)
@@ -47,6 +45,3 @@ class Yuv2pngTask(BaseTask):
         ]
 
         run_cmds(cmds)
-        log.info(f"Completed! cmds={cmds}")
-
-        self.dump_metainfo()

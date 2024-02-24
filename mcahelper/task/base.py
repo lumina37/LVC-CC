@@ -97,7 +97,11 @@ class BaseTask:
     def dump_metainfo(self) -> None:
         with (self.dstdir / "metainfo.json").open('w', encoding='utf-8') as f:
             f.write(self.metainfo)
-        append(self, self.dstdir)
 
     @abc.abstractmethod
-    def run(self) -> None: ...
+    def _run(self) -> None: ...
+
+    def run(self) -> None:
+        self._run()
+        self.dump_metainfo()
+        append(self, self.dstdir)

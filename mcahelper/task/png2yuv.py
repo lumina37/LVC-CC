@@ -4,7 +4,6 @@ from pathlib import Path
 from pydantic.dataclasses import dataclass
 
 from ..cfg.node import get_node_cfg
-from ..logging import get_logger
 from ..utils import get_first_file, get_src_pattern, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -32,8 +31,7 @@ class Png2yuvTask(BaseTask):
             srcdir = node_cfg.path.dataset / "img" / self.seq_name
         return srcdir
 
-    def run(self) -> None:
-        log = get_logger()
+    def _run(self) -> None:
         node_cfg = get_node_cfg()
 
         fname_pattern = get_src_pattern(get_first_file(self.srcdir).name)
@@ -55,6 +53,3 @@ class Png2yuvTask(BaseTask):
         ]
 
         run_cmds(cmds)
-        log.info(f"Completed! cmds={cmds}")
-
-        self.dump_metainfo()

@@ -6,7 +6,6 @@ from pydantic.dataclasses import dataclass
 
 from ..cfg import RaytrixCfg
 from ..cfg.node import get_node_cfg
-from ..logging import get_logger
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 
@@ -21,8 +20,7 @@ class PreprocTask(BaseTask):
     def dirname(self) -> str:
         return f"{self.task}-{self.seq_name}-{self.crop_ratio:.3f}-{self.shorthash}"
 
-    def run(self) -> None:
-        log = get_logger()
+    def _run(self) -> None:
         node_cfg = get_node_cfg()
 
         # Copy `calibration.xml`
@@ -54,6 +52,3 @@ class PreprocTask(BaseTask):
         ]
 
         run_cmds(cmds)
-        log.info(f"Completed! cmds={cmds}")
-
-        self.dump_metainfo()

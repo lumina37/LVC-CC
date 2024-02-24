@@ -3,6 +3,8 @@ import re
 import subprocess
 from pathlib import Path
 
+from .logging import get_logger
+
 
 def to_json(dic: dict, pretty: bool = False) -> str:
     if pretty:
@@ -23,6 +25,10 @@ def run_cmds(cmds: list, stdout_fpath: Path | None = None):
             ret = subprocess.run(strcmds, stdout=f, text=True)
     else:
         ret = subprocess.run(strcmds)
+
+    log = get_logger()
+    log.info(f"Completed! cmds={cmds}")
+
     return ret
 
 

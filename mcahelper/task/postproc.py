@@ -7,7 +7,6 @@ from pydantic.dataclasses import dataclass
 
 from ..cfg import RaytrixCfg
 from ..cfg.node import get_node_cfg
-from ..logging import get_logger
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -30,8 +29,7 @@ class PostprocTask(BaseTask):
         srcdir = query(self.parent) / "img"
         return srcdir
 
-    def run(self) -> None:
-        log = get_logger()
+    def _run(self) -> None:
         node_cfg = get_node_cfg()
 
         # Copy `calibration.xml`
@@ -62,6 +60,3 @@ class PostprocTask(BaseTask):
         ]
 
         run_cmds(cmds)
-        log.info(f"Completed! cmds={cmds}")
-
-        self.dump_metainfo()

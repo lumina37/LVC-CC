@@ -1,5 +1,5 @@
 import dataclasses as dcs
-from typing import SupportsIndex, overload
+from typing import SupportsIndex
 
 from pydantic.dataclasses import dataclass
 
@@ -15,13 +15,7 @@ class Chains:
     def __len__(self) -> int:
         return len(self.objs)
 
-    @overload
-    def __getitem__(self, idx: SupportsIndex) -> Marshalable: ...
-
-    # @overload
-    # def __getitem__(self, idx: slice) -> list[Marshalable]: ...
-
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: SupportsIndex) -> Marshalable:
         item = self.objs[idx]
         item.chains.objs = self.objs[:idx]
         return item

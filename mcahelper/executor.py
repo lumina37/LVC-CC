@@ -2,6 +2,7 @@ import dataclasses as dcs
 import multiprocessing as mp
 
 from .task import BaseTask
+from .task.infomap import TypeInfomap, init_infomap, register_infomap
 
 
 @dcs.dataclass
@@ -17,7 +18,9 @@ class Executor:
         return task
 
     @staticmethod
-    def _worker(queue: mp.Queue, active_count: mp.Value):
+    def _worker(queue: mp.Queue, active_count: mp.Value, infomap: TypeInfomap):
+        register_infomap(infomap)
+
         while 1:
             task: BaseTask = queue.get()
 
@@ -48,12 +51,14 @@ class Executor:
         queue = mp.Queue()
         for root in roots.values():
             queue.put(root)
-
         active_count = mp.Value('Q', 0)
+        manager = mp.Manager()
+        infomap = manager.dict()
+        infomap.update(init_infomap())
 
         workers: list[mp.Process] = []
         for _ in range(self.process_num):
-            worker = mp.Process(target=self._worker, args=(queue, active_count))
+            worker = mp.Process(target=self._worker, args=(queue, active_count, infomap))
             worker.start()
             workers.append(worker)
 

@@ -1,8 +1,8 @@
 import dataclasses as dcs
 import multiprocessing as mp
-
 from .task import BaseTask
 from .task.infomap import TypeInfomap, init_infomap, register_infomap
+import queue
 
 
 @dcs.dataclass
@@ -18,30 +18,28 @@ class Executor:
         return task
 
     @staticmethod
-    def _worker(queue: mp.Queue, active_count: mp.Value, infomap: TypeInfomap):
+    def _worker(que: mp.Queue, active_count: mp.Value, infomap: TypeInfomap):
         register_infomap(infomap)
 
         while 1:
-            task: BaseTask = queue.get()
+            try:
+                task: BaseTask = que.get(timeout=3.0)
 
-            # Active before actually run
-            with active_count.get_lock():
-                active_count.value += 1
+            except queue.Empty:
+                if active_count.value == 0 and queue.empty():
+                    break
 
-            task.run()
+            else:
+                # Active before actually run
+                with active_count.get_lock():
+                    active_count.value += 1
+                task.run()
+                with active_count.get_lock():
+                    active_count.value -= 1
 
-            with active_count.get_lock():
-                active_count.value -= 1
-
-            if task.children:
-                for child in task.children:
-                    queue.put(child)
-
-            elif active_count.value == 0 and queue.empty():
-                # Quit if there is no more tasks and no active worker
-                # Note that queue.empty() has a sightly delay
-                queue.close()
-                break
+                if task.children:
+                    for child in task.children:
+                        que.put(child)
 
     def run(self) -> None:
         roots = {}

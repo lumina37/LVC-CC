@@ -1,8 +1,9 @@
 import dataclasses as dcs
 import multiprocessing as mp
+import queue
+
 from .task import BaseTask
 from .task.infomap import TypeInfomap, init_infomap, register_infomap
-import queue
 
 
 @dcs.dataclass

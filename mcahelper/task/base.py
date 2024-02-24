@@ -70,13 +70,13 @@ class BaseTask:
 
     @functools.cached_property
     def metainfo(self) -> str:
-        marshaled = self.marshal(exclude_if=lambda f: DataclsCfg.getval_from_meta(f.metadata, 'no_meta'))
+        marshaled = self.marshal(exclude_if=lambda f: DataclsCfg.from_meta(f.metadata).no_meta)
         metainfo = to_json(marshaled, pretty=True)
         return metainfo
 
     @functools.cached_property
     def hash(self) -> str:
-        marshaled = self.marshal(exclude_if=lambda f: DataclsCfg.getval_from_meta(f.metadata, 'no_hash'))
+        marshaled = self.marshal(exclude_if=lambda f: DataclsCfg.from_meta(f.metadata).no_hash)
         hashbytes = to_json(marshaled).encode('utf-8')
         hash_ = hashlib.sha1(hashbytes, usedforsecurity=False)
         return hash_.hexdigest()

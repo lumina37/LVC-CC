@@ -34,8 +34,9 @@ class Executor:
                 for child in task.children:
                     queue.put(child)
 
-            if queue.empty() and active_count.value == 0:
+            elif active_count.value == 0 and queue.empty():
                 # Quit if there is no more tasks and no active worker
+                # Note that queue.empty() has a sightly delay
                 queue.close()
                 break
 

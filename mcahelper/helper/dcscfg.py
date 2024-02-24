@@ -17,8 +17,7 @@ class DataclsCfg:
         return {self.KEY: dcs.asdict(self)}
 
     @staticmethod
-    def getval_from_meta(meta: dict, key: str):
+    def from_meta(meta: dict):
         mca_meta = meta.get(DataclsCfg.KEY, {})
-        mca_cfg = DataclsCfg(**mca_meta)
-        val = getattr(mca_cfg, key)
-        return val
+        cfg = DataclsCfg(**mca_meta)
+        return cfg

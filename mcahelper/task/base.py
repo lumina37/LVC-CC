@@ -36,6 +36,9 @@ class BaseTask:
             self.chains = chains
             # Appending reverse hooks to `parent`
             parent.children.append(self)
+            # Infer `seq_name` from `parent`
+            if not self.seq_name:
+                self.seq_name = parent.seq_name
 
     @classmethod
     def unmarshal(cls, dic: dict):

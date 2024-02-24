@@ -24,21 +24,21 @@ for seq_name in node_cfg.cases.seqs:
 
     for vtm_type in node_cfg.cases.vtm_types:
         for qp in QPs['woMCA'][seq_name]:
-            task2 = CodecTask(seq_name=seq_name, vtm_type=vtm_type, frames=FRAMES, QP=qp, parent=task1)
-            task3 = Yuv2pngTask(seq_name=seq_name, parent=task2)
-            task4 = RenderTask(seq_name=seq_name, frames=FRAMES, parent=task3)
+            task2 = CodecTask(vtm_type=vtm_type, frames=FRAMES, QP=qp, parent=task1)
+            task3 = Yuv2pngTask(parent=task2)
+            task4 = RenderTask(frames=FRAMES, parent=task3)
 
 for seq_name in node_cfg.cases.seqs:
     task1 = PreprocTask(seq_name=seq_name)
     roots.append(task1)
-    task2 = Png2yuvTask(seq_name=seq_name, frames=FRAMES, parent=task1)
+    task2 = Png2yuvTask(frames=FRAMES, parent=task1)
 
     for vtm_type in node_cfg.cases.vtm_types:
         for qp in QPs['wMCA'][seq_name]:
-            task3 = CodecTask(seq_name=seq_name, vtm_type=vtm_type, frames=FRAMES, QP=qp, parent=task2)
-            task4 = Yuv2pngTask(seq_name=seq_name, parent=task3)
-            task5 = PostprocTask(seq_name=seq_name, parent=task4)
-            task6 = RenderTask(seq_name=seq_name, frames=FRAMES, parent=task5)
+            task3 = CodecTask(vtm_type=vtm_type, frames=FRAMES, QP=qp, parent=task2)
+            task4 = Yuv2pngTask(parent=task3)
+            task5 = PostprocTask(parent=task4)
+            task6 = RenderTask(frames=FRAMES, parent=task5)
 
 
 if __name__ == "__main__":

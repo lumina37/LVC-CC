@@ -24,10 +24,10 @@ class Executor:
 
         while 1:
             try:
-                task: BaseTask = que.get(timeout=3.0)
+                task: BaseTask = que.get(timeout=5.0)
 
             except queue.Empty:
-                if active_count.value == 0 and queue.empty():
+                if active_count.value == 0 and que.empty():
                     break
 
             else:

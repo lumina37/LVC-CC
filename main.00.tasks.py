@@ -7,7 +7,7 @@ from mcahelper.task import CodecTask, Png2yuvTask, PostprocTask, PreprocTask, Re
 node_cfg = node.set_node_cfg('node-cfg.toml')
 
 
-FRAMES = 1
+FRAMES = 30
 
 with open('QP.toml', 'rb') as f:
     QPs = tomllib.load(f)
@@ -19,7 +19,7 @@ for seq_name in node_cfg.cases.seqs:
     roots.append(task)
 
 for seq_name in node_cfg.cases.seqs:
-    task1 = Png2yuvTask(seq_name=seq_name, frames=1)
+    task1 = Png2yuvTask(seq_name=seq_name, frames=FRAMES)
     roots.append(task1)
 
     for vtm_type in node_cfg.cases.vtm_types:
@@ -42,5 +42,5 @@ for seq_name in node_cfg.cases.seqs:
 
 
 if __name__ == "__main__":
-    executor = Executor(roots, process_num=6)
+    executor = Executor(roots, process_num=4)
     executor.run()

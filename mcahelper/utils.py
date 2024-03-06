@@ -1,6 +1,7 @@
 import json
 import re
 import subprocess
+import traceback
 from pathlib import Path
 
 from .logging import get_logger
@@ -18,18 +19,23 @@ def mkdir(path: Path):
     path.mkdir(0o755, parents=True, exist_ok=True)
 
 
-def run_cmds(cmds: list, stdout_fpath: Path | None = None):
-    strcmds = [str(cmd) for cmd in cmds]
-    if stdout_fpath:
-        with stdout_fpath.open('w') as f:
-            ret = subprocess.run(strcmds, stdout=f, text=True)
-    else:
-        ret = subprocess.run(strcmds)
-
+def run_cmds(cmds: list, stdout_fpath: Path | None = None, cwd: Path | None = None):
     log = get_logger()
-    log.info(f"Completed! cmds={cmds}")
 
-    return ret
+    try:
+        strcmds = [str(cmd) for cmd in cmds]
+        if stdout_fpath:
+            with stdout_fpath.open('w') as f:
+                subprocess.run(strcmds, stdout=f, text=True, cwd=cwd, check=True)
+        else:
+            subprocess.run(strcmds, cwd=cwd, check=True)
+
+    except Exception:
+        log.error(f"Failed! err={traceback.format_exc()}")
+        raise
+
+    else:
+        log.info(f"Completed! cmds={cmds}")
 
 
 def get_first_file(d: Path, glob_pattern: str = '*.png') -> Path:

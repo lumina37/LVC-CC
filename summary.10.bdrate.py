@@ -95,13 +95,13 @@ with (src_dir / 'psnr.json').open('r') as f:
 with dst_p.open('w', encoding='utf-8', newline='') as csv_f:
     csv_writer = csv.writer(csv_f)
     headers = ['seq.']
-    headers.extend(f'{vtm_type}-BD-rate' for vtm_type in node_cfg['common']['vtm_types'])
+    headers.extend(f'{vtm_type}-BD-rate' for vtm_type in node_cfg.cases.vtm_types)
     csv_writer.writerow(headers)
 
     for seq_name, pre_type_dic in main_dic.items():
         row = [seq_name]
 
-        for vtm_type in node_cfg['common']['vtm_types']:
+        for vtm_type in node_cfg.cases.vtm_types:
             bdrate = BD_RATE(
                 pre_type_dic['woMCA'][vtm_type]['bitrate'],
                 pre_type_dic['woMCA'][vtm_type]['Y-PSNR'],

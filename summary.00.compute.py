@@ -18,7 +18,7 @@ log = get_logger()
 
 
 BASES: dict[str, Path] = {}
-FRAMES = 1
+FRAMES = 30
 
 
 def compose(task: RenderTask):
@@ -48,10 +48,9 @@ def compose(task: RenderTask):
 
 
 def get_codec_task(rtask: RenderTask) -> CodecTask:
-    for i, task_dic in enumerate(rtask.chains):
-        if task_dic['task'] == CodecTask.task:
-            ctask = CodecTask(**task_dic, chains=rtask.chains[:i])
-            return ctask
+    for task in rtask.chains:
+        if isinstance(task, CodecTask):
+            return task
 
 
 def get_bitrate_from_fp(fp: Path) -> float:
@@ -158,7 +157,7 @@ for task in iterator.tasks(RenderTask, lambda t: t.chains):
 
     ctask = get_codec_task(task)
 
-    pre_type = 'wMCA' if ctask.chains[0]['task'] == PreprocTask.task else 'woMCA'
+    pre_type = 'wMCA' if isinstance(ctask.chains[0], PreprocTask) else 'woMCA'
     pre_type_dic: dict = seq_dic.setdefault(pre_type, {})
 
     vtm_dic: dict = pre_type_dic.setdefault(ctask.vtm_type, {})

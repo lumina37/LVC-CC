@@ -65,4 +65,7 @@ class RenderTask(BaseTask):
             rlccfg_dstpath,
         ]
 
-        run_cmds(cmds)
+        tmpcwd_dir = self.dstdir / "tmpcwd"
+        mkdir(tmpcwd_dir)
+
+        run_cmds(cmds, cwd=tmpcwd_dir)

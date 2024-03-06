@@ -68,4 +68,4 @@ class CodecTask(BaseTask):
             decoded_path,
         ]
 
-        run_cmds(cmds, log_path)
+        run_cmds(cmds, stdout_fpath=log_path)

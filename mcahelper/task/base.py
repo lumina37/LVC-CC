@@ -12,7 +12,7 @@ from ..cfg.node import get_node_cfg
 from ..helper import DataclsCfg
 from ..utils import to_json
 from .chains import Chains
-from .infomap import append
+from .infomap import append, query
 
 
 @dataclass
@@ -105,6 +105,13 @@ class BaseTask:
     def _run(self) -> None: ...
 
     def run(self) -> None:
-        self._run()
-        self.dump_metainfo()
-        append(self, self.dstdir)
+        if query(self):
+            return
+
+        try:
+            self._run()
+        except Exception:
+            pass
+        else:
+            self.dump_metainfo()
+            append(self, self.dstdir)

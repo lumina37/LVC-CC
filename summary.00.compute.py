@@ -18,7 +18,6 @@ log = get_logger()
 
 
 BASES: dict[str, Path] = {}
-FRAMES = 30
 
 
 def compose(task: RenderTask):
@@ -132,7 +131,7 @@ def compute_psnr_task(task: RenderTask) -> np.ndarray:
 
 
 for task in iterator.tasks(RenderTask, lambda t: not t.chains):
-    if task.frames != FRAMES:
+    if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:
         continue
@@ -145,7 +144,7 @@ for task in iterator.tasks(RenderTask, lambda t: not t.chains):
 main_dic = {}
 
 for task in iterator.tasks(RenderTask, lambda t: t.chains):
-    if task.frames != FRAMES:
+    if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:
         continue

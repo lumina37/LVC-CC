@@ -6,8 +6,7 @@ from pydantic.dataclasses import dataclass
 
 
 @dataclass
-class ClusterCfg:
-    ...
+class ClusterCfg: ...
 
 
 _CLUSTER_CFG = None

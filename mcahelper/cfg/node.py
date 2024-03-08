@@ -29,6 +29,7 @@ class _App:
 
 @dataclass
 class NodeCfg:
+    frames: int
     cases: _Cases
     path: _Path
     app: _App

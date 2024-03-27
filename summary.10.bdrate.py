@@ -1,4 +1,5 @@
 import csv
+import dataclasses as dcs
 import json
 
 import numpy as np
@@ -81,6 +82,18 @@ def BD_RATE(R1, PSNR1, R2, PSNR2, piecewise=0):
     return avg_diff
 
 
+@dcs.dataclass
+class PSNR:
+    bitrate: float
+    qp: int
+    psnry: float
+    psnru: float
+    psnrv: float
+
+    def __lt__(self, rhs: "PSNR") -> bool:
+        return self.bitrate < rhs.bitrate
+
+
 log = get_logger()
 
 node_cfg = node.set_node_cfg('node-cfg.toml')
@@ -102,11 +115,16 @@ with dst_p.open('w', encoding='utf-8', newline='') as csv_f:
         row = [seq_name]
 
         for vtm_type in node_cfg.cases.vtm_types:
+            womca_psnrs = [PSNR(**d) for d in pre_type_dic['woMCA'][vtm_type]]
+            womca_psnrs.sort()
+            wmca_psnrs = [PSNR(**d) for d in pre_type_dic['wMCA'][vtm_type]]
+            wmca_psnrs.sort()
+
             bdrate = BD_RATE(
-                pre_type_dic['woMCA'][vtm_type]['bitrate'],
-                pre_type_dic['woMCA'][vtm_type]['Y-PSNR'],
-                pre_type_dic['wMCA'][vtm_type]['bitrate'],
-                pre_type_dic['wMCA'][vtm_type]['Y-PSNR'],
+                [p.bitrate for p in womca_psnrs],
+                [p.psnry for p in womca_psnrs],
+                [p.bitrate for p in wmca_psnrs],
+                [p.psnry for p in wmca_psnrs],
                 piecewise=1,
             )
             row.append(f'{bdrate:.2f}%')

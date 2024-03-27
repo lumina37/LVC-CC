@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import json
 from typing import Dict
 
@@ -9,6 +10,19 @@ from mcahelper.logging import get_logger
 from mcahelper.utils import mkdir
 
 plt.rcParams['font.sans-serif'] = ['Times New Roman']
+
+
+@dcs.dataclass
+class PSNR:
+    bitrate: float
+    qp: int
+    psnry: float
+    psnru: float
+    psnrv: float
+
+    def __lt__(self, rhs: "PSNR") -> bool:
+        return self.bitrate < rhs.bitrate
+
 
 log = get_logger()
 
@@ -22,10 +36,10 @@ with (src_dir / 'psnr.json').open('r') as f:
     main_dic: Dict[str, dict] = json.load(f)
 
 
-mode_map = {'intra': 'All Intra', 'randomaccess': 'Random Access'}
+mode_map = {'AI': 'All Intra', 'RA': 'Random Access'}
 
 for seq_name, seq_dic in main_dic.items():
-    for vtm_type in rootcfg['common']['vtm_types']:
+    for vtm_type in rootcfg.cases.vtm_types:
         fig, ax = plt.subplots(figsize=(6, 6))
         ax: Axes = ax
         ax.set_xlabel("Total bitrate (Kbps)")
@@ -37,9 +51,11 @@ for seq_name, seq_dic in main_dic.items():
             ('wMCA', 'W/O MCA', 'orange'),
             ('woMCA', 'W/ MCA', 'blue'),
         ]:
+            psnrs = [PSNR(**d) for d in seq_dic[tp][vtm_type]]
+            psnrs.sort()
             ax.plot(
-                seq_dic[tp][vtm_type]['bitrate'],
-                seq_dic[tp][vtm_type]['Y-PSNR'],
+                [p.bitrate for p in psnrs],
+                [p.psnry for p in psnrs],
                 color=color,
                 marker='o',
                 label=label,

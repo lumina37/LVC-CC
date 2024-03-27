@@ -159,24 +159,23 @@ for task in iterator.tasks(RenderTask, lambda t: t.chains):
     pre_type = 'wMCA' if isinstance(ctask.chains[0], PreprocTask) else 'woMCA'
     pre_type_dic: dict = seq_dic.setdefault(pre_type, {})
 
-    vtm_dic: dict = pre_type_dic.setdefault(ctask.vtm_type, {})
+    vtm_list: list = pre_type_dic.setdefault(ctask.vtm_type, [])
 
     log_path = query(ctask) / "out.log"
     bitrate = get_bitrate_from_fp(log_path)
-    bitrates: list = vtm_dic.setdefault('bitrate', [])
-    bitrates.append(bitrate)
 
+    qp = ctask.QP
     psnr = compute_psnr_task(task)
 
-    QPs: list = vtm_dic.setdefault('QP', [])
-    QPs.append(ctask.QP)
-
-    ypsnrs: list = vtm_dic.setdefault('Y-PSNR', [])
-    ypsnrs.append(psnr[0])
-    upsnrs: list = vtm_dic.setdefault('U-PSNR', [])
-    upsnrs.append(psnr[1])
-    vpsnrs: list = vtm_dic.setdefault('V-PSNR', [])
-    vpsnrs.append(psnr[2])
+    vtm_list.append(
+        {
+            'bitrate': bitrate,
+            'qp': qp,
+            'psnry': psnr[0],
+            'psnru': psnr[1],
+            'psnrv': psnr[2],
+        }
+    )
 
 summary_dir = node_cfg.path.dataset / 'summary'
 mkdir(summary_dir)

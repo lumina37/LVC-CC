@@ -18,3 +18,5 @@ __pypackages__/
 *.txt
 *.csv
 node-cfg.toml
+
+misc*

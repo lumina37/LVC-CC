@@ -3,6 +3,7 @@ from pathlib import Path
 
 from ..cfg.node import get_node_cfg
 from .factory import TaskFactory
+from ..utils import mkdir
 
 TypeInfomap = dict[str, Path]
 
@@ -12,8 +13,11 @@ _INFOMAP: TypeInfomap = None
 def init_infomap() -> TypeInfomap:
     node_cfg = get_node_cfg()
 
+    playground_dir = node_cfg.path.dataset / "playground"
+    mkdir(playground_dir)
+
     infomap = {}
-    for d in (node_cfg.path.dataset / "playground").iterdir():
+    for d in playground_dir.iterdir():
         metainfo_path = d / "metainfo.json"
         if not metainfo_path.exists():
             continue

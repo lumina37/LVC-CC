@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import json
 import re
 from pathlib import Path
@@ -52,16 +53,35 @@ def get_codec_task(rtask: RenderTask) -> CodecTask:
             return task
 
 
-def get_bitrate_from_fp(fp: Path) -> float:
-    with fp.open('r') as f:
+@dcs.dataclass
+class EncLog:
+    bitrate: float
+    timecost: float
+
+
+def analyze_enclog(log_path: Path) -> EncLog:
+    with log_path.open("r", encoding='utf-8') as f:
         layerid_row_idx = -128
+
         for i, row in enumerate(f.readlines()):
-            if row.startswith('LayerId'):
+            if row.startswith("LayerId"):
                 layerid_row_idx = i
-            if i == layerid_row_idx + 2:
-                num_strs = re.findall(r"\d+\.?\d*", row)
-                bitrate_str = num_strs[1]
-                return float(bitrate_str)
+
+            if layerid_row_idx > 0:
+                if i == layerid_row_idx + 2:
+                    matchobj = re.findall(r"\d+\.?\d*", row)
+                    bitrate_str = matchobj[1]
+                    bitrate = float(bitrate_str)
+                    continue
+
+                if i == layerid_row_idx + 5:
+                    matchobj = re.search(r"Time:\s+(\d+\.?\d*)", row)
+                    timecost_str = matchobj.group(1)
+                    timecost = float(timecost_str)
+                    continue
+
+    log = EncLog(bitrate, timecost)
+    return log
 
 
 def get_wh(task: RenderTask) -> Tuple[int, int]:
@@ -85,9 +105,10 @@ def compute_psnr_yuv(lhs: Path, rhs: Path, frames: int, width: int, height: int)
     assert lhs_size == rhs_size
 
     ysize = width * height
-    uvsize = int(ysize / 4)
+    uvsize = ysize // 4
 
-    psnr = np.zeros(3)
+    channels = 3
+    psnr = np.zeros(channels)
 
     with lhs.open('rb', buffering=ysize) as lhs_file, rhs.open('rb', buffering=ysize) as rhs_file:
         for _ in range(frames):
@@ -120,7 +141,9 @@ def compute_psnr_task(task: RenderTask) -> np.ndarray:
 
     width, height = get_wh(task)
 
-    psnr = np.zeros(3)
+    channels = 3
+    psnr = np.zeros(channels)
+
     count = 0
     for lhs, rhs in zip(basedir.iterdir(), yuvdir.iterdir(), strict=True):
         psnr += compute_psnr_yuv(lhs, rhs, task.frames, width, height)
@@ -162,18 +185,17 @@ for task in iterator.tasks(RenderTask, lambda t: t.chains):
     vtm_list: list = pre_type_dic.setdefault(ctask.vtm_type, [])
 
     log_path = query(ctask) / "out.log"
-    bitrate = get_bitrate_from_fp(log_path)
+    enclog = analyze_enclog(log_path)
 
-    qp = ctask.QP
     psnr = compute_psnr_task(task)
 
     vtm_list.append(
         {
-            'bitrate': bitrate,
-            'qp': qp,
-            'psnry': psnr[0],
-            'psnru': psnr[1],
-            'psnrv': psnr[2],
+            'bitrate': enclog.bitrate,
+            'qp': ctask.QP,
+            'ypsnr': psnr[0],
+            'upsnr': psnr[1],
+            'vpsnr': psnr[2],
         }
     )
 

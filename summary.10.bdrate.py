@@ -86,9 +86,9 @@ def BD_RATE(R1, PSNR1, R2, PSNR2, piecewise=0):
 class PSNR:
     bitrate: float
     qp: int
-    psnry: float
-    psnru: float
-    psnrv: float
+    ypsnr: float
+    upsnr: float
+    vpsnr: float
 
     def __lt__(self, rhs: "PSNR") -> bool:
         return self.bitrate < rhs.bitrate
@@ -122,9 +122,9 @@ with dst_p.open('w', encoding='utf-8', newline='') as csv_f:
 
             bdrate = BD_RATE(
                 [p.bitrate for p in womca_psnrs],
-                [p.psnry for p in womca_psnrs],
+                [p.ypsnr for p in womca_psnrs],
                 [p.bitrate for p in wmca_psnrs],
-                [p.psnry for p in wmca_psnrs],
+                [p.ypsnr for p in wmca_psnrs],
                 piecewise=1,
             )
             row.append(f'{bdrate:.2f}%')

@@ -16,9 +16,9 @@ plt.rcParams['font.sans-serif'] = ['Times New Roman']
 class PSNR:
     bitrate: float
     qp: int
-    psnry: float
-    psnru: float
-    psnrv: float
+    ypsnr: float
+    upsnr: float
+    vpsnr: float
 
     def __lt__(self, rhs: "PSNR") -> bool:
         return self.bitrate < rhs.bitrate
@@ -55,7 +55,7 @@ for seq_name, seq_dic in main_dic.items():
             psnrs.sort()
             ax.plot(
                 [p.bitrate for p in psnrs],
-                [p.psnry for p in psnrs],
+                [p.ypsnr for p in psnrs],
                 color=color,
                 marker='o',
                 label=label,

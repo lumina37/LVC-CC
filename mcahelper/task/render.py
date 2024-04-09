@@ -57,6 +57,7 @@ class RenderTask(BaseTask):
 
         rlccfg.Output_Path = str(img_dstdir / "frame#%03d")
         rlccfg.Isfiltering = 1
+        rlccfg.viewNum = self.views
         # Will render frames with id \in [start, end]
         start_frame = get_src_startidx(first_file_name)
         rlccfg.start_frame = start_frame

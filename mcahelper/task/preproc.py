@@ -4,7 +4,7 @@ import shutil
 
 from pydantic.dataclasses import dataclass
 
-from ..cfg import RaytrixCfg
+from ..cfg import RLCCfg
 from ..cfg.node import get_node_cfg
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
@@ -31,7 +31,7 @@ class PreprocTask(BaseTask):
 
         # Mod and write `rlc.cfg`
         rlccfg_srcpath = cfg_srcdir / "rlc.cfg"
-        rlccfg = RaytrixCfg.from_file(rlccfg_srcpath)
+        rlccfg = RLCCfg.from_file(rlccfg_srcpath)
 
         rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
         rlccfg.crop_ratio = self.crop_ratio

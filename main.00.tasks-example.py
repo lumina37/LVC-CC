@@ -1,14 +1,9 @@
-import tomllib
-
-from mcahelper.cfg import node
+from mcahelper.cfg import common, node
 from mcahelper.executor import Executor
 from mcahelper.task import CodecTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
 
 node_cfg = node.set_node_cfg('node-cfg.toml')
-
-
-with open('QP.toml', 'rb') as f:
-    QPs = tomllib.load(f)
+common_cfg = common.set_common_cfg('common-cfg.toml')
 
 roots = []
 
@@ -21,7 +16,7 @@ for seq_name in node_cfg.cases.seqs:
     roots.append(task1)
 
     for vtm_type in node_cfg.cases.vtm_types:
-        for qp in QPs['woMCA'][seq_name]:
+        for qp in common_cfg.QP.woMCA[seq_name]:
             task2 = CodecTask(vtm_type=vtm_type, frames=node_cfg.frames, QP=qp, parent=task1)
             task3 = Yuv2pngTask(parent=task2)
             task4 = RenderTask(frames=node_cfg.frames, parent=task3)
@@ -32,7 +27,7 @@ for seq_name in node_cfg.cases.seqs:
     task2 = Png2yuvTask(frames=node_cfg.frames, parent=task1)
 
     for vtm_type in node_cfg.cases.vtm_types:
-        for qp in QPs['wMCA'][seq_name]:
+        for qp in common_cfg.QP.wMCA[seq_name]:
             task3 = CodecTask(vtm_type=vtm_type, frames=node_cfg.frames, QP=qp, parent=task2)
             task4 = Yuv2pngTask(parent=task3)
             task5 = PostprocTask(parent=task4)

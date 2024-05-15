@@ -4,9 +4,10 @@ from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
-from ..cfg import RaytrixCfg
+from ..cfg import RLCCfg
+from ..cfg.common import get_common_cfg
 from ..cfg.node import get_node_cfg
-from ..utils import get_first_file, get_src_pattern, get_src_startidx, mkdir, run_cmds
+from ..utils import get_first_file, get_src_startidx, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 
@@ -36,6 +37,7 @@ class RenderTask(BaseTask):
 
     def _run(self) -> None:
         node_cfg = get_node_cfg()
+        common_cfg = get_common_cfg()
 
         # Copy `calibration.xml`
         cfg_srcdir = node_cfg.path.dataset / "cfg" / self.seq_name
@@ -45,12 +47,11 @@ class RenderTask(BaseTask):
 
         # Mod and write `rlc.cfg`
         rlccfg_srcpath = cfg_srcdir / "rlc.cfg"
-        rlccfg = RaytrixCfg.from_file(rlccfg_srcpath)
+        rlccfg = RLCCfg.from_file(rlccfg_srcpath)
 
         rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
 
-        first_file_name = get_first_file(self.srcdir).name
-        fname_pattern = get_src_pattern(first_file_name)
+        fname_pattern = common_cfg.pattern[self.seq_name]
         rlccfg.RawImage_Path = str(self.srcdir / fname_pattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
@@ -59,6 +60,7 @@ class RenderTask(BaseTask):
         rlccfg.Isfiltering = 1
         rlccfg.viewNum = self.views
         # Will render frames with id \in [start, end]
+        first_file_name = get_first_file(self.srcdir).name
         start_frame = get_src_startidx(first_file_name)
         rlccfg.start_frame = start_frame
         rlccfg.end_frame = start_frame + self.frames - 1

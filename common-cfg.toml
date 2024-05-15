@@ -1,4 +1,4 @@
-[woMCA]
+[QP.woMCA]
 "Boxer-IrishMan-Gladiator" = [37, 41, 45, 49]
 "chess" = [37, 41, 45, 49]
 "ChessPieces" = [33, 40, 45, 49]
@@ -7,7 +7,7 @@
 "NagoyaOrigami" = [36, 40, 45, 49]
 "Tunnel_Train" = [35, 40, 45, 49]
 
-[wMCA]
+[QP.wMCA]
 "Boxer-IrishMan-Gladiator" = [33, 37, 41, 45]
 "chess" = [34, 37, 41, 45]
 "ChessPieces" = [30, 36, 40, 45]
@@ -15,3 +15,15 @@
 "NagoyaFujita" = [32, 36, 42, 46]
 "NagoyaOrigami" = [32, 37, 41, 45]
 "Tunnel_Train" = [30, 35, 40, 45]
+
+[pattern]
+"Boxer-IrishMan-Gladiator" = "frame_%03d.png"
+"chess" = "frame_%03d.png"
+"ChessPieces" = "frame_%03d.png"
+"NagoyaDataLeading" = "NagoyaDataLeading_f%04d.png"
+"NagoyaFujita" = "NagoyaFujita_f%04d.png"
+"Tunnel_Train" = "Tunnel_Train_2c_f%04d.png"
+"Boys" = "Image%03d.bmp"
+"Cars" = "Image%d.bmp"
+"Experimenting" = "Image%03d.bmp"
+"Matryoshka" = "Image%d.bmp"

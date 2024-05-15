@@ -38,18 +38,12 @@ def run_cmds(cmds: list, stdout_fpath: Path | None = None, cwd: Path | None = No
         log.info(f"Completed! cmds={cmds}")
 
 
-def get_first_file(d: Path, glob_pattern: str = '*.png') -> Path:
+def get_first_file(d: Path, glob_pattern: str = '*') -> Path:
     return next(d.glob(glob_pattern))
 
 
-def get_src_pattern(sample: str) -> str:
-    number = re.search(r'(\d+)\.png', sample).group(1)  # match '001' in 'frame_001.png'
-    pattern = re.sub(r'(\d+)(?=\.png)', f'%0{len(number)}d', sample)  # turn into 'frame_%03d.png'
-    return pattern
-
-
 def get_src_startidx(sample: str) -> int:
-    number = re.search(r'(\d+)\.png', sample).group(1)  # match '001' in 'frame_001.png'
+    number = re.search(r'(\d+)\.[a-zA-Z]+', sample).group(1)  # match '001' in 'frame_001.png'
     number = int(number)
     return number
 

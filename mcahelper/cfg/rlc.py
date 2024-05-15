@@ -7,7 +7,8 @@ from pydantic.dataclasses import dataclass
 
 
 @dataclass
-class RaytrixCfg:
+class RLCCfg:
+    isTSPC: int = 0
     viewNum: int = 5
     rmode: int = 1
     pmode: int = 0
@@ -35,20 +36,20 @@ class RaytrixCfg:
         f.flush()
 
     @staticmethod
-    def load(f: TextIOBase) -> "RaytrixCfg":
+    def load(f: TextIOBase) -> "RLCCfg":
         def _items():
             for row in f.readlines():
                 key, value = row.replace('\t', ' ').split(' ', maxsplit=1)
                 value = value.lstrip().rstrip('\n')
                 yield key, value
 
-        return RaytrixCfg(**dict(_items()))
+        return RLCCfg(**dict(_items()))
 
     def to_file(self, path: Path) -> None:
         with path.open('w') as f:
             self.dump(f)
 
     @staticmethod
-    def from_file(path: Path) -> "RaytrixCfg":
+    def from_file(path: Path) -> "RLCCfg":
         with path.open('r') as f:
-            return RaytrixCfg.load(f)
+            return RLCCfg.load(f)

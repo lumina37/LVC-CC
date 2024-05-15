@@ -1,3 +1,3 @@
-from . import cluster, node
-from .raytrix import RaytrixCfg
+from . import common, node
+from .rlc import RLCCfg
 from .vtm import VTMCfg

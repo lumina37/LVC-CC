@@ -3,8 +3,9 @@ from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
+from ..cfg.common import get_common_cfg
 from ..cfg.node import get_node_cfg
-from ..utils import get_first_file, get_src_pattern, mkdir, run_cmds
+from ..utils import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 
@@ -33,8 +34,9 @@ class Png2yuvTask(BaseTask):
 
     def _run(self) -> None:
         node_cfg = get_node_cfg()
+        common_cfg = get_common_cfg()
 
-        fname_pattern = get_src_pattern(get_first_file(self.srcdir).name)
+        fname_pattern = common_cfg.pattern[self.seq_name]
 
         mkdir(self.dstdir)
 

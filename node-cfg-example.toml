@@ -1,23 +1,20 @@
-frames = 1
+frames = 30
 
 [cases]
 vtm_types = ["AI", "RA"]
 seqs = [
-    "Boxer-IrishMan-Gladiator",
-    "chess",
-    "ChessPieces",
-    "NagoyaDataLeading",
-    "NagoyaFujita",
-    "NagoyaOrigami",
-    "Tunnel_Train",
+    "Boys",
+    "Cars",
+    "Experimenting",
+    "Matryoshka",
 ]
 
 [path]
-dataset = "D:/MPEG/MPEG144/dataset"
+dataset = "D:/Dataset/MPEG"
 
 [app]
-ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
+ffmpeg = "E:/Program Files/ffmpeg/bin/ffmpeg.exe"
 encoder = "D:/MPEG/MPEG144/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
 preproc = "D:/MPEG/MPEG143/code/libMCA/cmake-build-release-visual-studio/apps/main_preproc.exe"
 postproc = "D:/MPEG/MPEG143/code/libMCA/cmake-build-release-visual-studio/apps/main_postproc.exe"
-rlc = "D:/MPEG/MPEG143/code/rlc-master/cmake-build-release-visual-studio/apps/RLC.exe"
+rlc = "E:/Code/MPEG/MPEG146/rlc/Program/cmake-build-release/RLC30.exe"

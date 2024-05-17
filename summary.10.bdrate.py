@@ -5,7 +5,7 @@ import json
 import numpy as np
 import scipy.interpolate
 
-from mcahelper.cfg import node
+from mcahelper.config import node
 from mcahelper.logging import get_logger
 
 

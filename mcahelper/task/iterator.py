@@ -1,13 +1,13 @@
 import json
 from collections.abc import Callable, Generator
-from typing import Any, Optional
+from typing import Any
 
-from ..cfg.node import get_node_cfg
+from ..config.node import get_node_cfg
 from .base import BaseTask
 from .factory import TaskFactory
 
 
-def tasks(cls: Any = None, require: Optional[Callable[[BaseTask], bool]] = lambda _: True) -> Generator[BaseTask]:
+def tasks(cls: Any = None, require: Callable[[BaseTask], bool] | None = lambda _: True) -> Generator[BaseTask]:
     node_cfg = get_node_cfg()
 
     playground_path = node_cfg.path.dataset / "playground"

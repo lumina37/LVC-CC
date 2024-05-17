@@ -4,9 +4,9 @@ from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
-from ..cfg import RLCCfg
-from ..cfg.common import get_common_cfg
-from ..cfg.node import get_node_cfg
+from ..config import RLCCfg
+from ..config.common import get_common_cfg
+from ..config.node import get_node_cfg
 from ..utils import get_first_file, get_src_startidx, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query

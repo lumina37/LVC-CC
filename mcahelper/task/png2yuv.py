@@ -3,8 +3,8 @@ from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
-from ..cfg.common import get_common_cfg
-from ..cfg.node import get_node_cfg
+from ..config.common import get_common_cfg
+from ..config.node import get_node_cfg
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query

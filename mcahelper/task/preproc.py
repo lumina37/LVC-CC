@@ -4,8 +4,8 @@ import shutil
 
 from pydantic.dataclasses import dataclass
 
-from ..cfg import RLCCfg
-from ..cfg.node import get_node_cfg
+from ..config import RLCCfg
+from ..config.node import get_node_cfg
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 

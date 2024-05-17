@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from ..cfg.node import get_node_cfg
-from .factory import TaskFactory
+from ..config.node import get_node_cfg
 from ..utils import mkdir
+from .factory import TaskFactory
 
 TypeInfomap = dict[str, Path]
 

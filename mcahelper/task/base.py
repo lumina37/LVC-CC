@@ -8,7 +8,7 @@ from typing import Optional
 
 from pydantic.dataclasses import dataclass
 
-from ..cfg.node import get_node_cfg
+from ..config.node import get_node_cfg
 from ..helper import DataclsCfg
 from ..utils import to_json
 from .chains import Chains

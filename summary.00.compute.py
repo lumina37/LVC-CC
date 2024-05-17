@@ -2,12 +2,11 @@ import dataclasses as dcs
 import json
 import re
 from pathlib import Path
-from typing import Tuple
 
 import cv2 as cv
 import numpy as np
 
-from mcahelper.cfg import node
+from mcahelper.config import node
 from mcahelper.logging import get_logger
 from mcahelper.task import CodecTask, PreprocTask, RenderTask, iterator
 from mcahelper.task.infomap import query
@@ -84,7 +83,7 @@ def analyze_enclog(log_path: Path) -> EncLog:
     return log
 
 
-def get_wh(task: RenderTask) -> Tuple[int, int]:
+def get_wh(task: RenderTask) -> tuple[int, int]:
     render_dir = query(task) / 'img'
     frame_dir = next(render_dir.glob('frame#*'))
     img_ref_p = get_first_file(frame_dir)

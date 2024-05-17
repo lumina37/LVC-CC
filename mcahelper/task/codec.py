@@ -3,8 +3,8 @@ import functools
 import cv2 as cv
 from pydantic.dataclasses import dataclass
 
-from ..cfg.node import get_node_cfg
-from ..cfg.vtm import VTMCfg
+from ..config.node import get_node_cfg
+from ..config.vtm import VTMCfg
 from ..utils import get_first_file, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query

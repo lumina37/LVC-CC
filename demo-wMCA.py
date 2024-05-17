@@ -1,4 +1,4 @@
-from mcahelper.cfg import node
+from mcahelper.config import node
 from mcahelper.executor import Executor
 from mcahelper.task import CodecTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
 

@@ -1,11 +1,10 @@
 import dataclasses as dcs
 import json
-from typing import Dict
 
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
-from mcahelper.cfg import node
+from mcahelper.config import node
 from mcahelper.logging import get_logger
 from mcahelper.utils import mkdir
 
@@ -33,7 +32,7 @@ dst_dir = src_dir / 'figs'
 mkdir(dst_dir)
 
 with (src_dir / 'psnr.json').open('r') as f:
-    main_dic: Dict[str, dict] = json.load(f)
+    main_dic: dict[str, dict] = json.load(f)
 
 
 mode_map = {'AI': 'All Intra', 'RA': 'Random Access'}

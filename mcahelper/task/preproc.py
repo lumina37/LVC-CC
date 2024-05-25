@@ -4,7 +4,8 @@ import shutil
 
 from pydantic.dataclasses import dataclass
 
-from ..config import RLCCfg
+from ..config import MCACfg
+from ..config.common import get_common_cfg
 from ..config.node import get_node_cfg
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
@@ -21,6 +22,7 @@ class PreprocTask(BaseTask):
         return f"{self.task}-{self.seq_name}-{self.crop_ratio:.3f}-{self.shorthash}"
 
     def _run(self) -> None:
+        common_cfg = get_common_cfg()
         node_cfg = get_node_cfg()
 
         # Copy `calibration.xml`
@@ -29,26 +31,26 @@ class PreprocTask(BaseTask):
         mkdir(cfg_dstdir)
         shutil.copy(cfg_srcdir / "calibration.xml", cfg_dstdir)
 
-        # Mod and write `rlc.cfg`
-        rlccfg_srcpath = cfg_srcdir / "rlc.cfg"
-        rlccfg = RLCCfg.from_file(rlccfg_srcpath)
-
-        rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
-        rlccfg.crop_ratio = self.crop_ratio
-
-        rlccfg_dstpath = cfg_dstdir / "rlc.cfg"
-        rlccfg.to_file(rlccfg_dstpath)
-
-        # Prepare and run command
-        img_srcdir = node_cfg.path.dataset / "img" / self.seq_name
+        # Make dst dir
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
+        # Mod and write `mca.cfg`
+        mcacfg_srcpath = cfg_srcdir / "mca.cfg"
+        mcacfg = MCACfg.from_file(mcacfg_srcpath)
+
+        mcacfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
+        mcacfg.RawImage_Path = node_cfg.path.dataset / "img" / self.seq_name / common_cfg.pattern[self.seq_name]
+        mcacfg.Output_Path = img_dstdir / "frame#%03d"
+        mcacfg.crop_ratio = self.crop_ratio
+
+        mcacfg_dstpath = cfg_dstdir / "mca.cfg"
+        mcacfg.to_file(mcacfg_dstpath)
+
+        # Run command
         cmds = [
             node_cfg.app.preproc,
-            rlccfg_dstpath,
-            img_srcdir,
-            img_dstdir,
+            mcacfg_dstpath,
         ]
 
         run_cmds(cmds)

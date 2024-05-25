@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
-from ..config import RLCCfg
+from ..config import MCACfg
 from ..config.node import get_node_cfg
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
@@ -38,25 +38,26 @@ class PostprocTask(BaseTask):
         mkdir(cfg_dstdir)
         shutil.copy(cfg_srcdir / "calibration.xml", cfg_dstdir)
 
-        # Mod and write `rlc.cfg`
-        rlccfg_srcpath = cfg_srcdir / "rlc.cfg"
-        rlccfg = RLCCfg.from_file(rlccfg_srcpath)
-
-        rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
-        rlccfg.crop_ratio = self.crop_ratio
-
-        rlccfg_dstpath = cfg_dstdir / "rlc.cfg"
-        rlccfg.to_file(rlccfg_dstpath)
-
-        # Prepare and run command
+        # Make dst dir
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
+        # Mod and write `mca.cfg`
+        mcacfg_srcpath = cfg_srcdir / "mca.cfg"
+        mcacfg = MCACfg.from_file(mcacfg_srcpath)
+
+        mcacfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
+        mcacfg.RawImage_Path = self.srcdir / "frame#%03d"
+        mcacfg.Output_Path = img_dstdir / "frame#%03d"
+        mcacfg.crop_ratio = self.crop_ratio
+
+        mcacfg_dstpath = cfg_dstdir / "mca.cfg"
+        mcacfg.to_file(mcacfg_dstpath)
+
+        # Run command
         cmds = [
             node_cfg.app.postproc,
-            rlccfg_dstpath,
-            self.srcdir,
-            img_dstdir,
+            mcacfg_dstpath,
         ]
 
         run_cmds(cmds)

@@ -7,7 +7,7 @@ from pydantic.dataclasses import dataclass
 
 @dataclass
 class RLCCfg:
-    isTSPC: int = 0
+    camType: int = 0
     viewNum: int = 5
     rmode: int = 1
     pmode: int = 0

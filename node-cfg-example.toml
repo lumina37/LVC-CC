@@ -13,8 +13,8 @@ seqs = [
 dataset = "D:/Dataset/MPEG"
 
 [app]
-ffmpeg = "E:/Program Files/ffmpeg/bin/ffmpeg.exe"
+ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
 encoder = "D:/MPEG/MPEG144/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
-preproc = "D:/MPEG/MPEG143/code/libMCA/cmake-build-release-visual-studio/apps/main_preproc.exe"
-postproc = "D:/MPEG/MPEG143/code/libMCA/cmake-build-release-visual-studio/apps/main_postproc.exe"
-rlc = "E:/Code/MPEG/MPEG146/rlc/Program/cmake-build-release/RLC30.exe"
+preproc = "D:/MPEG/MPEG143/code/MCA/cmake-build-release/src/bin/mca-preproc.exe"
+postproc = "D:/MPEG/MPEG143/code/MCA/cmake-build-release/src/bin/mca-postproc.exe"
+rlc = "D:/MPEG/MPEG146/code/rlc/Program/cmake-build-release/RLC30.exe"

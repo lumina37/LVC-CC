@@ -8,7 +8,7 @@ from pydantic.dataclasses import dataclass
 
 @dataclass
 class MCACfg:
-    isTSPC: int = 0
+    camType: int = 0
     Calibration_xml: str = ""
     RawImage_Path: str = ""
     Output_Path: str = ""

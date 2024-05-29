@@ -15,6 +15,7 @@ class _QP:
 class CommonCfg:
     QP: _QP
     pattern: dict[str, str]
+    start_idx: dict[str, int]
 
 
 _COMMON_CFG = None

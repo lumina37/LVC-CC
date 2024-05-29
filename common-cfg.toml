@@ -4,8 +4,9 @@
 "ChessPieces" = [33, 40, 45, 49]
 "NagoyaDataLeading" = [38, 43, 49, 51]
 "NagoyaFujita" = [36, 40, 45, 49]
-"NagoyaOrigami" = [36, 40, 45, 49]
+"NagoyaOrigami" = [34, 39, 44, 49]
 "Tunnel_Train" = [35, 40, 45, 49]
+"Boys" = [37, 41, 45, 49]
 
 [QP.wMCA]
 "Boxer-IrishMan-Gladiator" = [33, 37, 41, 45]
@@ -13,8 +14,9 @@
 "ChessPieces" = [30, 36, 40, 45]
 "NagoyaDataLeading" = [33, 38, 44, 47]
 "NagoyaFujita" = [32, 36, 42, 46]
-"NagoyaOrigami" = [32, 37, 41, 45]
+"NagoyaOrigami" = [31, 36, 40, 45]
 "Tunnel_Train" = [30, 35, 40, 45]
+"Boys" = [34, 37, 41, 45]
 
 [pattern]
 "Boxer-IrishMan-Gladiator" = "frame_%03d.png"
@@ -27,3 +29,15 @@
 "Cars" = "Image%d.bmp"
 "Experimenting" = "Image%03d.bmp"
 "Matryoshka" = "Image%d.bmp"
+
+[start_idx]
+"Boxer-IrishMan-Gladiator" = 0
+"chess" = 0
+"ChessPieces" = 0
+"NagoyaDataLeading" = 1
+"NagoyaFujita" = 1
+"Tunnel_Train" = 0
+"Boys" = 0
+"Cars" = 21
+"Experimenting" = 0
+"Matryoshka" = 0

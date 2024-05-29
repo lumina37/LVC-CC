@@ -6,6 +6,7 @@ from pathlib import Path
 from pydantic.dataclasses import dataclass
 
 from ..config import MCACfg
+from ..config.common import get_common_cfg
 from ..config.node import get_node_cfg
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
@@ -16,6 +17,7 @@ from .infomap import query
 class PostprocTask(BaseTask):
     task: str = "postproc"
 
+    frames: int = 30
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property
@@ -31,6 +33,7 @@ class PostprocTask(BaseTask):
 
     def _run(self) -> None:
         node_cfg = get_node_cfg()
+        common_cfg = get_common_cfg()
 
         # Copy `calibration.xml`
         cfg_srcdir = node_cfg.path.dataset / "cfg" / self.seq_name
@@ -47,8 +50,10 @@ class PostprocTask(BaseTask):
         mcacfg = MCACfg.from_file(mcacfg_srcpath)
 
         mcacfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
-        mcacfg.RawImage_Path = self.srcdir / "frame#%03d"
+        mcacfg.RawImage_Path = self.srcdir / "frame#%03d.png"
         mcacfg.Output_Path = img_dstdir
+        mcacfg.start_frame = common_cfg.start_idx[self.seq_name]
+        mcacfg.end_frame = mcacfg.start_frame + self.frames - 1
         mcacfg.crop_ratio = self.crop_ratio
 
         mcacfg_dstpath = cfg_dstdir / "mca.cfg"

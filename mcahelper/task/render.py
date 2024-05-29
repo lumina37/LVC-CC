@@ -7,7 +7,7 @@ from pydantic.dataclasses import dataclass
 from ..config import RLCCfg
 from ..config.common import get_common_cfg
 from ..config.node import get_node_cfg
-from ..utils import get_first_file, get_src_startidx, mkdir, run_cmds
+from ..utils import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 
@@ -51,19 +51,20 @@ class RenderTask(BaseTask):
 
         rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
 
-        fname_pattern = common_cfg.pattern[self.seq_name]
-        rlccfg.RawImage_Path = str(self.srcdir / fname_pattern)
+        if self.parent:
+            rlccfg.RawImage_Path = str(self.srcdir / "frame#%03d.png")
+        else:
+            fname_pattern = common_cfg.pattern[self.seq_name]
+            rlccfg.RawImage_Path = str(self.srcdir / fname_pattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
         rlccfg.Output_Path = str(img_dstdir / "frame#%03d")
         rlccfg.Isfiltering = 1
         rlccfg.viewNum = self.views
-        # Will render frames with id \in [start, end]
-        first_file_name = get_first_file(self.srcdir).name
-        start_frame = get_src_startidx(first_file_name)
-        rlccfg.start_frame = start_frame
-        rlccfg.end_frame = start_frame + self.frames - 1
+        # Render frames with id \in [start, end]
+        rlccfg.start_frame = common_cfg.start_idx[self.seq_name]
+        rlccfg.end_frame = rlccfg.start_frame + self.frames - 1
 
         rlccfg_dstpath = cfg_dstdir / "rlc.cfg"
         rlccfg.to_file(rlccfg_dstpath)

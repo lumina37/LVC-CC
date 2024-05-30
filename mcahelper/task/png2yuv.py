@@ -18,35 +18,23 @@ class Png2yuvTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
-        if self.parent:
-            return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
-        else:
-            return f"{self.task}-{self.seq_name}-{self.shorthash}"
+        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
 
     @functools.cached_property
     def srcdir(self) -> Path:
-        if self.parent:
-            srcdir = query(self.parent) / "img"
-        else:
-            node_cfg = get_node_cfg()
-            srcdir = node_cfg.path.dataset / "img" / self.seq_name
+        srcdir = query(self.parent) / "img"
         return srcdir
 
     def _run(self) -> None:
         node_cfg = get_node_cfg()
         common_cfg = get_common_cfg()
 
-        if self.parent:
-            fname_pattern = "frame#%03d.png"
-        else:
-            fname_pattern = common_cfg.pattern[self.seq_name]
-
         mkdir(self.dstdir)
 
         cmds = [
             node_cfg.app.ffmpeg,
             "-i",
-            self.srcdir / fname_pattern,
+            self.srcdir / common_cfg.default_pattern.c,
             "-vf",
             "format=yuv420p",
             "-vframes",

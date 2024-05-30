@@ -21,28 +21,12 @@ class RenderTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
-        if self.parent:
-            return f"{self.task}-{self.seq_name}-{self.views}-{self.parent.shorthash}-{self.shorthash}"
-        else:
-            return f"{self.task}-{self.seq_name}-{self.views}-{self.shorthash}"
+        return f"{self.task}-{self.seq_name}-{self.views}-{self.parent.shorthash}-{self.shorthash}"
 
     @functools.cached_property
     def srcdir(self) -> Path:
-        if self.parent:
-            srcdir = query(self.parent) / "img"
-        else:
-            node_cfg = get_node_cfg()
-            srcdir = node_cfg.path.dataset / "img" / self.seq_name
+        srcdir = query(self.parent) / "img"
         return srcdir
-
-    @functools.cached_property
-    def srcpattern(self) -> Path:
-        if self.parent:
-            srcpattern = self.srcdir / "frame#%03d.png"
-        else:
-            common_cfg = get_common_cfg()
-            srcpattern = self.srcdir / common_cfg.pattern[self.seq_name]
-        return srcpattern
 
     def _run(self) -> None:
         node_cfg = get_node_cfg()
@@ -59,16 +43,15 @@ class RenderTask(BaseTask):
         rlccfg = RLCCfg.from_file(rlccfg_srcpath)
 
         rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
-        rlccfg.RawImage_Path = str(self.srcpattern)
+        rlccfg.RawImage_Path = str(self.srcdir / common_cfg.default_pattern.c)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
-        rlccfg.Output_Path = str(img_dstdir / "frame#%03d")
+        rlccfg.Output_Path = str(img_dstdir / common_cfg.default_pattern.c.rstrip('.png'))
         rlccfg.Isfiltering = 1
         rlccfg.viewNum = self.views
         # Render frames with id \in [start, end]
-        rlccfg.start_frame = common_cfg.start_idx[self.seq_name]
-        rlccfg.end_frame = rlccfg.start_frame + self.frames - 1
+        rlccfg.end_frame = self.frames - 1
 
         rlccfg_dstpath = cfg_dstdir / "rlc.cfg"
         rlccfg.to_file(rlccfg_dstpath)

@@ -1,6 +1,6 @@
 [project]
 name = "MCA-Benchmark"
-version = "0.2.2"
+version = "0.3.0"
 description = ""
 authors = [{ name = "Starry-OvO", email = "starry.qvq@gmail.com" }]
 dependencies = ["pydantic", "scipy", "opencv-contrib-python", "matplotlib"]

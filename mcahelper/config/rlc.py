@@ -24,7 +24,7 @@ class RLCCfg:
     Sigma: int = 0
     input_model: int = 0
     output_model: int = 0
-    start_frame: int = 1
+    start_frame: int = 0
     end_frame: int = 1
     height: int = 2048
     width: int = 2048

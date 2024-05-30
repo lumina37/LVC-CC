@@ -3,6 +3,7 @@ import functools
 import cv2 as cv
 from pydantic.dataclasses import dataclass
 
+from ..config.common import get_common_cfg
 from ..config.node import get_node_cfg
 from ..utils import get_first_file, mkdir, run_cmds
 from .base import BaseTask
@@ -20,6 +21,7 @@ class Yuv2pngTask(BaseTask):
 
     def _run(self) -> None:
         node_cfg = get_node_cfg()
+        common_cfg = get_common_cfg()
 
         refimg_path = get_first_file(self.parent.parent.srcdir)
         refimg = cv.imread(str(refimg_path))
@@ -39,7 +41,7 @@ class Yuv2pngTask(BaseTask):
             srcpath,
             "-vf",
             "format=yuv444p",
-            dstdir / "frame#%03d.png",
+            dstdir / common_cfg.default_pattern.c,
             "-v",
             "warning",
         ]

@@ -12,7 +12,7 @@ class MCACfg:
     Calibration_xml: str = ""
     RawImage_Path: str = ""
     Output_Path: str = ""
-    start_frame: int = 1
+    start_frame: int = 0
     end_frame: int = 1
     height: int = 2048
     width: int = 2048

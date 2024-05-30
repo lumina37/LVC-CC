@@ -56,7 +56,7 @@ class CopyTask(BaseTask):
                 dst_fname = common_cfg.default_pattern.py.format(cnt)
                 cv.imwrite(str(img_dstdir / dst_fname), img)
 
-        for cnt, idx in enumerate(range(self.start_idx, self.start_idx + self.frames)):
+        for cnt, idx in enumerate(range(self.start_idx, self.start_idx + self.frames), 1):
             src_fname = fname_pattern.format(idx)
             handler(src_fname, cnt)
 

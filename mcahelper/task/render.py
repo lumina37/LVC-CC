@@ -51,8 +51,8 @@ class RenderTask(BaseTask):
         rlccfg.Isfiltering = 1
         rlccfg.viewNum = self.views
         # Render frames with id \in [start, end]
-        rlccfg.start_frame = 0
-        rlccfg.end_frame = self.frames - 1
+        rlccfg.start_frame = 1
+        rlccfg.end_frame = self.frames
 
         rlccfg_dstpath = cfg_dstdir / "rlc.cfg"
         rlccfg.to_file(rlccfg_dstpath)

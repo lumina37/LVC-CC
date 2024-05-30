@@ -51,9 +51,9 @@ class PostprocTask(BaseTask):
 
         mcacfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
         mcacfg.RawImage_Path = self.srcdir / common_cfg.default_pattern.c
-        mcacfg.Output_Path = img_dstdir
-        mcacfg.start_frame = 0
-        mcacfg.end_frame = self.frames - 1
+        mcacfg.Output_Path = img_dstdir / common_cfg.default_pattern.c
+        mcacfg.start_frame = 1
+        mcacfg.end_frame = self.frames
         mcacfg.crop_ratio = self.crop_ratio
 
         mcacfg_dstpath = cfg_dstdir / "mca.cfg"

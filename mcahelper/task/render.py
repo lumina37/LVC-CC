@@ -43,11 +43,11 @@ class RenderTask(BaseTask):
         rlccfg = RLCCfg.from_file(rlccfg_srcpath)
 
         rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
-        rlccfg.RawImage_Path = str(self.srcdir / common_cfg.default_pattern.c)
+        rlccfg.RawImage_Path = str(self.srcdir / common_cfg.default_pattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
-        rlccfg.Output_Path = str(img_dstdir / common_cfg.default_pattern.c.rstrip('.png'))
+        rlccfg.Output_Path = str(img_dstdir / common_cfg.default_pattern.rstrip('.png'))
         rlccfg.Isfiltering = 1
         rlccfg.viewNum = self.views
         # Render frames with id \in [start, end]

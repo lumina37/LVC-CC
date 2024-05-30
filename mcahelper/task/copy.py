@@ -3,13 +3,12 @@ import shutil
 from pathlib import Path
 from typing import ClassVar
 
-import cv2 as cv
 from pydantic.dataclasses import dataclass
 
 from ..config.common import get_common_cfg
 from ..config.node import get_node_cfg
 from ..logging import get_logger
-from ..utils import mkdir
+from ..utils import mkdir, run_cmds
 from .base import BaseTask
 
 
@@ -44,21 +43,33 @@ class CopyTask(BaseTask):
         mkdir(img_dstdir)
 
         if fname_pattern.endswith('.png'):
-
-            def handler(src_fname: str, cnt: int):
-                dst_fname = common_cfg.default_pattern.py.format(cnt)
+            for cnt, idx in enumerate(range(self.start_idx, self.start_idx + self.frames), 1):
+                src_fname = fname_pattern % idx
+                dst_fname = common_cfg.default_pattern % cnt
                 shutil.copy(self.srcdir / src_fname, img_dstdir / dst_fname)
 
         else:
+            node_cfg = get_node_cfg()
+            cmds = [
+                node_cfg.app.ffmpeg,
+                "-i",
+                self.srcdir / fname_pattern,
+                "-start_number",
+                self.start_idx,
+                "-frames:v",
+                self.frames,
+                img_dstdir / common_cfg.default_pattern,
+                "-v",
+                "warning",
+                "-y",
+            ]
 
-            def handler(src_fname: str, cnt: int):
-                img = cv.imread(str(self.srcdir / src_fname))
-                dst_fname = common_cfg.default_pattern.py.format(cnt)
-                cv.imwrite(str(img_dstdir / dst_fname), img)
+            run_cmds(cmds)
 
-        for cnt, idx in enumerate(range(self.start_idx, self.start_idx + self.frames), 1):
-            src_fname = fname_pattern.format(idx)
-            handler(src_fname, cnt)
+            for i in range(self.frames, 0, -1):
+                src_fname = common_cfg.default_pattern % (self.start_idx + i - 1)
+                dst_fname = common_cfg.default_pattern % i
+                (img_dstdir / src_fname).rename(img_dstdir / dst_fname)
 
         log = get_logger()
         log.info("Completed!")

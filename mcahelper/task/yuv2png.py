@@ -41,7 +41,7 @@ class Yuv2pngTask(BaseTask):
             srcpath,
             "-vf",
             "format=yuv444p",
-            dstdir / common_cfg.default_pattern.c,
+            dstdir / common_cfg.default_pattern,
             "-v",
             "warning",
         ]

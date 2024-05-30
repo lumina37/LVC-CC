@@ -48,8 +48,8 @@ class PreprocTask(BaseTask):
         mcacfg = MCACfg.from_file(mcacfg_srcpath)
 
         mcacfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
-        mcacfg.RawImage_Path = self.srcdir / common_cfg.default_pattern.c
-        mcacfg.Output_Path = img_dstdir / common_cfg.default_pattern.c
+        mcacfg.RawImage_Path = self.srcdir / common_cfg.default_pattern
+        mcacfg.Output_Path = img_dstdir / common_cfg.default_pattern
         mcacfg.start_frame = 1
         mcacfg.end_frame = self.frames
         mcacfg.crop_ratio = self.crop_ratio

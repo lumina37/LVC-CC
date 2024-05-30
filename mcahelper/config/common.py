@@ -12,15 +12,9 @@ class _QP:
 
 
 @dataclass
-class _DefaultPattern:
-    py: str
-    c: str
-
-
-@dataclass
 class CommonCfg:
     QP: _QP
-    default_pattern: _DefaultPattern
+    default_pattern: str
     pattern: dict[str, str]
     start_idx: dict[str, int]
 

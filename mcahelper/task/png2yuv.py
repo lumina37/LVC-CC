@@ -34,7 +34,7 @@ class Png2yuvTask(BaseTask):
         cmds = [
             node_cfg.app.ffmpeg,
             "-i",
-            self.srcdir / common_cfg.default_pattern.c,
+            self.srcdir / common_cfg.default_pattern,
             "-vf",
             "format=yuv420p",
             "-vframes",

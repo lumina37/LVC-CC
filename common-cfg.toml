@@ -1,3 +1,5 @@
+default_pattern = "frame#%03d.png"
+
 [QP.woMCA]
 "Boxer-IrishMan-Gladiator" = [37, 41, 45, 49]
 "chess" = [37, 41, 45, 49]
@@ -18,21 +20,17 @@
 "Tunnel_Train" = [30, 35, 40, 45]
 "Boys" = [34, 37, 41, 45]
 
-[default_pattern]
-"py" = "frame#{:03d}.png"
-"c" = "frame#%03d.png"
-
 [pattern]
-"Boxer-IrishMan-Gladiator" = "frame_{:03d}.png"
-"chess" = "frame_{:03d}.png"
-"ChessPieces" = "frame_{:03d}.png"
-"NagoyaDataLeading" = "NagoyaDataLeading_f{:04d}.png"
-"NagoyaFujita" = "NagoyaFujita_f{:04d}.png"
-"Tunnel_Train" = "Tunnel_Train_2c_f{:04d}.png"
-"Boys" = "Image{:03d}.bmp"
-"Cars" = "Image{}.bmp"
-"Experimenting" = "Image{:03d}.bmp"
-"Matryoshka" = "Image{}.bmp"
+"Boxer-IrishMan-Gladiator" = "frame_%03d.png"
+"chess" = "frame_%03d.png"
+"ChessPieces" = "frame_%03d.png"
+"NagoyaDataLeading" = "NagoyaDataLeading_f%04d.png"
+"NagoyaFujita" = "NagoyaFujita_f%04d.png"
+"Tunnel_Train" = "Tunnel_Train_2c_f%04d.png"
+"Boys" = "Image%03d.bmp"
+"Cars" = "Image%d.bmp"
+"Experimenting" = "Image%03d.bmp"
+"Matryoshka" = "Image%d.bmp"
 
 [start_idx]
 "Boxer-IrishMan-Gladiator" = 0

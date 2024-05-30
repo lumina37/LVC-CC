@@ -35,6 +35,15 @@ class RenderTask(BaseTask):
             srcdir = node_cfg.path.dataset / "img" / self.seq_name
         return srcdir
 
+    @functools.cached_property
+    def srcpattern(self) -> Path:
+        if self.parent:
+            srcpattern = self.srcdir / "frame#%03d.png"
+        else:
+            common_cfg = get_common_cfg()
+            srcpattern = self.srcdir / common_cfg.pattern[self.seq_name]
+        return srcpattern
+
     def _run(self) -> None:
         node_cfg = get_node_cfg()
         common_cfg = get_common_cfg()
@@ -50,12 +59,7 @@ class RenderTask(BaseTask):
         rlccfg = RLCCfg.from_file(rlccfg_srcpath)
 
         rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
-
-        if self.parent:
-            rlccfg.RawImage_Path = str(self.srcdir / "frame#%03d.png")
-        else:
-            fname_pattern = common_cfg.pattern[self.seq_name]
-            rlccfg.RawImage_Path = str(self.srcdir / fname_pattern)
+        rlccfg.RawImage_Path = str(self.srcpattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 

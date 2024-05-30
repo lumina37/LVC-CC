@@ -36,7 +36,10 @@ class Png2yuvTask(BaseTask):
         node_cfg = get_node_cfg()
         common_cfg = get_common_cfg()
 
-        fname_pattern = common_cfg.pattern[self.seq_name]
+        if self.parent:
+            fname_pattern = "frame#%03d.png"
+        else:
+            fname_pattern = common_cfg.pattern[self.seq_name]
 
         mkdir(self.dstdir)
 

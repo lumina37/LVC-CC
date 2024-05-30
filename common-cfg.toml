@@ -16,7 +16,9 @@
 "NagoyaFujita" = [32, 36, 42, 46]
 "NagoyaOrigami" = [31, 36, 40, 45]
 "Tunnel_Train" = [30, 35, 40, 45]
-"Boys" = [34, 37, 41, 45]
+"Boys" = [34, 37, 
+# 41, 45,
+]
 
 [pattern]
 "Boxer-IrishMan-Gladiator" = "frame_%03d.png"

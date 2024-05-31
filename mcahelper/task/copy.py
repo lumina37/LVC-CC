@@ -66,7 +66,14 @@ class CopyTask(BaseTask):
 
             run_cmds(cmds)
 
-            for i in range(self.frames, 0, -1):
+            if self.start_idx > 1:
+                rg = range(1, self.frames + 1)
+            elif self.start_idx == 0:
+                rg = range(self.frames, 0, -1)
+            else:
+                rg = []
+
+            for i in rg:
                 src_fname = common_cfg.default_pattern % (self.start_idx + i - 1)
                 dst_fname = common_cfg.default_pattern % i
                 (img_dstdir / src_fname).rename(img_dstdir / dst_fname)

@@ -39,6 +39,8 @@ class BaseTask:
             # Infer `seq_name` from `parent`
             if not self.seq_name:
                 self.seq_name = parent.seq_name
+        elif self.chains:
+            self.parent = self.chains[-1]
 
     @classmethod
     def unmarshal(cls, dic: dict):

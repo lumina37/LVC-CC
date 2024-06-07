@@ -6,44 +6,19 @@ from pathlib import Path
 import cv2 as cv
 import numpy as np
 
-from mcahelper.config import node
+from mcahelper.config import common, node
 from mcahelper.logging import get_logger
 from mcahelper.task import CodecTask, PreprocTask, RenderTask, iterator
 from mcahelper.task.infomap import query
-from mcahelper.utils import get_first_file, mkdir, run_cmds
+from mcahelper.utils import get_first_file, mkdir
 
 node_cfg = node.set_node_cfg('node-cfg.toml')
+common_cfg = common.set_common_cfg('common-cfg.toml')
 
 log = get_logger()
 
 
 BASES: dict[str, Path] = {}
-
-
-def compose(task: RenderTask):
-    basedir = query(task)
-    dstdir = basedir / "yuv"
-    mkdir(dstdir)
-
-    view_idx = 1
-    for row_idx in range(1, task.views + 1):
-        for col_idx in range(1, task.views + 1):
-            cmds = [
-                node_cfg.app.ffmpeg,
-                "-i",
-                basedir / "img" / "frame#%03d" / f"image_{view_idx:0>3}.png",
-                "-vf",
-                "format=yuv420p",
-                "-vframes",
-                task.frames,
-                dstdir / f"{row_idx}-{col_idx}.yuv",
-                "-v",
-                "warning",
-                "-y",
-            ]
-            run_cmds(cmds)
-
-            view_idx += 1
 
 
 def get_codec_task(rtask: RenderTask) -> CodecTask:
@@ -152,33 +127,33 @@ def compute_psnr_task(task: RenderTask) -> np.ndarray:
     return psnr
 
 
-for task in iterator.tasks(RenderTask, lambda t: not t.chains):
+for task in iterator.tasks(RenderTask, lambda t: t.parent.task == 'copy'):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:
         continue
 
     log.info(f"Handling {task}")
-    compose(task)
     dstdir = query(task) / "yuv"
     BASES[task.seq_name] = dstdir
 
 main_dic = {}
 
-for task in iterator.tasks(RenderTask, lambda t: t.chains):
+for task in iterator.tasks(RenderTask, lambda t: t.parent.task != 'copy'):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:
         continue
 
     log.info(f"Handling {task}")
-    compose(task)
 
     seq_dic: dict = main_dic.setdefault(task.seq_name, {})
 
     ctask = get_codec_task(task)
+    if ctask is None:
+        continue
 
-    pre_type = 'wMCA' if isinstance(ctask.chains[0], PreprocTask) else 'woMCA'
+    pre_type = 'wMCA' if isinstance(ctask.chains[1], PreprocTask) else 'woMCA'
     pre_type_dic: dict = seq_dic.setdefault(pre_type, {})
 
     vtm_list: list = pre_type_dic.setdefault(ctask.vtm_type, [])

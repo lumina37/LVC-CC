@@ -37,7 +37,6 @@ class PreprocTask(BaseTask):
         cfg_srcdir = node_cfg.path.dataset / "cfg" / self.seq_name
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
-        shutil.copy(cfg_srcdir / "calibration.xml", cfg_dstdir)
 
         # Make dst dir
         img_dstdir = self.dstdir / "img"
@@ -47,7 +46,9 @@ class PreprocTask(BaseTask):
         mcacfg_srcpath = cfg_srcdir / "mca.cfg"
         mcacfg = MCACfg.from_file(mcacfg_srcpath)
 
-        mcacfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
+        calib_cfg_name = "rlc.xml" if mcacfg.pipeline == 0 else "tlct.xml"
+        shutil.copy(cfg_srcdir / calib_cfg_name, cfg_dstdir)
+        mcacfg.Calibration_xml = str(cfg_dstdir / calib_cfg_name)
         mcacfg.RawImage_Path = self.srcdir / common_cfg.default_pattern
         mcacfg.Output_Path = img_dstdir / common_cfg.default_pattern
         mcacfg.start_frame = 1

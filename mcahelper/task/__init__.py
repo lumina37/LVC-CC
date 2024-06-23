@@ -5,7 +5,7 @@ from .copy import CopyTask
 from .png2yuv import Png2yuvTask
 from .postproc import PostprocTask
 from .preproc import PreprocTask
-from .render import RenderTask
+from .rlc import RLCRenderTask
 from .yuv2png import Yuv2pngTask
 
 factory.register(CodecTask)
@@ -13,5 +13,5 @@ factory.register(CopyTask)
 factory.register(Png2yuvTask)
 factory.register(PostprocTask)
 factory.register(PreprocTask)
-factory.register(RenderTask)
+factory.register(RLCRenderTask)
 factory.register(Yuv2pngTask)

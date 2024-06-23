@@ -8,7 +8,7 @@ import numpy as np
 
 from mcahelper.config import common, node
 from mcahelper.logging import get_logger
-from mcahelper.task import CodecTask, PreprocTask, RenderTask, iterator
+from mcahelper.task import CodecTask, PreprocTask, RLCRenderTask, iterator
 from mcahelper.task.infomap import query
 from mcahelper.utils import get_first_file, mkdir
 
@@ -21,7 +21,7 @@ log = get_logger()
 BASES: dict[str, Path] = {}
 
 
-def get_codec_task(rtask: RenderTask) -> CodecTask:
+def get_codec_task(rtask: RLCRenderTask) -> CodecTask:
     for task in rtask.chains:
         if isinstance(task, CodecTask):
             return task
@@ -58,7 +58,7 @@ def analyze_enclog(log_path: Path) -> EncLog:
     return log
 
 
-def get_wh(task: RenderTask) -> tuple[int, int]:
+def get_wh(task: RLCRenderTask) -> tuple[int, int]:
     render_dir = query(task) / 'img'
     frame_dir = next(render_dir.glob('frame#*'))
     img_ref_p = get_first_file(frame_dir)
@@ -109,7 +109,7 @@ def compute_psnr_yuv(lhs: Path, rhs: Path, frames: int, width: int, height: int)
     return psnr
 
 
-def compute_psnr_task(task: RenderTask) -> np.ndarray:
+def compute_psnr_task(task: RLCRenderTask) -> np.ndarray:
     basedir = BASES[task.seq_name]
     yuvdir = query(task) / "yuv"
 
@@ -127,7 +127,7 @@ def compute_psnr_task(task: RenderTask) -> np.ndarray:
     return psnr
 
 
-for task in iterator.tasks(RenderTask, lambda t: t.parent.task == 'copy'):
+for task in iterator.tasks(RLCRenderTask, lambda t: t.parent.task == 'copy'):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:
@@ -139,7 +139,7 @@ for task in iterator.tasks(RenderTask, lambda t: t.parent.task == 'copy'):
 
 main_dic = {}
 
-for task in iterator.tasks(RenderTask, lambda t: t.parent.task != 'copy'):
+for task in iterator.tasks(RLCRenderTask, lambda t: t.parent.task != 'copy'):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:

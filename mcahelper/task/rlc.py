@@ -13,15 +13,15 @@ from .infomap import query
 
 
 @dataclass
-class RenderTask(BaseTask):
-    task: str = "render"
+class RLCRenderTask(BaseTask):
+    task: str = "rlc"
 
     frames: int = 30
     views: int = 5
 
     @functools.cached_property
     def dirname(self) -> str:
-        return f"{self.task}-{self.seq_name}-{self.views}-{self.parent.shorthash}-{self.shorthash}"
+        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
 
     @functools.cached_property
     def srcdir(self) -> Path:
@@ -36,13 +36,14 @@ class RenderTask(BaseTask):
         cfg_srcdir = node_cfg.path.dataset / "cfg" / self.seq_name
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
-        shutil.copy(cfg_srcdir / "calibration.xml", cfg_dstdir)
 
         # Mod and write `rlc.cfg`
         rlccfg_srcpath = cfg_srcdir / "rlc.cfg"
         rlccfg = RLCCfg.from_file(rlccfg_srcpath)
 
-        rlccfg.Calibration_xml = str(cfg_dstdir / "calibration.xml")
+        calib_cfg_name = "rlc.xml"
+        shutil.copy(cfg_srcdir / calib_cfg_name, cfg_dstdir)
+        rlccfg.Calibration_xml = str(cfg_dstdir / calib_cfg_name)
         rlccfg.RawImage_Path = str(self.srcdir / common_cfg.default_pattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)

@@ -1,10 +1,11 @@
+import enum
 import functools
 import shutil
 from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
-from ..config import RLCCfg
+from ..config import RLCCfg, TLCTCfg
 from ..config.common import get_common_cfg
 from ..config.node import get_node_cfg
 from ..utils import mkdir, run_cmds
@@ -12,12 +13,24 @@ from .base import BaseTask
 from .infomap import query
 
 
+class Pipeline(enum.IntEnum):
+    RLC = enum.auto()
+    TLCT = enum.auto()
+
+
+PIPELINE_TO_CFG: dict[Pipeline, RLCCfg | TLCTCfg] = {
+    Pipeline.RLC: RLCCfg,
+    Pipeline.TLCT: TLCTCfg,
+}
+
+
 @dataclass
-class RLCRenderTask(BaseTask):
-    task: str = "rlc"
+class RenderTask(BaseTask):
+    task: str = "render"
 
     frames: int = 30
     views: int = 5
+    pipeline: Pipeline = Pipeline.RLC
 
     @functools.cached_property
     def dirname(self) -> str:
@@ -37,11 +50,13 @@ class RLCRenderTask(BaseTask):
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        # Mod and write `rlc.cfg`
-        rlccfg_srcpath = cfg_srcdir / "rlc.cfg"
-        rlccfg = RLCCfg.from_file(rlccfg_srcpath)
+        # Mod and write cfg
+        TypeCfg = PIPELINE_TO_CFG[self.pipeline]
+        cfg_name = f"{TypeCfg.CFG_NAME}.cfg"
+        rlccfg_srcpath = cfg_srcdir / cfg_name
+        rlccfg = TypeCfg.from_file(rlccfg_srcpath)
 
-        calib_cfg_name = "rlc.xml"
+        calib_cfg_name = f"{TypeCfg.CFG_NAME}.xml"
         shutil.copy(cfg_srcdir / calib_cfg_name, cfg_dstdir)
         rlccfg.Calibration_xml = str(cfg_dstdir / calib_cfg_name)
         rlccfg.RawImage_Path = str(self.srcdir / common_cfg.default_pattern)
@@ -55,7 +70,7 @@ class RLCRenderTask(BaseTask):
         rlccfg.start_frame = 1
         rlccfg.end_frame = self.frames
 
-        rlccfg_dstpath = cfg_dstdir / "rlc.cfg"
+        rlccfg_dstpath = cfg_dstdir / cfg_name
         rlccfg.to_file(rlccfg_dstpath)
 
         # Prepare and run command

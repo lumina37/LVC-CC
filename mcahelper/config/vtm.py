@@ -24,7 +24,7 @@ class VTMCfg:
     @staticmethod
     def load(f: TextIOBase) -> "VTMCfg":
         def _items():
-            for row in f.readlines():
+            for row in f:
                 pound_idx = row.find('#')
                 if pound_idx != -1:
                     row = row[:pound_idx]

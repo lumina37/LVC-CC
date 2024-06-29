@@ -30,8 +30,8 @@ class Yuv2pngTask(BaseTask):
         srcdir = query(self.parent)
         srcpath = srcdir / "out.yuv"
 
-        dstdir = self.dstdir / "img"
-        mkdir(dstdir)
+        img_dstdir = self.dstdir / "img"
+        mkdir(img_dstdir)
 
         cmds = [
             node_cfg.app.ffmpeg,
@@ -41,7 +41,7 @@ class Yuv2pngTask(BaseTask):
             srcpath,
             "-vf",
             "format=yuv444p",
-            dstdir / common_cfg.default_pattern,
+            img_dstdir / common_cfg.default_pattern,
             "-v",
             "warning",
         ]

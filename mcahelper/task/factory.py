@@ -6,7 +6,5 @@ def register(task_tp):
     _TASKMAP[task_tp.task] = task_tp
 
 
-class TaskFactory:
-    def __new__(cls, **kwargs):
-        realcls = _TASKMAP[kwargs.pop('task')]
-        return realcls.unmarshal(kwargs)
+def get_task_type(task_name):
+    return _TASKMAP[task_name]

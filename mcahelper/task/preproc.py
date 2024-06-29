@@ -22,7 +22,7 @@ class PreprocTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
-        return f"{self.task}-{self.seq_name}-{self.crop_ratio:.3f}-{self.parent.shorthash}-{self.shorthash}"
+        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
 
     @functools.cached_property
     def srcdir(self) -> Path:

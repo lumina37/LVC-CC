@@ -28,7 +28,6 @@ class Png2yuvTask(BaseTask):
     def _run(self) -> None:
         node_cfg = get_node_cfg()
         common_cfg = get_common_cfg()
-
         mkdir(self.dstdir)
 
         cmds = [
@@ -37,7 +36,7 @@ class Png2yuvTask(BaseTask):
             self.srcdir / common_cfg.default_pattern,
             "-vf",
             "format=yuv420p",
-            "-vframes",
+            "-frames:v",
             self.frames,
             self.dstdir / "out.yuv",
             "-v",

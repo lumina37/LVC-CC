@@ -14,8 +14,8 @@ class Executor:
 
     @staticmethod
     def find_root(task: BaseTask) -> BaseTask:
-        while task.parent is not None:
-            task = task.parent
+        while task.parent_ is not None:
+            task = task.parent_
         return task
 
     @staticmethod
@@ -38,8 +38,8 @@ class Executor:
                 with active_count.get_lock():
                     active_count.value -= 1
 
-                if task.children:
-                    for child in task.children:
+                if task.children_:
+                    for child in task.children_:
                         que.put(child)
 
     def run(self) -> None:

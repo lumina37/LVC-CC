@@ -20,11 +20,11 @@ class CodecTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
-        assert self.parent is not None
-        return f"{self.task}-{self.seq_name}-{self.vtm_type}-{self.QP}-{self.parent.shorthash}-{self.shorthash}"
+        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
 
     def _run(self) -> None:
         node_cfg = get_node_cfg()
+        mkdir(self.dstdir)
 
         assert self.vtm_type in ['AI', 'RA']
         vtm_type_cfg_path = node_cfg.path.dataset / "cfg" / f"vtm_{self.vtm_type}.cfg"
@@ -38,7 +38,6 @@ class CodecTask(BaseTask):
         vtm_cfg.SourceHeight = height
         vtm_cfg.SourceWidth = width
 
-        mkdir(self.dstdir)
         vtmcfg_dstpath = self.dstdir / 'vtm.cfg'
         vtm_cfg.to_file(vtmcfg_dstpath)
 

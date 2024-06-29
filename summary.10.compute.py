@@ -8,7 +8,7 @@ import numpy as np
 
 from mcahelper.config import common, node
 from mcahelper.logging import get_logger
-from mcahelper.task import CodecTask, PreprocTask, RLCRenderTask, iterator
+from mcahelper.task import CodecTask, PreprocTask, RenderTask, iterator
 from mcahelper.task.infomap import query
 from mcahelper.utils import get_first_file, mkdir
 
@@ -21,8 +21,8 @@ log = get_logger()
 BASES: dict[str, Path] = {}
 
 
-def get_codec_task(rtask: RLCRenderTask) -> CodecTask:
-    for task in rtask.chains:
+def get_codec_task(rtask: RenderTask) -> CodecTask:
+    for task in rtask.chain_:
         if isinstance(task, CodecTask):
             return task
 
@@ -37,7 +37,7 @@ def analyze_enclog(log_path: Path) -> EncLog:
     with log_path.open("r", encoding='utf-8') as f:
         layerid_row_idx = -128
 
-        for i, row in enumerate(f.readlines()):
+        for i, row in enumerate(f):
             if row.startswith("LayerId"):
                 layerid_row_idx = i
 
@@ -58,7 +58,7 @@ def analyze_enclog(log_path: Path) -> EncLog:
     return log
 
 
-def get_wh(task: RLCRenderTask) -> tuple[int, int]:
+def get_wh(task: RenderTask) -> tuple[int, int]:
     render_dir = query(task) / 'img'
     frame_dir = next(render_dir.glob('frame#*'))
     img_ref_p = get_first_file(frame_dir)
@@ -109,7 +109,7 @@ def compute_psnr_yuv(lhs: Path, rhs: Path, frames: int, width: int, height: int)
     return psnr
 
 
-def compute_psnr_task(task: RLCRenderTask) -> np.ndarray:
+def compute_psnr_task(task: RenderTask) -> np.ndarray:
     basedir = BASES[task.seq_name]
     yuvdir = query(task) / "yuv"
 
@@ -127,7 +127,7 @@ def compute_psnr_task(task: RLCRenderTask) -> np.ndarray:
     return psnr
 
 
-for task in iterator.tasks(RLCRenderTask, lambda t: t.parent.task == 'copy'):
+for task in iterator.tasks(RenderTask, lambda t: t.parent_.task == 'copy'):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:
@@ -139,7 +139,7 @@ for task in iterator.tasks(RLCRenderTask, lambda t: t.parent.task == 'copy'):
 
 main_dic = {}
 
-for task in iterator.tasks(RLCRenderTask, lambda t: t.parent.task != 'copy'):
+for task in iterator.tasks(RenderTask, lambda t: t.parent_.task != 'copy'):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:
@@ -153,7 +153,7 @@ for task in iterator.tasks(RLCRenderTask, lambda t: t.parent.task != 'copy'):
     if ctask is None:
         continue
 
-    pre_type = 'wMCA' if isinstance(ctask.chains[1], PreprocTask) else 'woMCA'
+    pre_type = 'wMCA' if isinstance(ctask.chain_[1], PreprocTask) else 'woMCA'
     pre_type_dic: dict = seq_dic.setdefault(pre_type, {})
 
     vtm_list: list = pre_type_dic.setdefault(ctask.vtm_type, [])

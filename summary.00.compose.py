@@ -4,7 +4,7 @@ import cv2 as cv
 
 from mcahelper.config import node
 from mcahelper.logging import get_logger
-from mcahelper.task import RLCRenderTask, iterator
+from mcahelper.task import RenderTask, iterator
 from mcahelper.task.infomap import query
 from mcahelper.utils import get_first_file, mkdir, run_cmds
 
@@ -16,7 +16,7 @@ log = get_logger()
 BASES: dict[str, Path] = {}
 
 
-def compose(task: RLCRenderTask):
+def compose(task: RenderTask):
     basedir = query(task)
     dstdir = basedir / "yuv"
     mkdir(dstdir)
@@ -30,7 +30,7 @@ def compose(task: RLCRenderTask):
                 basedir / "img" / "frame#%03d" / f"image_{view_idx:0>3}.png",
                 "-vf",
                 "format=yuv420p",
-                "-vframes",
+                "-frames:v",
                 task.frames,
                 dstdir / f"{row_idx}-{col_idx}.yuv",
                 "-v",
@@ -42,7 +42,7 @@ def compose(task: RLCRenderTask):
             view_idx += 1
 
 
-def get_wh(task: RLCRenderTask) -> tuple[int, int]:
+def get_wh(task: RenderTask) -> tuple[int, int]:
     render_dir = query(task) / 'img'
     frame_dir = next(render_dir.glob('frame#*'))
     img_ref_p = get_first_file(frame_dir)
@@ -51,7 +51,7 @@ def get_wh(task: RLCRenderTask) -> tuple[int, int]:
     return (height, width)
 
 
-for task in iterator.tasks(RLCRenderTask):
+for task in iterator.tasks(RenderTask):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:

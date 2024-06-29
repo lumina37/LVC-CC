@@ -1,12 +1,15 @@
 import dataclasses as dcs
 from io import TextIOBase
 from pathlib import Path
+from typing import ClassVar
 
 from pydantic.dataclasses import dataclass
 
 
 @dataclass
 class TLCTCfg:
+    CFG_NAME: ClassVar[str] = "rlc"
+
     pipeline: int = 1
     viewNum: int = 5
     rmode: int = 1
@@ -25,7 +28,7 @@ class TLCTCfg:
     @staticmethod
     def load(f: TextIOBase) -> "TLCTCfg":
         def _items():
-            for row in f.readlines():
+            for row in f:
                 key, value = row.replace('\t', ' ').split(' ', maxsplit=1)
                 value = value.lstrip().rstrip('\n')
                 yield key, value

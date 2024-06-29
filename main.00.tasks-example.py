@@ -1,6 +1,6 @@
 from mcahelper.config import common, node
 from mcahelper.executor import Executor
-from mcahelper.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTask, RLCRenderTask, Yuv2pngTask
+from mcahelper.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
 
 node_cfg = node.set_node_cfg('node-cfg.toml')
 common_cfg = common.set_common_cfg('common-cfg.toml')
@@ -13,7 +13,7 @@ for seq_name in node_cfg.cases.seqs:
     #task1 = RLCRenderTask(frames=node_cfg.frames, parent=tcopy)
 
     # # W/O MCA
-    task1 = Png2yuvTask(frames=node_cfg.frames, parent=tcopy)
+    task1 = Png2yuvTask(frames=node_cfg.frames, parent_=tcopy)
 
     # for vtm_type in node_cfg.cases.vtm_types:
     #     for qp in common_cfg.QP.woMCA[seq_name]:
@@ -35,5 +35,5 @@ for seq_name in node_cfg.cases.seqs:
     roots.append(tcopy)
 
 if __name__ == "__main__":
-    executor = Executor(roots, process_num=4)
+    executor = Executor(roots, process_num=1)
     executor.run()

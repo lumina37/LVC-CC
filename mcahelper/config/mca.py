@@ -25,7 +25,7 @@ class MCACfg:
     @staticmethod
     def load(f: TextIOBase) -> "MCACfg":
         def _items():
-            for row in f.readlines():
+            for row in f:
                 key, value = row.replace('\t', ' ').split(' ', maxsplit=1)
                 value = value.lstrip().rstrip('\n')
                 yield key, value

@@ -22,12 +22,10 @@ class PostprocTask(BaseTask):
 
     @functools.cached_property
     def dirname(self) -> str:
-        assert self.parent is not None
-        return f"{self.task}-{self.seq_name}-{self.crop_ratio:.3f}-{self.parent.shorthash}-{self.shorthash}"
+        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
 
     @functools.cached_property
     def srcdir(self) -> Path:
-        assert self.parent is not None
         srcdir = query(self.parent) / "img"
         return srcdir
 

@@ -9,8 +9,7 @@ from pydantic.dataclasses import dataclass
 class DataclsCfg:
     KEY: ClassVar[str] = 'mca'
 
-    no_meta: bool = False
-    no_hash: bool = False
+    is_chain_param: bool = False
 
     @functools.cached_property
     def D(self) -> dict[str, bool]:

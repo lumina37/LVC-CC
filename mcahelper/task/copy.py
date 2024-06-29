@@ -7,7 +7,6 @@ from pydantic.dataclasses import dataclass
 
 from ..config.common import get_common_cfg
 from ..config.node import get_node_cfg
-from ..logging import get_logger
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 
@@ -77,6 +76,3 @@ class CopyTask(BaseTask):
                 src_fname = common_cfg.default_pattern % (self.start_idx + i - 1)
                 dst_fname = common_cfg.default_pattern % i
                 (img_dstdir / src_fname).rename(img_dstdir / dst_fname)
-
-        log = get_logger()
-        log.info("Completed!")

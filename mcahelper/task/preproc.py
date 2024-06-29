@@ -8,7 +8,7 @@ from pydantic.dataclasses import dataclass
 from ..config import MCACfg
 from ..config.common import get_common_cfg
 from ..config.node import get_node_cfg
-from ..utils import mkdir, run_cmds
+from ..helper import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 

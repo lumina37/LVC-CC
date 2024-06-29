@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from ..config.node import get_node_cfg
-from ..utils import mkdir
+from ..helper import mkdir
 from .chain import Chain
 
 TypeInfomap = dict[str, Path]

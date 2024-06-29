@@ -5,7 +5,7 @@ from pydantic.dataclasses import dataclass
 
 from ..config.node import get_node_cfg
 from ..config.vtm import VTMCfg
-from ..utils import get_first_file, mkdir, run_cmds
+from ..helper import get_first_file, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 

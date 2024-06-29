@@ -5,8 +5,8 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
 from mcahelper.config import node
+from mcahelper.helper import mkdir
 from mcahelper.logging import get_logger
-from mcahelper.utils import mkdir
 
 plt.rcParams['font.sans-serif'] = ['Times New Roman']
 

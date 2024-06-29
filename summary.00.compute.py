@@ -7,10 +7,10 @@ import cv2 as cv
 import numpy as np
 
 from mcahelper.config import common, node
+from mcahelper.helper import get_first_file, mkdir
 from mcahelper.logging import get_logger
-from mcahelper.task import CodecTask, PreprocTask, RenderTask, iterator
+from mcahelper.task import ComposeTask, PreprocTask, RenderTask, get_codec_task, tasks
 from mcahelper.task.infomap import query
-from mcahelper.utils import get_first_file, mkdir
 
 node_cfg = node.set_node_cfg('node-cfg.toml')
 common_cfg = common.set_common_cfg('common-cfg.toml')
@@ -19,12 +19,6 @@ log = get_logger()
 
 
 BASES: dict[str, Path] = {}
-
-
-def get_codec_task(rtask: RenderTask) -> CodecTask:
-    for task in rtask.chain:
-        if isinstance(task, CodecTask):
-            return task
 
 
 @dcs.dataclass
@@ -127,7 +121,7 @@ def compute_psnr_task(task: RenderTask) -> np.ndarray:
     return psnr
 
 
-for task in iterator.tasks(RenderTask, lambda t: t.parent_.task == 'copy'):
+for task in tasks(RenderTask, lambda t: t.parent.task == 'copy'):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:
@@ -139,7 +133,7 @@ for task in iterator.tasks(RenderTask, lambda t: t.parent_.task == 'copy'):
 
 main_dic = {}
 
-for task in iterator.tasks(RenderTask, lambda t: t.parent_.task != 'copy'):
+for task in tasks(RenderTask, lambda t: t.parent.task != 'copy'):
     if task.frames != node_cfg.frames:
         continue
     if task.seq_name not in node_cfg.cases.seqs:

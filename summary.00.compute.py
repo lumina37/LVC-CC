@@ -9,7 +9,16 @@ import numpy as np
 from mcahelper.config import common, node
 from mcahelper.helper import get_first_file, mkdir
 from mcahelper.logging import get_logger
-from mcahelper.task import ComposeTask, PreprocTask, RenderTask, get_codec_task, tasks
+from mcahelper.task import (
+    CodecTask,
+    ComposeTask,
+    CopyTask,
+    Png2yuvTask,
+    PostprocTask,
+    PreprocTask,
+    RenderTask,
+    Yuv2pngTask,
+)
 from mcahelper.task.infomap import query
 
 node_cfg = node.set_node_cfg('node-cfg.toml')
@@ -17,6 +26,8 @@ common_cfg = common.set_common_cfg('common-cfg.toml')
 
 log = get_logger()
 
+summary_dir = node_cfg.path.dataset / 'summary/compute'
+mkdir(summary_dir)
 
 BASES: dict[str, Path] = {}
 
@@ -52,8 +63,8 @@ def analyze_enclog(log_path: Path) -> EncLog:
     return log
 
 
-def get_wh(task: RenderTask) -> tuple[int, int]:
-    render_dir = query(task) / 'img'
+def get_wh(task: ComposeTask) -> tuple[int, int]:
+    render_dir = query(task.parent) / 'img'
     frame_dir = next(render_dir.glob('frame#*'))
     img_ref_p = get_first_file(frame_dir)
     img_ref = cv.imread(str(img_ref_p))
@@ -103,8 +114,8 @@ def compute_psnr_yuv(lhs: Path, rhs: Path, frames: int, width: int, height: int)
     return psnr
 
 
-def compute_psnr_task(task: RenderTask) -> np.ndarray:
-    basedir = BASES[task.seq_name]
+def compute_psnr_task(task: RenderTask, base: ComposeTask) -> np.ndarray:
+    basedir = query(base) / "yuv"
     yuvdir = query(task) / "yuv"
 
     width, height = get_wh(task)
@@ -121,53 +132,68 @@ def compute_psnr_task(task: RenderTask) -> np.ndarray:
     return psnr
 
 
-for task in tasks(RenderTask, lambda t: t.parent.task == 'copy'):
-    if task.frames != node_cfg.frames:
-        continue
-    if task.seq_name not in node_cfg.cases.seqs:
-        continue
+for seq_name in node_cfg.cases.seqs:
+    seq_dic = {}
 
-    log.info(f"Handling {task}")
-    dstdir = query(task) / "yuv"
-    BASES[task.seq_name] = dstdir
+    # Anchor
+    tcopy = CopyTask(seq_name=seq_name, frames=node_cfg.frames)
 
-main_dic = {}
+    task1 = RenderTask().with_parent(tcopy)
+    tbase = ComposeTask().with_parent(task1)
 
-for task in tasks(RenderTask, lambda t: t.parent.task != 'copy'):
-    if task.frames != node_cfg.frames:
-        continue
-    if task.seq_name not in node_cfg.cases.seqs:
-        continue
+    # W/O MCA
+    task1 = Png2yuvTask().with_parent(tcopy)
+    for vtm_type in node_cfg.cases.vtm_types:
+        for qp in common_cfg.QP.woMCA[seq_name]:
+            tcodec = CodecTask(vtm_type=vtm_type, QP=qp).with_parent(task1)
+            task3 = Yuv2pngTask().with_parent(tcodec)
+            task4 = RenderTask().with_parent(task3)
+            tcomp = ComposeTask().with_parent(task4)
 
-    log.info(f"Handling {task}")
+            log.info(f"Handling {tcomp}")
 
-    seq_dic: dict = main_dic.setdefault(task.seq_name, {})
+            pre_type_dic: dict = seq_dic.setdefault('woMCA', {})
+            vtm_list: list = pre_type_dic.setdefault(vtm_type, [])
+            log_path = query(tcodec) / "out.log"
+            enclog = analyze_enclog(log_path)
+            psnr = compute_psnr_task(tcomp, tbase)
+            vtm_list.append(
+                {
+                    'bitrate': enclog.bitrate,
+                    'qp': qp,
+                    'ypsnr': psnr[0],
+                    'upsnr': psnr[1],
+                    'vpsnr': psnr[2],
+                }
+            )
 
-    ctask = get_codec_task(task)
-    if ctask is None:
-        continue
+    # W MCA
+    task1 = PreprocTask().with_parent(tcopy)
+    task2 = Png2yuvTask().with_parent(task1)
+    for vtm_type in node_cfg.cases.vtm_types:
+        for qp in common_cfg.QP.wMCA[seq_name]:
+            task3 = CodecTask(vtm_type=vtm_type, QP=qp).with_parent(task2)
+            task4 = Yuv2pngTask().with_parent(task3)
+            task5 = PostprocTask().with_parent(task4)
+            task6 = RenderTask().with_parent(task5)
+            task7 = ComposeTask().with_parent(task6)
 
-    pre_type = 'wMCA' if isinstance(ctask.chain[1], PreprocTask) else 'woMCA'
-    pre_type_dic: dict = seq_dic.setdefault(pre_type, {})
+            log.info(f"Handling {tcomp}")
 
-    vtm_list: list = pre_type_dic.setdefault(ctask.vtm_type, [])
+            pre_type_dic: dict = seq_dic.setdefault('woMCA', {})
+            vtm_list: list = pre_type_dic.setdefault(vtm_type, [])
+            log_path = query(tcodec) / "out.log"
+            enclog = analyze_enclog(log_path)
+            psnr = compute_psnr_task(tcomp, tbase)
+            vtm_list.append(
+                {
+                    'bitrate': enclog.bitrate,
+                    'qp': qp,
+                    'ypsnr': psnr[0],
+                    'upsnr': psnr[1],
+                    'vpsnr': psnr[2],
+                }
+            )
 
-    log_path = query(ctask) / "out.log"
-    enclog = analyze_enclog(log_path)
-
-    psnr = compute_psnr_task(task)
-
-    vtm_list.append(
-        {
-            'bitrate': enclog.bitrate,
-            'qp': ctask.QP,
-            'ypsnr': psnr[0],
-            'upsnr': psnr[1],
-            'vpsnr': psnr[2],
-        }
-    )
-
-summary_dir = node_cfg.path.dataset / 'summary'
-mkdir(summary_dir)
-with (summary_dir / 'psnr.json').open('w') as f:
-    json.dump(main_dic, f, indent=2)
+    with (summary_dir / f'{seq_name}.json').open('w') as f:
+        json.dump(seq_dic, f, indent=2)

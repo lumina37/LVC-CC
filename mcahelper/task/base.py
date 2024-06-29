@@ -9,7 +9,6 @@ from typing import Generic, TypeVar
 from pydantic.dataclasses import dataclass
 
 from ..config.node import get_node_cfg
-from ..helper import DataclsCfg
 from ..logging import get_logger
 from ..utils import to_json
 from .chain import Chain
@@ -24,33 +23,33 @@ class BaseTask(Generic[TSelfTask]):
     task: str = ""
     seq_name: str = ""
 
-    children_: list[TDerivedTask] = dcs.field(
-        default_factory=list, init=False, repr=False, metadata=DataclsCfg(is_chain_param=True).D
-    )
-    chain_: Chain = dcs.field(default_factory=Chain, init=False, repr=False, metadata=DataclsCfg(is_chain_param=True).D)
+    children: list[TDerivedTask] = dcs.field(default_factory=list, init=False, repr=False)
+    chain: Chain = dcs.field(default_factory=Chain, init=False, repr=False)
 
     @property
     def has_parent(self) -> bool:
-        return len(self.chain_) > 1
+        return len(self.chain) > 0
 
     @functools.cached_property
     def parent(self) -> TDerivedTask:
         if self.has_parent:
-            return self.chain_[-2]
+            return self.chain[-1]
         else:
             return None
 
     def with_parent(self: TSelfTask, parent: TDerivedTask) -> TSelfTask:
         # Appending `parent.params`` to chain
-        chains = parent.chain_.copy()
+        chains = parent.chain.copy()
         chains.objs.append(parent.params)
-        self.chain_ = chains
+        self.chain = chains
         # Appending reverse hooks to `parent`
-        parent.children_.append(self)
+        parent.children.append(self)
 
         # Infer `seq_name` from `parent`
         if not self.seq_name:
             self.seq_name = parent.seq_name
+        if not self.frames:
+            self.frames = parent.frames
 
         return self
 
@@ -67,7 +66,7 @@ class BaseTask(Generic[TSelfTask]):
 
         return cls(**kwargs)
 
-    def marshal(self, exclude_if: Callable[[dcs.Field], bool]) -> dict:
+    def marshal(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
         dic = {}
 
         for field in dcs.fields(self):
@@ -79,19 +78,24 @@ class BaseTask(Generic[TSelfTask]):
         return dic
 
     @functools.cached_property
-    def taskinfo(self) -> str:
-        taskinfo = to_json(self.chain_.objs, pretty=True)
+    def taskinfo(self) -> list[dict]:
+        taskinfo = self.chain.objs.copy()
+        taskinfo.append(self.params)
         return taskinfo
 
     @functools.cached_property
+    def taskinfo_str(self) -> str:
+        return to_json(self.taskinfo, pretty=True)
+
+    @functools.cached_property
     def hash(self) -> str:
-        hashbytes = to_json(self.chain_.objs).encode('utf-8')
+        hashbytes = to_json(self.taskinfo).encode('utf-8')
         hash_ = hashlib.sha1(hashbytes, usedforsecurity=False)
         return hash_.hexdigest()
 
     @property
     def params(self) -> dict:
-        params = self.chain_.objs[-1]
+        params = self.marshal()
         return params
 
     @property
@@ -109,7 +113,7 @@ class BaseTask(Generic[TSelfTask]):
 
     def dump_taskinfo(self) -> None:
         with (self.dstdir / "task.json").open('w', encoding='utf-8') as f:
-            f.write(self.taskinfo)
+            f.write(to_json(self.taskinfo, pretty=True))
 
     @abc.abstractmethod
     def _run(self) -> None: ...

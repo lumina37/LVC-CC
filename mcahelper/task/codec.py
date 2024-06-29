@@ -11,12 +11,12 @@ from .infomap import query
 
 
 @dataclass
-class CodecTask(BaseTask):
+class CodecTask(BaseTask["CodecTask"]):
     task: str = "codec"
 
+    frames: int = 0
     vtm_type: str = ""  # `AI` or `RA`
-    frames: int = 30
-    QP: int = 40
+    QP: int = -1
 
     @functools.cached_property
     def dirname(self) -> str:

@@ -14,10 +14,10 @@ from .infomap import query
 
 
 @dataclass
-class PostprocTask(BaseTask):
+class PostprocTask(BaseTask["PostprocTask"]):
     task: str = "postproc"
 
-    frames: int = 30
+    frames: int = 0
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property

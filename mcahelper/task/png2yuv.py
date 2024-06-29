@@ -11,10 +11,10 @@ from .infomap import query
 
 
 @dataclass
-class Png2yuvTask(BaseTask):
+class Png2yuvTask(BaseTask["Png2yuvTask"]):
     task: str = "png2yuv"
 
-    frames: int = 30
+    frames: int = 0
 
     @functools.cached_property
     def dirname(self) -> str:

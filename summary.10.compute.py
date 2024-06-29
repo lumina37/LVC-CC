@@ -22,7 +22,7 @@ BASES: dict[str, Path] = {}
 
 
 def get_codec_task(rtask: RenderTask) -> CodecTask:
-    for task in rtask.chain_:
+    for task in rtask.chain:
         if isinstance(task, CodecTask):
             return task
 
@@ -153,7 +153,7 @@ for task in iterator.tasks(RenderTask, lambda t: t.parent_.task != 'copy'):
     if ctask is None:
         continue
 
-    pre_type = 'wMCA' if isinstance(ctask.chain_[1], PreprocTask) else 'woMCA'
+    pre_type = 'wMCA' if isinstance(ctask.chain[1], PreprocTask) else 'woMCA'
     pre_type_dic: dict = seq_dic.setdefault(pre_type, {})
 
     vtm_list: list = pre_type_dic.setdefault(ctask.vtm_type, [])

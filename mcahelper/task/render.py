@@ -25,10 +25,10 @@ PIPELINE_TO_CFG: dict[Pipeline, RLCCfg | TLCTCfg] = {
 
 
 @dataclass
-class RenderTask(BaseTask):
+class RenderTask(BaseTask["RenderTask"]):
     task: str = "render"
 
-    frames: int = 30
+    frames: int = 0
     views: int = 5
     pipeline: Pipeline = Pipeline.RLC
 
@@ -79,7 +79,10 @@ class RenderTask(BaseTask):
             rlccfg_dstpath,
         ]
 
-        tmpwd = self.dstdir / "tmpwd"
-        mkdir(tmpwd)
+        if self.pipeline == Pipeline.RLC:
+            tmpwd = self.dstdir / "tmpwd"
+            mkdir(tmpwd)
+        else:
+            tmpwd = None
 
         run_cmds(cmds, cwd=tmpwd)

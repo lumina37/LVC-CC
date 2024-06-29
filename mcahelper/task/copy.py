@@ -12,12 +12,12 @@ from .base import BaseTask
 
 
 @dataclass
-class CopyTask(BaseTask):
+class CopyTask(BaseTask["CopyTask"]):
     task: str = "copy"
 
     DEFAULT_START_IDX: ClassVar[int] = -1
     start_idx: int = DEFAULT_START_IDX
-    frames: int = 30
+    frames: int = 0
 
     def __post_init__(self) -> None:
         common_cfg = get_common_cfg()

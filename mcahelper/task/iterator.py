@@ -1,13 +1,15 @@
 import json
 from collections.abc import Callable, Generator
-from typing import Any
 
 from ..config.node import get_node_cfg
-from .base import BaseTask
+from .base import TDerivedTask
 from .chain import Chain
+from .codec import CodecTask
 
 
-def tasks(cls: Any = None, require: Callable[[BaseTask], bool] | None = lambda _: True) -> Generator[BaseTask]:
+def tasks(
+    cls: type[TDerivedTask] = None, require: Callable[[TDerivedTask], bool] | None = lambda _: True
+) -> Generator[TDerivedTask]:
     node_cfg = get_node_cfg()
 
     playground_path = node_cfg.path.dataset / "playground"
@@ -27,3 +29,11 @@ def tasks(cls: Any = None, require: Callable[[BaseTask], bool] | None = lambda _
             if not require(task):
                 continue
             yield task
+
+
+def get_codec_task(task: TDerivedTask) -> CodecTask:
+    for t in task.chain:
+        if isinstance(t, CodecTask):
+            return t
+
+    return CodecTask()

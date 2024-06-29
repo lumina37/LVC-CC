@@ -2,21 +2,14 @@ import dataclasses as dcs
 import multiprocessing as mp
 import queue
 
-from .task import BaseTask
+from .task.base import TDerivedTask
 from .task.infomap import TypeInfomap, init_infomap, register_infomap
 
 
 @dcs.dataclass
 class Executor:
-
-    anytasks: list[BaseTask]
-    process_num: int = 2
-
-    @staticmethod
-    def find_root(task: BaseTask) -> BaseTask:
-        while task.parent_ is not None:
-            task = task.parent_
-        return task
+    root_tasks: list[TDerivedTask]
+    process_num: int = 1
 
     @staticmethod
     def _worker(que: mp.Queue, active_count: mp.Value, infomap: TypeInfomap):
@@ -24,7 +17,7 @@ class Executor:
 
         while 1:
             try:
-                task: BaseTask = que.get(timeout=5.0)
+                task: TDerivedTask = que.get(timeout=5.0)
 
             except queue.Empty:
                 if active_count.value == 0 and que.empty():
@@ -38,13 +31,13 @@ class Executor:
                 with active_count.get_lock():
                     active_count.value -= 1
 
-                if task.children_:
-                    for child in task.children_:
+                if task.children:
+                    for child in task.children:
                         que.put(child)
 
     def run(self) -> None:
         roots = {}
-        for t in self.anytasks:
+        for t in self.root_tasks:
             roots[t.hash] = t
 
         queue = mp.Queue()

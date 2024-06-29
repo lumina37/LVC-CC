@@ -11,8 +11,10 @@ from .infomap import query
 
 
 @dataclass
-class Yuv2pngTask(BaseTask):
+class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
     task: str = "yuv2png"
+
+    frames: int = 0
 
     @functools.cached_property
     def dirname(self) -> str:
@@ -41,6 +43,8 @@ class Yuv2pngTask(BaseTask):
             srcpath,
             "-vf",
             "format=yuv444p",
+            "-frames:v",
+            self.frames,
             img_dstdir / common_cfg.default_pattern,
             "-v",
             "warning",

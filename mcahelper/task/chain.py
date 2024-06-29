@@ -17,7 +17,7 @@ class Chain:
         dic = self.objs[idx]
         TaskType = get_task_type(dic['task'])
         item = TaskType(**dic)
-        item.chains_.objs = self.objs[:idx]
+        item.chain.objs = self.objs[:idx]
         return item
 
     def copy(self) -> "Chain":

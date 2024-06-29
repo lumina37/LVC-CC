@@ -4,7 +4,7 @@ from pathlib import Path
 from pydantic.dataclasses import dataclass
 
 from ..config.node import get_node_cfg
-from ..helper import mkdir, run_cmds
+from ..utils import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 

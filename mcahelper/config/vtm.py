@@ -46,5 +46,5 @@ class VTMCfg:
 
     @staticmethod
     def from_file(path: Path) -> "VTMCfg":
-        with path.open('r') as f:
+        with path.open() as f:
             return VTMCfg.load(f)

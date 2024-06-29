@@ -41,5 +41,5 @@ class TLCTCfg:
 
     @staticmethod
     def from_file(path: Path) -> "TLCTCfg":
-        with path.open('r') as f:
+        with path.open() as f:
             return TLCTCfg.load(f)

@@ -96,14 +96,11 @@ class PSNR:
 
 log = get_logger()
 
-node_cfg = node.set_node_cfg('node-cfg.toml')
+node_cfg = node.set_node_cfg('cfg-node.toml')
 
-src_dir = node_cfg.path.dataset / 'summary'
-dst_dir = src_dir
+dst_dir = node_cfg.path.dataset / 'summary'
+src_dir = dst_dir / 'compute'
 dst_p = dst_dir / 'bdrate.csv'
-
-with (src_dir / 'psnr.json').open('r') as f:
-    main_dic: dict = json.load(f)
 
 with dst_p.open('w', encoding='utf-8', newline='') as csv_f:
     csv_writer = csv.writer(csv_f)
@@ -111,13 +108,15 @@ with dst_p.open('w', encoding='utf-8', newline='') as csv_f:
     headers.extend(f'{vtm_type}-BD-rate' for vtm_type in node_cfg.cases.vtm_types)
     csv_writer.writerow(headers)
 
-    for seq_name, pre_type_dic in main_dic.items():
+    for seq_name in node_cfg.cases.seqs:
+        with (src_dir / f'{seq_name}.json').open() as f:
+            seq_dic: dict = json.load(f)
         row = [seq_name]
 
         for vtm_type in node_cfg.cases.vtm_types:
-            womca_psnrs = [PSNR(**d) for d in pre_type_dic['woMCA'][vtm_type]]
+            womca_psnrs = [PSNR(**d) for d in seq_dic['woMCA'][vtm_type]]
             womca_psnrs.sort()
-            wmca_psnrs = [PSNR(**d) for d in pre_type_dic['wMCA'][vtm_type]]
+            wmca_psnrs = [PSNR(**d) for d in seq_dic['wMCA'][vtm_type]]
             wmca_psnrs.sort()
 
             bdrate = BD_RATE(

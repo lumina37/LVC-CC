@@ -9,8 +9,8 @@ from typing import Generic, TypeVar
 from pydantic.dataclasses import dataclass
 
 from ..config.node import get_node_cfg
-from ..helper import to_json
 from ..logging import get_logger
+from ..utils import to_json
 from .chain import Chain
 from .infomap import append, query
 

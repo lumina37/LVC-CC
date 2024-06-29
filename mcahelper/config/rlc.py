@@ -51,5 +51,5 @@ class RLCCfg:
 
     @staticmethod
     def from_file(path: Path) -> "RLCCfg":
-        with path.open('r') as f:
+        with path.open() as f:
             return RLCCfg.load(f)

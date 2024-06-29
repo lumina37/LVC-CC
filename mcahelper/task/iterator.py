@@ -22,7 +22,7 @@ def tasks(
         if not taskinfo_path.exists():
             continue
 
-        with taskinfo_path.open('r', encoding='utf-8') as f:
+        with taskinfo_path.open( encoding='utf-8') as f:
             taskinfo = json.load(f)
             chain = Chain(taskinfo)
             task = chain[-1]

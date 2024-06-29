@@ -5,40 +5,39 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
 from mcahelper.config import node
-from mcahelper.helper import mkdir
 from mcahelper.logging import get_logger
+from mcahelper.utils import mkdir
 
 plt.rcParams['font.sans-serif'] = ['Times New Roman']
 
 
 @dcs.dataclass
-class PSNR:
+class Stat:
     bitrate: float
     qp: int
     ypsnr: float
     upsnr: float
     vpsnr: float
 
-    def __lt__(self, rhs: "PSNR") -> bool:
+    def __lt__(self, rhs: "Stat") -> bool:
         return self.bitrate < rhs.bitrate
 
 
 log = get_logger()
 
-rootcfg = node.set_node_cfg('node-cfg.toml')
+node_cfg = node.set_node_cfg('cfg-node.toml')
 
-src_dir = rootcfg.path.dataset / 'summary'
+src_dir = node_cfg.path.dataset / 'summary'
 dst_dir = src_dir / 'figs'
 mkdir(dst_dir)
 
-with (src_dir / 'psnr.json').open('r') as f:
-    main_dic: dict[str, dict] = json.load(f)
-
-
 mode_map = {'AI': 'All Intra', 'RA': 'Random Access'}
 
-for seq_name, seq_dic in main_dic.items():
-    for vtm_type in rootcfg.cases.vtm_types:
+for seq_name in node_cfg.cases.seqs:
+    with (src_dir / f'{seq_name}.json').open() as f:
+        seq_dic: dict = json.load(f)
+
+    for vtm_type in node_cfg.cases.vtm_types:
         fig, ax = plt.subplots(figsize=(6, 6))
         ax: Axes = ax
         ax.set_xlabel("Total bitrate (Kbps)")
@@ -50,7 +49,7 @@ for seq_name, seq_dic in main_dic.items():
             ('wMCA', 'W/O MCA', 'orange'),
             ('woMCA', 'W/ MCA', 'blue'),
         ]:
-            psnrs = [PSNR(**d) for d in seq_dic[tp][vtm_type]]
+            psnrs = [Stat(**d) for d in seq_dic[tp][vtm_type]]
             psnrs.sort()
             ax.plot(
                 [p.bitrate for p in psnrs],

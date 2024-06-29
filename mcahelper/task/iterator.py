@@ -5,6 +5,8 @@ from ..config.node import get_node_cfg
 from .base import TDerivedTask
 from .chain import Chain
 from .codec import CodecTask
+from .preproc import PreprocTask
+from .render import RenderTask
 
 
 def tasks(
@@ -22,7 +24,7 @@ def tasks(
         if not taskinfo_path.exists():
             continue
 
-        with taskinfo_path.open( encoding='utf-8') as f:
+        with taskinfo_path.open(encoding='utf-8') as f:
             taskinfo = json.load(f)
             chain = Chain(taskinfo)
             task = chain[-1]
@@ -37,3 +39,11 @@ def get_codec_task(task: TDerivedTask) -> CodecTask:
             return t
 
     return CodecTask()
+
+
+def has_mca(task: TDerivedTask) -> bool:
+    return len(task.chain) > 1 and task.chain.objs[1]['task'] == PreprocTask.task
+
+
+def is_anchor(task: TDerivedTask) -> bool:
+    return len(task.chain) == 1 and task.task == RenderTask.task

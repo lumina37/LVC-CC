@@ -27,8 +27,9 @@ log = get_logger()
 
 node_cfg = node.set_node_cfg('cfg-node.toml')
 
-src_dir = node_cfg.path.dataset / 'summary'
-dst_dir = src_dir / 'figs'
+summary_dir = node_cfg.path.dataset / 'summary'
+src_dir = summary_dir / 'compute'
+dst_dir = summary_dir / 'figs'
 mkdir(dst_dir)
 
 mode_map = {'AI': 'All Intra', 'RA': 'Random Access'}

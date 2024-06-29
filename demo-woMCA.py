@@ -7,7 +7,7 @@ set_node_cfg('cfg-node.toml')
 
 tcopy = CopyTask(seq_name="Tunnel_Train", frames=1)
 task1 = Png2yuvTask().with_parent(tcopy)
-task2 = CodecTask(vtm_type='AI', QP=46).with_parent(task1)
+task2 = CodecTask(vtm_type='AI', qp=46).with_parent(task1)
 task3 = Yuv2pngTask().with_parent(task2)
 task4 = RenderTask().with_parent(task3)
 

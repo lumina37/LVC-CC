@@ -3,7 +3,7 @@ from .base import TDerivedTask
 from .codec import CodecTask
 from .compose import ComposeTask
 from .copy import CopyTask
-from .iterator import get_codec_task, tasks
+from .iterator import get_codec_task, has_mca, is_anchor, tasks
 from .png2yuv import Png2yuvTask
 from .postproc import PostprocTask
 from .preproc import PreprocTask

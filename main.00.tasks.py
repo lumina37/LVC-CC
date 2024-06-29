@@ -28,7 +28,7 @@ for seq_name in node_cfg.cases.seqs:
     task1 = Png2yuvTask().with_parent(tcopy)
     for vtm_type in node_cfg.cases.vtm_types:
         for qp in common_cfg.QP.woMCA[seq_name]:
-            task2 = CodecTask(vtm_type=vtm_type, QP=qp).with_parent(task1)
+            task2 = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task1)
             task3 = Yuv2pngTask().with_parent(task2)
             task4 = RenderTask().with_parent(task3)
             task5 = ComposeTask().with_parent(task4)
@@ -38,7 +38,7 @@ for seq_name in node_cfg.cases.seqs:
     task2 = Png2yuvTask().with_parent(task1)
     for vtm_type in node_cfg.cases.vtm_types:
         for qp in common_cfg.QP.wMCA[seq_name]:
-            task3 = CodecTask(vtm_type=vtm_type, QP=qp).with_parent(task2)
+            task3 = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task2)
             task4 = Yuv2pngTask().with_parent(task3)
             task5 = PostprocTask().with_parent(task4)
             task6 = RenderTask().with_parent(task5)

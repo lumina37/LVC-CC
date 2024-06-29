@@ -16,6 +16,7 @@ class CopyTask(BaseTask["CopyTask"]):
     task: str = "copy"
 
     DEFAULT_START_IDX: ClassVar[int] = -1
+
     start_idx: int = DEFAULT_START_IDX
     frames: int = 0
 

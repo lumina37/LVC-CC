@@ -1,4 +1,5 @@
 import functools
+from typing import ClassVar
 
 import cv2 as cv
 from pydantic.dataclasses import dataclass
@@ -14,9 +15,11 @@ from .infomap import query
 class CodecTask(BaseTask["CodecTask"]):
     task: str = "codec"
 
+    DEFAULT_QP: ClassVar[int] = -1
+
     frames: int = 0
     vtm_type: str = ""  # `AI` or `RA`
-    QP: int = -1
+    qp: int = DEFAULT_QP
 
     @functools.cached_property
     def dirname(self) -> str:
@@ -58,7 +61,7 @@ class CodecTask(BaseTask["CodecTask"]):
             "--OutputBitDepth=8",
             f"--FramesToBeEncoded={self.frames}",
             "--TemporalSubsampleRatio=1",
-            f"--QP={self.QP}",
+            f"--QP={self.qp}",
             "-i",
             srcpath,
             "-b",

@@ -17,6 +17,6 @@ __pypackages__/
 *.png
 *.txt
 *.csv
-cfg-node.toml
+config.toml
 
 misc*

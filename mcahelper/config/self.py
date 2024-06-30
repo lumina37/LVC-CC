@@ -37,7 +37,7 @@ class _QP:
 
 @dataclass
 class Config:
-    frame: int
+    frames: int
     cases: _Cases
     path: _Path
     app: _App

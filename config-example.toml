@@ -5,8 +5,8 @@ default_pattern = "frame#%03d.png"
 [cases]
 vtm_types = ["RA"]
 seqs = [
-    "ChessPieces-MovingCamera",
     "Boxer-IrishMan-Gladiator",
+    "ChessPieces-MovingCamera",
     "NagoyaFujita",
     "Boys",
     "Matryoshka",

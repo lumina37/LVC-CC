@@ -6,8 +6,7 @@ from pathlib import Path
 from pydantic.dataclasses import dataclass
 
 from ..config import RLCCfg, TLCTCfg
-from ..config.common import get_common_cfg
-from ..config.node import get_node_cfg
+from ..config.self import get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -42,11 +41,10 @@ class RenderTask(BaseTask["RenderTask"]):
         return srcdir
 
     def _run(self) -> None:
-        node_cfg = get_node_cfg()
-        common_cfg = get_common_cfg()
+        config = get_config()
 
         # Copy `calibration.xml`
-        cfg_srcdir = node_cfg.path.dataset / "cfg" / self.seq_name
+        cfg_srcdir = Path("config") / self.seq_name
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
@@ -59,11 +57,11 @@ class RenderTask(BaseTask["RenderTask"]):
         calib_cfg_name = f"{TypeCfg.CFG_NAME}.xml"
         shutil.copy(cfg_srcdir / calib_cfg_name, cfg_dstdir)
         rlccfg.Calibration_xml = str(cfg_dstdir / calib_cfg_name)
-        rlccfg.RawImage_Path = str(self.srcdir / common_cfg.default_pattern)
+        rlccfg.RawImage_Path = str(self.srcdir / config.default_pattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
-        rlccfg.Output_Path = str(img_dstdir / common_cfg.default_pattern.rstrip('.png'))
+        rlccfg.Output_Path = str(img_dstdir / config.default_pattern.rstrip('.png'))
         rlccfg.Isfiltering = 1
         rlccfg.viewNum = self.views
         # Render frames with id \in [start, end]
@@ -75,7 +73,7 @@ class RenderTask(BaseTask["RenderTask"]):
 
         # Prepare and run command
         cmds = [
-            node_cfg.app.rlc,
+            config.app.rlc,
             rlccfg_dstpath,
         ]
 

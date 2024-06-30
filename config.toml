@@ -1,0 +1,84 @@
+frames = 1
+
+[cases]
+vtm_types = ["RA"]
+seqs = [
+    # "Boys",
+    # "Cars",
+    # "Experimenting",
+    # "Matryoshka",
+    # "Tri-viewpoint",
+    # "Boxer-IrishMan-Gladiator",
+    "Tunnel_Train",
+]
+
+[path]
+input = "D:/MPEG/MPEG144/dataset/input"
+output = "D:/MPEG/MPEG144/dataset/output"
+
+[path.pattern]
+"Boxer-IrishMan-Gladiator" = "Boxer-IrishMan-Gladiator/frame_%03d.png"
+"ChessPieces" = "ChessPieces/frame_%03d.png"
+"ChessPieces-MovingCamera" = "ChessPieces-MovingCamera/frame_%03d.png"
+"ComplexObjectMove" = "ComplexObjectMove/frame_%03d.png"
+"UnicornLinearCam" = "UnicornLinearCam/frame_%03d.png"
+"NagoyaDataLeading" = "NagoyaDataLeading/NagoyaDataLeading_f%04d.png"
+"NagoyaFujita" = "NagoyaFujita/NagoyaFujita_f%04d.png"
+"Tunnel_Train" = "Tunnel_Train/Tunnel_Train_2c_f%04d.png"
+"Boys" = "Boys/Image%03d.bmp"
+"Cars" = "Cars/Image%d.bmp"
+"Experimenting" = "Experimenting/Image%03d.bmp"
+"Matryoshka" = "Matryoshka/Image%d.bmp"
+"Tri-viewpoint" = "Tri-viewpoint/frame%03d.png"
+
+[app]
+ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"
+encoder = "D:/MPEG/MPEG144/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"
+preproc = "D:/MPEG/MPEG143/code/MCA/cmake-build-release/src/bin/mca-preproc.exe"
+postproc = "D:/MPEG/MPEG143/code/MCA/cmake-build-release/src/bin/mca-postproc.exe"
+rlc = "D:/MPEG/MPEG146/code/rlc/Program/cmake-build-release/RLC30.exe"
+
+# Seldom Modify the Configurations Below
+
+default_pattern = "frame#%03d.png"
+
+[QP.woMCA]
+"Boxer-IrishMan-Gladiator" = [37, 41, 45, 49]
+"ChessPieces" = [37, 41, 45, 49]
+"ChessPieces-MovingCamera" = [33, 40, 45, 49]
+"NagoyaDataLeading" = [38, 43, 49, 51]
+"NagoyaFujita" = [36, 40, 45, 49]
+"NagoyaOrigami" = [34, 39, 44, 49]
+"Tunnel_Train" = [35, 40, 45, 49]
+"Boys" = [37, 41, 45, 49]
+"Cars" = [37, 41, 45, 49]
+"Experimenting" = [37, 41, 45, 49]
+"Matryoshka" = [37, 41, 45, 49]
+
+[QP.wMCA]
+"Boxer-IrishMan-Gladiator" = [33, 37, 41, 45]
+"ChessPieces" = [34, 37, 41, 45]
+"ChessPieces-MovingCamera" = [30, 36, 40, 45]
+"NagoyaDataLeading" = [33, 38, 44, 47]
+"NagoyaFujita" = [32, 36, 42, 46]
+"NagoyaOrigami" = [31, 36, 40, 45]
+"Tunnel_Train" = [30, 35, 40, 45]
+"Boys" = [34, 37, 41, 45]
+"Cars" = [34, 37, 41, 45]
+"Experimenting" = [34, 37, 41, 45]
+"Matryoshka" = [34, 37, 41, 45]
+
+[start_idx]
+"Boxer-IrishMan-Gladiator" = 0
+"ChessPieces" = 0
+"ChessPieces-MovingCamera" = 0
+"ComplexObjectMove" = 0
+"UnicornLinearCam" = 0
+"NagoyaDataLeading" = 1
+"NagoyaFujita" = 1
+"Tunnel_Train" = 0
+"Boys" = 0
+"Cars" = 21
+"Experimenting" = 0
+"Tri-viewpoint" = 0
+"Matryoshka" = 0

@@ -6,8 +6,7 @@ from pathlib import Path
 from pydantic.dataclasses import dataclass
 
 from ..config import MCACfg
-from ..config.common import get_common_cfg
-from ..config.node import get_node_cfg
+from ..config.self import get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -30,11 +29,10 @@ class PostprocTask(BaseTask["PostprocTask"]):
         return srcdir
 
     def _run(self) -> None:
-        node_cfg = get_node_cfg()
-        common_cfg = get_common_cfg()
+        config = get_config()
 
         # Copy `calibration.xml`
-        cfg_srcdir = node_cfg.path.dataset / "cfg" / self.seq_name
+        cfg_srcdir = Path("config") / self.seq_name
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
@@ -49,8 +47,8 @@ class PostprocTask(BaseTask["PostprocTask"]):
         calib_cfg_name = "rlc.xml" if mcacfg.pipeline == 0 else "tlct.xml"
         shutil.copy(cfg_srcdir / calib_cfg_name, cfg_dstdir)
         mcacfg.Calibration_xml = str(cfg_dstdir / calib_cfg_name)
-        mcacfg.RawImage_Path = self.srcdir / common_cfg.default_pattern
-        mcacfg.Output_Path = img_dstdir / common_cfg.default_pattern
+        mcacfg.RawImage_Path = self.srcdir / config.default_pattern
+        mcacfg.Output_Path = img_dstdir / config.default_pattern
         mcacfg.start_frame = 1
         mcacfg.end_frame = self.frames
         mcacfg.crop_ratio = self.crop_ratio
@@ -60,7 +58,7 @@ class PostprocTask(BaseTask["PostprocTask"]):
 
         # Run command
         cmds = [
-            node_cfg.app.postproc,
+            config.app.postproc,
             mcacfg_dstpath,
         ]
 

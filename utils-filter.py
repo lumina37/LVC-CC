@@ -1,8 +1,7 @@
-from mcahelper.config import set_common_cfg, set_node_cfg
+from mcahelper.config import set_config
 from mcahelper.task import CodecTask, RenderTask, get_codec_task, is_anchor, tasks
 
-node_cfg = set_node_cfg('cfg-node.toml')
-common_cfg = set_common_cfg('cfg-common.toml')
+set_config('config.toml')
 
 
 def qp_filter(task: RenderTask):

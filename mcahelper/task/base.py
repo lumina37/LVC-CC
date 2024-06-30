@@ -8,7 +8,7 @@ from typing import Generic, TypeVar
 
 from pydantic.dataclasses import dataclass
 
-from ..config.node import get_node_cfg
+from ..config import get_config
 from ..logging import get_logger
 from ..utils import to_json
 from .chain import Chain
@@ -108,8 +108,8 @@ class BaseTask(Generic[TSelfTask]):
 
     @functools.cached_property
     def dstdir(self) -> Path:
-        node_cfg = get_node_cfg()
-        return node_cfg.path.dataset / "playground" / self.dirname
+        config = get_config()
+        return config.path.output / "playground" / self.dirname
 
     def dump_taskinfo(self) -> None:
         with (self.dstdir / "task.json").open('w', encoding='utf-8') as f:

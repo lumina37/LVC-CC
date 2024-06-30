@@ -15,7 +15,9 @@ class _Cases:
 
 @dataclass
 class _Path:
-    dataset: Path
+    input: Path
+    output: Path
+    pattern: dict[str, str]
 
 
 @dataclass
@@ -28,37 +30,45 @@ class _App:
 
 
 @dataclass
-class NodeCfg:
-    frames: int
+class _QP:
+    wMCA: dict[str, list[int]]
+    woMCA: dict[str, list[int]]
+
+
+@dataclass
+class Config:
+    frame: int
     cases: _Cases
     path: _Path
     app: _App
+    default_pattern: str
+    QP: _QP
+    start_idx: dict[str, int]
 
 
-_NODE_CFG = None
+_COMMON_CFG = None
 
 
-def load(f: IOBase) -> NodeCfg:
-    return NodeCfg(**tomllib.load(f))
+def load(f: IOBase) -> Config:
+    return Config(**tomllib.load(f))
 
 
-def from_file(path: Path) -> NodeCfg:
+def from_file(path: Path) -> Config:
     path = Path(path)
     with path.open('rb') as f:
         return load(f)
 
 
-def set_node_cfg(path: Path) -> NodeCfg:
-    global _NODE_CFG
-    _NODE_CFG = from_file(path)
-    return _NODE_CFG
+def set_config(path: Path) -> Config:
+    global _COMMON_CFG
+    _COMMON_CFG = from_file(path)
+    return _COMMON_CFG
 
 
-def get_node_cfg() -> NodeCfg | None:
-    if _NODE_CFG is None:
+def get_config() -> Config | None:
+    if _COMMON_CFG is None:
         log = get_logger()
         msg = "You should call `set_node_cfg` first!"
         log.critical(msg)
         raise RuntimeError(msg)
-
-    return _NODE_CFG
+    return _COMMON_CFG

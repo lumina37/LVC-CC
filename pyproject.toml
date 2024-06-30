@@ -3,7 +3,7 @@ name = "MCA-Benchmark"
 version = "0.4.0"
 description = ""
 authors = [{ name = "Starry-OvO", email = "starry.qvq@gmail.com" }]
-dependencies = ["pydantic", "scipy", "opencv-contrib-python", "matplotlib"]
+dependencies = ["pydantic", "scipy", "opencv-python", "matplotlib"]
 requires-python = ">=3.10,<3.13"
 readme = "README.md"
 license = { text = "MIT" }

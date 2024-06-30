@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from ..config.node import get_node_cfg
+from ..config import get_config
 from ..utils import mkdir
 from .chain import Chain
 
@@ -11,9 +11,9 @@ _INFOMAP: TypeInfomap = None
 
 
 def init_infomap() -> TypeInfomap:
-    node_cfg = get_node_cfg()
+    config = get_config()
 
-    playground_dir = node_cfg.path.dataset / "playground"
+    playground_dir = config.path.output / "playground"
     mkdir(playground_dir)
 
     infomap = {}

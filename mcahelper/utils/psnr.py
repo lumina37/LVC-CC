@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 
-from ..config import get_node_cfg
+from ..config import get_config
 from .command import run_cmds
 from .readlog import read_psnrlog
 
@@ -12,11 +12,11 @@ def compute_psnr_yuv(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarra
     with tempfile.NamedTemporaryFile('w', delete_on_close=False) as tf:
         tf.close()
 
-        node_cfg = get_node_cfg()
+        config = get_config()
         temp_path = Path(tf.name)
         temp_path_str = str(temp_path).replace('\\', '/').replace(':', '\\:')
         cmds = [
-            node_cfg.app.ffmpeg,
+            config.app.ffmpeg,
             "-s",
             f"{width}x{height}",
             "-pix_fmt",

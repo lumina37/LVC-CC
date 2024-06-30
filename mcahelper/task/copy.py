@@ -1,12 +1,10 @@
 import functools
 import shutil
-from pathlib import Path
 from typing import ClassVar
 
 from pydantic.dataclasses import dataclass
 
-from ..config.common import get_common_cfg
-from ..config.node import get_node_cfg
+from ..config import get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 
@@ -21,7 +19,7 @@ class CopyTask(BaseTask["CopyTask"]):
     frames: int = 0
 
     def __post_init__(self) -> None:
-        common_cfg = get_common_cfg()
+        common_cfg = get_config()
         if self.start_idx == self.DEFAULT_START_IDX:
             self.start_idx = common_cfg.start_idx[self.seq_name]
 
@@ -29,36 +27,30 @@ class CopyTask(BaseTask["CopyTask"]):
     def dirname(self) -> str:
         return f"{self.task}-{self.seq_name}-{self.shorthash}"
 
-    @functools.cached_property
-    def srcdir(self) -> Path:
-        node_cfg = get_node_cfg()
-        srcdir = node_cfg.path.dataset / "img" / self.seq_name
-        return srcdir
-
     def _run(self) -> None:
-        common_cfg = get_common_cfg()
+        config = get_config()
 
-        fname_pattern = common_cfg.pattern[self.seq_name]
+        input_dir = config.path.input
+        input_pattern = config.path.pattern[self.seq_name]
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
-        if fname_pattern.endswith('.png'):
+        if input_pattern.endswith('.png'):
             for cnt, idx in enumerate(range(self.start_idx, self.start_idx + self.frames), 1):
-                src_fname = fname_pattern % idx
-                dst_fname = common_cfg.default_pattern % cnt
-                shutil.copy(self.srcdir / src_fname, img_dstdir / dst_fname)
+                src_fpath = input_dir / (input_pattern % idx)
+                dst_fname = config.default_pattern % cnt
+                shutil.copy(src_fpath, img_dstdir / dst_fname)
 
         else:
-            node_cfg = get_node_cfg()
             cmds = [
-                node_cfg.app.ffmpeg,
+                config.app.ffmpeg,
                 "-i",
-                self.srcdir / fname_pattern,
+                input_dir / input_pattern,
                 "-start_number",
                 self.start_idx,
                 "-frames:v",
                 self.frames,
-                img_dstdir / common_cfg.default_pattern,
+                img_dstdir / config.default_pattern,
                 "-v",
                 "warning",
                 "-y",
@@ -74,6 +66,6 @@ class CopyTask(BaseTask["CopyTask"]):
                 rg = []
 
             for i in rg:
-                src_fname = common_cfg.default_pattern % (self.start_idx + i - 1)
-                dst_fname = common_cfg.default_pattern % i
+                src_fname = config.default_pattern % (self.start_idx + i - 1)
+                dst_fname = config.default_pattern % i
                 (img_dstdir / src_fname).rename(img_dstdir / dst_fname)

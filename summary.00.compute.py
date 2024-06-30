@@ -4,7 +4,7 @@ from pathlib import Path
 import cv2 as cv
 import numpy as np
 
-from mcahelper.config import set_common_cfg, set_node_cfg
+from mcahelper.config import set_config
 from mcahelper.logging import get_logger
 from mcahelper.task import (
     CodecTask,
@@ -19,12 +19,11 @@ from mcahelper.task import (
 from mcahelper.task.infomap import query
 from mcahelper.utils import compute_psnr_yuv, get_first_file, mkdir, read_enclog
 
-node_cfg = set_node_cfg('cfg-node.toml')
-common_cfg = set_common_cfg('cfg-common.toml')
+config = set_config('config.toml')
 
 log = get_logger()
 
-summary_dir = node_cfg.path.dataset / 'summary/compute'
+summary_dir = config.path.output / 'summary/compute'
 mkdir(summary_dir)
 
 BASES: dict[str, Path] = {}
@@ -57,19 +56,19 @@ def compute_psnr_task(task: RenderTask, base: ComposeTask) -> np.ndarray:
     return accpsnr
 
 
-for seq_name in node_cfg.cases.seqs:
+for seq_name in config.cases.seqs:
     seq_dic = {}
 
     # Anchor
-    tcopy = CopyTask(seq_name=seq_name, frames=node_cfg.frames)
+    tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
     task1 = RenderTask().with_parent(tcopy)
     tbase = ComposeTask().with_parent(task1)
 
     # W/O MCA
     task1 = Png2yuvTask().with_parent(tcopy)
-    for vtm_type in node_cfg.cases.vtm_types:
-        for qp in common_cfg.QP.woMCA[seq_name]:
+    for vtm_type in config.cases.vtm_types:
+        for qp in config.QP.woMCA[seq_name]:
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task1)
             task3 = Yuv2pngTask().with_parent(tcodec)
             task4 = RenderTask().with_parent(task3)
@@ -95,8 +94,8 @@ for seq_name in node_cfg.cases.seqs:
     # W MCA
     task1 = PreprocTask().with_parent(tcopy)
     task2 = Png2yuvTask().with_parent(task1)
-    for vtm_type in node_cfg.cases.vtm_types:
-        for qp in common_cfg.QP.wMCA[seq_name]:
+    for vtm_type in config.cases.vtm_types:
+        for qp in config.QP.wMCA[seq_name]:
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task2)
             task4 = Yuv2pngTask().with_parent(tcodec)
             task5 = PostprocTask().with_parent(task4)

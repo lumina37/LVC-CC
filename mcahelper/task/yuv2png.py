@@ -3,8 +3,7 @@ import functools
 import cv2 as cv
 from pydantic.dataclasses import dataclass
 
-from ..config.common import get_common_cfg
-from ..config.node import get_node_cfg
+from ..config.self import get_config
 from ..utils import get_first_file, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -22,8 +21,7 @@ class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
         return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
 
     def _run(self) -> None:
-        node_cfg = get_node_cfg()
-        common_cfg = get_common_cfg()
+        config = get_config()
 
         refimg_path = get_first_file(self.parent.parent.srcdir)
         refimg = cv.imread(str(refimg_path))
@@ -36,7 +34,7 @@ class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
         mkdir(img_dstdir)
 
         cmds = [
-            node_cfg.app.ffmpeg,
+            config.app.ffmpeg,
             "-s",
             f"{width}x{height}",
             "-i",
@@ -45,7 +43,7 @@ class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
             "format=yuv444p",
             "-frames:v",
             self.frames,
-            img_dstdir / common_cfg.default_pattern,
+            img_dstdir / config.default_pattern,
             "-v",
             "warning",
         ]

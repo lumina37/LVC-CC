@@ -1,4 +1,4 @@
-from mcahelper.config import set_common_cfg, set_node_cfg
+from mcahelper.config import set_config
 from mcahelper.executor import Executor
 from mcahelper.task import (
     CodecTask,
@@ -11,14 +11,13 @@ from mcahelper.task import (
     Yuv2pngTask,
 )
 
-common_cfg = set_common_cfg('cfg-common.toml')
-node_cfg = set_node_cfg('cfg-node.toml')
+config = set_config('config.toml')
 
 roots = []
 
-for seq_name in node_cfg.cases.seqs:
+for seq_name in config.cases.seqs:
     # Anchor
-    tcopy = CopyTask(seq_name=seq_name, frames=node_cfg.frames)
+    tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
     task1 = RenderTask().with_parent(tcopy)
@@ -26,8 +25,8 @@ for seq_name in node_cfg.cases.seqs:
 
     # W/O MCA
     task1 = Png2yuvTask().with_parent(tcopy)
-    for vtm_type in node_cfg.cases.vtm_types:
-        for qp in common_cfg.QP.woMCA[seq_name]:
+    for vtm_type in config.cases.vtm_types:
+        for qp in config.QP.woMCA[seq_name]:
             task2 = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task1)
             task3 = Yuv2pngTask().with_parent(task2)
             task4 = RenderTask().with_parent(task3)
@@ -36,8 +35,8 @@ for seq_name in node_cfg.cases.seqs:
     # W MCA
     task1 = PreprocTask().with_parent(tcopy)
     task2 = Png2yuvTask().with_parent(task1)
-    for vtm_type in node_cfg.cases.vtm_types:
-        for qp in common_cfg.QP.wMCA[seq_name]:
+    for vtm_type in config.cases.vtm_types:
+        for qp in config.QP.wMCA[seq_name]:
             task3 = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task2)
             task4 = Yuv2pngTask().with_parent(task3)
             task5 = PostprocTask().with_parent(task4)

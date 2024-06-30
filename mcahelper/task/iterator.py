@@ -1,7 +1,7 @@
 import json
 from collections.abc import Callable, Generator
 
-from ..config.node import get_node_cfg
+from ..config import get_config
 from .base import TDerivedTask
 from .chain import Chain
 from .codec import CodecTask
@@ -12,9 +12,9 @@ from .render import RenderTask
 def tasks(
     cls: type[TDerivedTask] = None, require: Callable[[TDerivedTask], bool] | None = lambda _: True
 ) -> Generator[TDerivedTask]:
-    node_cfg = get_node_cfg()
+    config = get_config()
 
-    playground_path = node_cfg.path.dataset / "playground"
+    playground_path = config.path.output / "playground"
     glob_pattern = f"{cls.task}*" if cls is not None else '*'
     for d in playground_path.glob(glob_pattern):
         if not d.is_dir():

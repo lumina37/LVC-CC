@@ -4,7 +4,7 @@ import json
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
-from mcahelper.config import node
+from mcahelper.config import set_config
 from mcahelper.logging import get_logger
 from mcahelper.utils import mkdir
 
@@ -25,20 +25,20 @@ class Stat:
 
 log = get_logger()
 
-node_cfg = node.set_node_cfg('cfg-node.toml')
+config = set_config('config.toml')
 
-summary_dir = node_cfg.path.dataset / 'summary'
+summary_dir = config.path.output / 'summary'
 src_dir = summary_dir / 'compute'
 dst_dir = summary_dir / 'figs'
 mkdir(dst_dir)
 
 mode_map = {'AI': 'All Intra', 'RA': 'Random Access'}
 
-for seq_name in node_cfg.cases.seqs:
+for seq_name in config.cases.seqs:
     with (src_dir / f'{seq_name}.json').open() as f:
         seq_dic: dict = json.load(f)
 
-    for vtm_type in node_cfg.cases.vtm_types:
+    for vtm_type in config.cases.vtm_types:
         fig, ax = plt.subplots(figsize=(6, 6))
         ax: Axes = ax
         ax.set_xlabel("Total bitrate (Kbps)")

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
-from ..config.node import get_node_cfg
+from ..config import get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -26,14 +26,14 @@ class ComposeTask(BaseTask["ComposeTask"]):
         return srcdir
 
     def _run(self) -> None:
-        node_cfg = get_node_cfg()
+        config = get_config()
 
         yuv_dstdir = self.dstdir / "yuv"
         mkdir(yuv_dstdir)
 
         for view_idx in range(1, self.views * self.views + 1):
             cmds = [
-                node_cfg.app.ffmpeg,
+                config.app.ffmpeg,
                 "-i",
                 self.srcdir / "frame#%03d" / f"image_{view_idx:0>3}.png",
                 "-vf",

@@ -5,7 +5,7 @@ import json
 import numpy as np
 import scipy.interpolate
 
-from mcahelper.config import node
+from mcahelper.config import set_config
 from mcahelper.logging import get_logger
 
 
@@ -96,24 +96,24 @@ class PSNR:
 
 log = get_logger()
 
-node_cfg = node.set_node_cfg('cfg-node.toml')
+config = set_config('config.toml')
 
-dst_dir = node_cfg.path.dataset / 'summary'
+dst_dir = config.path.output / 'summary'
 src_dir = dst_dir / 'compute'
 dst_p = dst_dir / 'bdrate.csv'
 
 with dst_p.open('w', encoding='utf-8', newline='') as csv_f:
     csv_writer = csv.writer(csv_f)
     headers = ['seq.']
-    headers.extend(f'{vtm_type}-BD-rate' for vtm_type in node_cfg.cases.vtm_types)
+    headers.extend(f'{vtm_type}-BD-rate' for vtm_type in config.cases.vtm_types)
     csv_writer.writerow(headers)
 
-    for seq_name in node_cfg.cases.seqs:
+    for seq_name in config.cases.seqs:
         with (src_dir / f'{seq_name}.json').open() as f:
             seq_dic: dict = json.load(f)
         row = [seq_name]
 
-        for vtm_type in node_cfg.cases.vtm_types:
+        for vtm_type in config.cases.vtm_types:
             womca_psnrs = [PSNR(**d) for d in seq_dic['woMCA'][vtm_type]]
             womca_psnrs.sort()
             wmca_psnrs = [PSNR(**d) for d in seq_dic['wMCA'][vtm_type]]

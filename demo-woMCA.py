@@ -1,9 +1,8 @@
-from mcahelper.config import set_common_cfg, set_node_cfg
+from mcahelper.config import set_config
 from mcahelper.executor import Executor
 from mcahelper.task import CodecTask, CopyTask, Png2yuvTask, RenderTask, Yuv2pngTask
 
-set_common_cfg('cfg-common.toml')
-set_node_cfg('cfg-node.toml')
+set_config('config.toml')
 
 tcopy = CopyTask(seq_name="Tunnel_Train", frames=1)
 task1 = Png2yuvTask().with_parent(tcopy)

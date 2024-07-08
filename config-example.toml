@@ -55,17 +55,17 @@ rlc = "D:/MPEG/MPEG146/code/rlc/Program/cmake-build-release/RLC30.exe"
 "Matryoshka" = [36, 40, 44, 48]
 
 [QP.wMCA]
-"Boxer-IrishMan-Gladiator" = [32, 36, 40, 44]
+"Boxer-IrishMan-Gladiator" = [36, 40, 44, 48]
 "ChessPieces" = [34, 37, 41, 45]
-"ChessPieces-MovingCamera" = [32, 36, 40, 44]
+"ChessPieces-MovingCamera" = [36, 40, 44, 48]
 "NagoyaDataLeading" = [33, 38, 44, 47]
-"NagoyaFujita" = [32, 36, 41, 45]
+"NagoyaFujita" = [36, 40, 44, 48]
 "NagoyaOrigami" = [31, 36, 40, 45]
 "Tunnel_Train" = [30, 35, 40, 45]
-"Boys" = [33, 36, 40, 44]
+"Boys" = [36, 40, 44, 48]
 "Cars" = [34, 37, 41, 45]
 "Experimenting" = [34, 37, 41, 45]
-"Matryoshka" = [33, 36, 40, 44]
+"Matryoshka" = [36, 40, 44, 48]
 
 [start_idx]
 "Boxer-IrishMan-Gladiator" = 0

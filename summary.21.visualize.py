@@ -47,8 +47,8 @@ for seq_name in config.cases.seqs:
         ax.set_title(title)
 
         for tp, label, color in [
-            ('wMCA', 'W/O MCA', 'orange'),
-            ('woMCA', 'W/ MCA', 'blue'),
+            ('wMCA', 'W/ MCA', 'orange'),
+            ('woMCA', 'W/O MCA', 'blue'),
         ]:
             psnrs = [Stat(**d) for d in seq_dic[tp][vtm_type]]
             psnrs.sort()

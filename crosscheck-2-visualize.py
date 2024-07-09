@@ -33,7 +33,11 @@ dst_dir = summary_dir / 'figs'
 mkdir(dst_dir)
 
 for seq_name in config.cases.seqs:
-    with (src_dir / f'{seq_name}.json').open() as f:
+    json_path = src_dir / f'{seq_name}.json'
+    if not json_path.exists():
+        continue
+
+    with json_path.open() as f:
         seq_dic: dict = json.load(f)
 
     for vtm_type in config.cases.vtm_types:

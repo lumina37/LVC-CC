@@ -1,10 +1,9 @@
 import csv
 import dataclasses as dcs
 import json
-from pathlib import Path
+
 from mcahelper.config import set_config
 from mcahelper.logging import get_logger
-from mcahelper.utils import mkdir
 
 
 @dcs.dataclass

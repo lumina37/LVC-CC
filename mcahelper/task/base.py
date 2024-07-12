@@ -2,6 +2,7 @@ import abc
 import dataclasses as dcs
 import functools
 import hashlib
+import traceback
 from collections.abc import Callable
 from pathlib import Path
 from typing import Generic, TypeVar
@@ -125,7 +126,7 @@ class BaseTask(Generic[TSelfTask]):
         try:
             self._run()
         except Exception:
-            pass
+            traceback.print_exc()
         else:
             self.dump_taskinfo()
             append(self, self.dstdir)

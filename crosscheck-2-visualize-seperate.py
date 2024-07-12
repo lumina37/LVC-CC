@@ -18,9 +18,6 @@ class Stat:
     ypsnr: float
     upsnr: float
     vpsnr: float
-    ll_ypsnr: float = 0.0
-    ll_upsnr: float = 0.0
-    ll_vpsnr: float = 0.0
 
     def __lt__(self, rhs: "Stat") -> bool:
         return self.bitrate < rhs.bitrate
@@ -36,12 +33,17 @@ dst_dir = summary_dir / 'figs'
 mkdir(dst_dir)
 
 for seq_name in config.cases.seqs:
-    json_path = src_dir / f'{seq_name}.json'
-    if not json_path.exists():
+    womca_json_path = src_dir / f'{seq_name}-woMCA.json'
+    if not womca_json_path.exists():
+        continue
+    wmca_json_path = src_dir / f'{seq_name}-wMCA.json'
+    if not wmca_json_path.exists():
         continue
 
-    with json_path.open() as f:
-        seq_dic: dict = json.load(f)
+    with womca_json_path.open() as f:
+        womca_dic: dict = json.load(f)
+    with wmca_json_path.open() as f:
+        wmca_dic: dict = json.load(f)
 
     for vtm_type in config.cases.vtm_types:
         fig, ax = plt.subplots(figsize=(6, 6))
@@ -51,11 +53,11 @@ for seq_name in config.cases.seqs:
         title = f'{seq_name}'
         ax.set_title(title)
 
-        for tp, label, color in [
-            ('wMCA', 'W/ MCA', 'orange'),
-            ('woMCA', 'W/O MCA', 'blue'),
+        for _, dic, label, color in [
+            ('wMCA', wmca_dic, 'W/ MCA', 'orange'),
+            ('woMCA', womca_dic, 'W/O MCA', 'blue'),
         ]:
-            psnrs = [Stat(**d) for d in seq_dic[tp][vtm_type]]
+            psnrs = [Stat(**d) for d in dic[vtm_type]]
             psnrs.sort()
             ax.plot(
                 [p.bitrate for p in psnrs],

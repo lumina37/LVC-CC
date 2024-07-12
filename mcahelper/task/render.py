@@ -55,8 +55,9 @@ class RenderTask(BaseTask["RenderTask"]):
         rlccfg = TypeCfg.from_file(rlccfg_srcpath)
 
         calib_cfg_name = f"{TypeCfg.CFG_NAME}.xml"
-        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstdir)
-        rlccfg.Calibration_xml = str(cfg_dstdir / calib_cfg_name)
+        cfg_dstpath = cfg_dstdir / calib_cfg_name
+        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
+        rlccfg.Calibration_xml = str(cfg_dstpath)
         rlccfg.RawImage_Path = str(self.srcdir / config.default_pattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)

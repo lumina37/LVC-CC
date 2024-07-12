@@ -45,8 +45,9 @@ class PreprocTask(BaseTask["PreprocTask"]):
         mcacfg = MCACfg.from_file(mcacfg_srcpath)
 
         calib_cfg_name = "rlc.xml" if mcacfg.pipeline == 0 else "tlct.xml"
-        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstdir)
-        mcacfg.Calibration_xml = str(cfg_dstdir / calib_cfg_name)
+        cfg_dstpath = cfg_dstdir / calib_cfg_name
+        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
+        mcacfg.Calibration_xml = str(cfg_dstpath)
         mcacfg.RawImage_Path = self.srcdir / config.default_pattern
         mcacfg.Output_Path = img_dstdir / config.default_pattern
         mcacfg.start_frame = 1

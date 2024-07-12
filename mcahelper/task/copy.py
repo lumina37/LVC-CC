@@ -39,7 +39,7 @@ class CopyTask(BaseTask["CopyTask"]):
             for cnt, idx in enumerate(range(self.start_idx, self.start_idx + self.frames), 1):
                 src_fpath = input_dir / (input_pattern % idx)
                 dst_fname = config.default_pattern % cnt
-                shutil.copy(src_fpath, img_dstdir / dst_fname)
+                shutil.copyfile(src_fpath, img_dstdir / dst_fname)
 
         else:
             cmds = [

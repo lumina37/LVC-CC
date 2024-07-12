@@ -45,7 +45,7 @@ class PostprocTask(BaseTask["PostprocTask"]):
         mcacfg = MCACfg.from_file(mcacfg_srcpath)
 
         calib_cfg_name = "rlc.xml" if mcacfg.pipeline == 0 else "tlct.xml"
-        shutil.copy(cfg_srcdir / calib_cfg_name, cfg_dstdir)
+        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstdir)
         mcacfg.Calibration_xml = str(cfg_dstdir / calib_cfg_name)
         mcacfg.RawImage_Path = self.srcdir / config.default_pattern
         mcacfg.Output_Path = img_dstdir / config.default_pattern

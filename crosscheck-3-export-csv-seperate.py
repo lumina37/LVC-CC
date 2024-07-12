@@ -13,9 +13,6 @@ class Stat:
     ypsnr: float
     upsnr: float
     vpsnr: float
-    ll_ypsnr: float = 0.0
-    ll_upsnr: float = 0.0
-    ll_vpsnr: float = 0.0
 
     def __lt__(self, rhs: "Stat") -> bool:
         return self.bitrate < rhs.bitrate
@@ -36,17 +33,22 @@ with (dst_dir / "psnr.csv").open("w", encoding="utf-8", newline='') as csv_file:
     )
 
     for seq_name in config.cases.seqs:
-        json_path = src_dir / f'{seq_name}.json'
-        if not json_path.exists():
+        womca_json_path = src_dir / f'{seq_name}-woMCA.json'
+        if not womca_json_path.exists():
+            continue
+        wmca_json_path = src_dir / f'{seq_name}-wMCA.json'
+        if not wmca_json_path.exists():
             continue
 
-        with json_path.open() as f:
-            seq_dic: dict = json.load(f)
+        with womca_json_path.open() as f:
+            womca_dic: dict = json.load(f)
+        with wmca_json_path.open() as f:
+            wmca_dic: dict = json.load(f)
 
         for vtm_type in config.cases.vtm_types:
             rows = [[seq_name] for _ in range(4)]
-            for mca_type in ['woMCA', 'wMCA']:
-                psnrs = [Stat(**d) for d in seq_dic[mca_type][vtm_type]]
+            for _, dic in [('woMCA', womca_dic), ('wMCA', wmca_dic)]:
+                psnrs = [Stat(**d) for d in dic[vtm_type]]
                 psnrs.sort(reverse=True)
 
                 for rowidx, psnr in enumerate(psnrs):

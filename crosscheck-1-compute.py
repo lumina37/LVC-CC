@@ -138,6 +138,8 @@ for seq_name in config.cases.seqs:
             task6 = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(task5)
             tcomp = ComposeTask().with_parent(task6)
 
+            if query(tcomp) is None:
+                continue
             log.info(f"Handling {tcomp}")
 
             pre_type_dic: dict = seq_dic.setdefault('wMCA', {})

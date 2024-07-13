@@ -32,7 +32,19 @@ dst_dir = src_dir
 with (dst_dir / "psnr.csv").open("w", encoding="utf-8", newline='') as csv_file:
     csv_writer = csv.writer(csv_file)
     csv_writer.writerow(
-        ['seq-name', 'QP - W/O MCA', 'Y-PSNR', 'U-PSNR', 'V-PSNR', 'QP - W/ MCA', 'Y-PSNR', 'U-PSNR', 'V-PSNR']
+        [
+            'seq-name',
+            'QP - W/O MCA',
+            'Bitrate',
+            'Y-PSNR',
+            'U-PSNR',
+            'V-PSNR',
+            'QP - W/ MCA',
+            'Bitrate',
+            'Y-PSNR',
+            'U-PSNR',
+            'V-PSNR',
+        ]
     )
 
     for seq_name in config.cases.seqs:
@@ -50,6 +62,6 @@ with (dst_dir / "psnr.csv").open("w", encoding="utf-8", newline='') as csv_file:
                 psnrs.sort(reverse=True)
 
                 for rowidx, psnr in enumerate(psnrs):
-                    rows[rowidx].extend([psnr.qp, psnr.ypsnr, psnr.upsnr, psnr.vpsnr])
+                    rows[rowidx].extend([psnr.qp, psnr.bitrate, psnr.ypsnr, psnr.upsnr, psnr.vpsnr])
 
             csv_writer.writerows(rows)

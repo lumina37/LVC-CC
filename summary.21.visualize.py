@@ -4,9 +4,9 @@ import json
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
-from mcahelper.config import set_config
-from mcahelper.logging import get_logger
-from mcahelper.utils import mkdir
+from lvccc.config import set_config
+from lvccc.logging import get_logger
+from lvccc.utils import mkdir
 
 plt.rcParams['font.sans-serif'] = ['Times New Roman']
 

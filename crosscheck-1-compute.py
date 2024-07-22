@@ -4,9 +4,9 @@ from pathlib import Path
 import cv2 as cv
 import numpy as np
 
-from mcahelper.config import set_config
-from mcahelper.logging import get_logger
-from mcahelper.task import (
+from lvccc.config import set_config
+from lvccc.logging import get_logger
+from lvccc.task import (
     CodecTask,
     ComposeTask,
     CopyTask,
@@ -16,9 +16,9 @@ from mcahelper.task import (
     RenderTask,
     Yuv2pngTask,
 )
-from mcahelper.task.infomap import query
-from mcahelper.task.render import Pipeline
-from mcahelper.utils import compute_psnr_yuv, get_first_file, mkdir, read_enclog
+from lvccc.task.infomap import query
+from lvccc.task.render import Pipeline
+from lvccc.utils import compute_psnr_yuv, get_first_file, mkdir, read_enclog
 
 name2pipeline = {
     "Boxer-IrishMan-Gladiator": Pipeline.RLC,

@@ -1,6 +1,6 @@
-from mcahelper.config import set_config
-from mcahelper.executor import Executor
-from mcahelper.task import CopyTask, RenderTask
+from lvccc.config import set_config
+from lvccc.executor import Executor
+from lvccc.task import CopyTask, RenderTask
 
 set_config('config.toml')
 

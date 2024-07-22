@@ -2,8 +2,8 @@ import csv
 import dataclasses as dcs
 import json
 
-from mcahelper.config import set_config
-from mcahelper.logging import get_logger
+from lvccc.config import set_config
+from lvccc.logging import get_logger
 
 
 @dcs.dataclass

@@ -1,6 +1,6 @@
 [project]
-name = "MCA-Benchmark"
-version = "0.4.0"
+name = "LVC-CC"
+version = "0.5.0"
 description = ""
 authors = [{ name = "Zhuo Tan", email = "tz23@mails.tsinghua.edu.cn" }]
 dependencies = ["pydantic", "scipy", "opencv-python", "matplotlib"]
@@ -13,7 +13,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["mcahelper"]
+packages = ["lvccc"]
 
 [tool.rye]
 managed = true

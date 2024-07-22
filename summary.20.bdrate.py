@@ -5,8 +5,8 @@ import json
 import numpy as np
 import scipy.interpolate
 
-from mcahelper.config import set_config
-from mcahelper.logging import get_logger
+from lvccc.config import set_config
+from lvccc.logging import get_logger
 
 
 def BD_PSNR(R1, PSNR1, R2, PSNR2, piecewise=0):

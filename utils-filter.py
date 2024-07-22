@@ -1,5 +1,5 @@
-from mcahelper.config import set_config
-from mcahelper.task import CodecTask, RenderTask, get_codec_task, is_anchor, tasks
+from lvccc.config import set_config
+from lvccc.task import CodecTask, RenderTask, get_codec_task, is_anchor, tasks
 
 set_config('config.toml')
 

@@ -45,16 +45,16 @@ for seq_name in config.cases.seqs:
             task4 = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(task3)
             task5 = ComposeTask().with_parent(task4)
 
-    # 带MCA
-    task1 = PreprocTask().with_parent(tcopy)
-    task2 = Png2yuvTask().with_parent(task1)
-    for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.wMCA[seq_name]:
-            task3 = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task2)
-            task4 = Yuv2pngTask().with_parent(task3)
-            task5 = PostprocTask().with_parent(task4)
-            task6 = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(task5)
-            task7 = ComposeTask().with_parent(task6)
+    # # 带MCA
+    # task1 = PreprocTask().with_parent(tcopy)
+    # task2 = Png2yuvTask().with_parent(task1)
+    # for vtm_type in config.cases.vtm_types:
+    #     for qp in config.QP.wMCA[seq_name]:
+    #         task3 = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task2)
+    #         task4 = Yuv2pngTask().with_parent(task3)
+    #         task5 = PostprocTask().with_parent(task4)
+    #         task6 = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(task5)
+    #         task7 = ComposeTask().with_parent(task6)
 
 
 if __name__ == "__main__":

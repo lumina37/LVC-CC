@@ -1,6 +1,6 @@
-from mcahelper.config import set_config
-from mcahelper.executor import Executor
-from mcahelper.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
+from lvccc.config import set_config
+from lvccc.executor import Executor
+from lvccc.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
 
 set_config('config.toml')
 

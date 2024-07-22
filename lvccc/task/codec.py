@@ -6,7 +6,6 @@ import cv2 as cv
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
-from ..config.vtm import VTMCfg
 from ..utils import get_first_file, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
@@ -37,14 +36,6 @@ class CodecTask(BaseTask["CodecTask"]):
         refimg = cv.imread(str(refimg_path))
         height, width = refimg.shape[:2]
 
-        vtmcfg_srcpath = Path("config") / self.seq_name / "vtm.cfg"
-        vtm_cfg = VTMCfg.from_file(vtmcfg_srcpath)
-        vtm_cfg.SourceHeight = height
-        vtm_cfg.SourceWidth = width
-
-        vtmcfg_dstpath = self.dstdir / 'vtm.cfg'
-        vtm_cfg.to_file(vtmcfg_dstpath)
-
         srcdir = query(self.parent)
         srcpath = srcdir / "out.yuv"
 
@@ -56,12 +47,12 @@ class CodecTask(BaseTask["CodecTask"]):
             config.app.encoder,
             "-c",
             vtm_type_cfg_path,
-            "-c",
-            vtmcfg_dstpath,
-            "--InternalBitDepth=10",
+            f"-wdt={width}",
+            f"-hgt={height}",
+            "-fr=30",
+            "--InputBitDepth=8",
             "--OutputBitDepth=8",
             f"--FramesToBeEncoded={self.frames}",
-            "--TemporalSubsampleRatio=1",
             f"--QP={self.qp}",
             "-i",
             srcpath,

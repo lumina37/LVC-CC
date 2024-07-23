@@ -4,10 +4,10 @@ from lvccc.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTa
 
 set_config('config.toml')
 
-tcopy = CopyTask(seq_name="Tunnel_Train", frames=1)
+tcopy = CopyTask(seq_name="NagoyaFujita", frames=1)
 task1 = PreprocTask().with_parent(tcopy)
 task2 = Png2yuvTask().with_parent(task1)
-task3 = CodecTask(vtm_type='AI', qp=46).with_parent(task2)
+task3 = CodecTask(qp=46).with_parent(task2)
 task4 = Yuv2pngTask().with_parent(task3)
 task5 = PostprocTask().with_parent(task4)
 task6 = RenderTask().with_parent(task5)

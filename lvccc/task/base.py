@@ -106,10 +106,13 @@ class BaseTask(Generic[TSelfTask]):
     @functools.cached_property
     def dstdir(self) -> Path:
         config = get_config()
-        if self.parent is not None and (parent_dirname := self.parent.dirname):
-            real_dirname = f"{self.task}-{parent_dirname}-{self.dirname}-{self.shorthash}"
+
+        if self.parent is not None and self.parent.dirname:
+            parent_dirname = f"-{self.parent.dirname}"
         else:
-            real_dirname = f"{self.task}-{self.dirname}-{self.shorthash}"
+            parent_dirname = ""
+        self_dirname = f"-{self.dirname}" if self.dirname else ""
+        real_dirname = f"{self.task}{parent_dirname}{self_dirname}-{self.shorthash}"
 
         return config.path.output / "tasks" / real_dirname
 

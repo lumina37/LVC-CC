@@ -9,8 +9,8 @@ from ..config import RLCCfg, TLCTCfg
 from ..config.self import get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
-from .infomap import query
 from .copy import CopyTask
+from .infomap import query
 
 
 class Pipeline(enum.IntEnum):
@@ -34,7 +34,7 @@ class RenderTask(BaseTask["RenderTask"]):
 
     @functools.cached_property
     def dirname(self) -> str:
-        return "anchor" if isinstance(self.parent, CopyTask) else ""
+        return "base" if isinstance(self.parent, CopyTask) else ""
 
     @functools.cached_property
     def srcdir(self) -> Path:

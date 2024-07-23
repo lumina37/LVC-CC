@@ -6,6 +6,7 @@ from pydantic.dataclasses import dataclass
 from ..config.self import get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
+from .copy import CopyTask
 from .infomap import query
 
 
@@ -17,7 +18,7 @@ class Png2yuvTask(BaseTask["Png2yuvTask"]):
 
     @functools.cached_property
     def dirname(self) -> str:
-        return ""
+        return "anchor" if isinstance(self.parent, CopyTask) else ""
 
     @functools.cached_property
     def srcdir(self) -> Path:

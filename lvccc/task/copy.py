@@ -25,7 +25,7 @@ class CopyTask(BaseTask["CopyTask"]):
 
     @functools.cached_property
     def dirname(self) -> str:
-        return self.seq_name
+        return f"{self.seq_name}-f{self.frames}"
 
     def _run(self) -> None:
         config = get_config()

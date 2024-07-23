@@ -1,3 +1,4 @@
+import enum
 import functools
 from pathlib import Path
 from typing import ClassVar
@@ -11,6 +12,11 @@ from .base import BaseTask
 from .infomap import query
 
 
+class VtmType(enum.StrEnum):
+    AI = "AI"
+    RA = "RA"
+
+
 @dataclass
 class CodecTask(BaseTask["CodecTask"]):
     task: str = "codec"
@@ -18,7 +24,7 @@ class CodecTask(BaseTask["CodecTask"]):
     DEFAULT_QP: ClassVar[int] = -1
 
     frames: int = 0
-    vtm_type: str = ""  # `AI` or `RA`
+    vtm_type: VtmType = VtmType.RA
     qp: int = DEFAULT_QP
 
     @functools.cached_property
@@ -29,7 +35,6 @@ class CodecTask(BaseTask["CodecTask"]):
         config = get_config()
         mkdir(self.dstdir)
 
-        assert self.vtm_type in ['AI', 'RA']
         vtm_type_cfg_path = Path("config") / f"vtm_{self.vtm_type}.cfg"
 
         refimg_path = get_first_file(self.parent.srcdir)

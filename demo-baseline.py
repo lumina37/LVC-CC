@@ -4,7 +4,7 @@ from lvccc.task import CopyTask, RenderTask
 
 set_config('config.toml')
 
-tcopy = CopyTask(seq_name="Tunnel_Train", frames=1)
+tcopy = CopyTask(seq_name="NagoyaFujita", frames=1)
 trender = RenderTask().with_parent(tcopy)
 
 if __name__ == "__main__":

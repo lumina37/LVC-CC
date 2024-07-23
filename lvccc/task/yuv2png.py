@@ -17,8 +17,7 @@ class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
 
     @functools.cached_property
     def dirname(self) -> str:
-        assert self.parent is not None
-        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
+        return ""
 
     def _run(self) -> None:
         config = get_config()

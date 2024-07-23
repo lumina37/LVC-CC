@@ -41,6 +41,7 @@ class Config:
     cases: _Cases
     path: _Path
     app: _App
+    default_pattern: str
     QP: _QP
     start_idx: dict[str, int]
 

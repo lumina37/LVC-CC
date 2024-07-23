@@ -1,3 +1,4 @@
+import ctypes
 import dataclasses as dcs
 import multiprocessing as mp
 import queue
@@ -19,7 +20,7 @@ class Executor:
             try:
                 task: TDerivedTask = que.get(timeout=5.0)
 
-            except queue.Empty:
+            except queue.Empty:  # noqa: PERF203
                 if active_count.value == 0 and que.empty():
                     break
 
@@ -43,7 +44,7 @@ class Executor:
         queue = mp.Queue()
         for root in roots.values():
             queue.put(root)
-        active_count = mp.Value('Q', 0)
+        active_count = mp.Value(ctypes.c_size_t, 0, lock=mp.Lock())
         manager = mp.Manager()
         infomap = manager.dict()
         infomap.update(init_infomap())

@@ -65,7 +65,6 @@ class RenderTask(BaseTask["RenderTask"]):
         mkdir(img_dstdir)
 
         rlccfg.Output_Path = str(img_dstdir / DEFAULT_PATTERN.rstrip('.png'))
-        rlccfg.Isfiltering = 1
         rlccfg.viewNum = self.views
         # Render frames with id \in [start, end]
         rlccfg.start_frame = 1

@@ -21,7 +21,7 @@ class PreprocTask(BaseTask["PreprocTask"]):
 
     @functools.cached_property
     def dirname(self) -> str:
-        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
+        return "mca"
 
     @functools.cached_property
     def srcdir(self) -> Path:

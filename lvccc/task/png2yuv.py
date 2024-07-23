@@ -17,7 +17,7 @@ class Png2yuvTask(BaseTask["Png2yuvTask"]):
 
     @functools.cached_property
     def dirname(self) -> str:
-        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
+        return ""
 
     @functools.cached_property
     def srcdir(self) -> Path:

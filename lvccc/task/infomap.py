@@ -13,11 +13,11 @@ _INFOMAP: TypeInfomap = None
 def init_infomap() -> TypeInfomap:
     config = get_config()
 
-    playground_dir = config.path.output / "playground"
-    mkdir(playground_dir)
+    tasks_dir = config.path.output / "tasks"
+    mkdir(tasks_dir)
 
     infomap = {}
-    for d in playground_dir.iterdir():
+    for d in tasks_dir.iterdir():
         taskinfo_path = d / "task.json"
         if not taskinfo_path.exists():
             continue

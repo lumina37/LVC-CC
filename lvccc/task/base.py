@@ -1,12 +1,12 @@
 import abc
 import dataclasses as dcs
 import functools
-import hashlib
 import traceback
 from collections.abc import Callable
 from pathlib import Path
 from typing import Generic, TypeVar
 
+import xxhash
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
@@ -27,21 +27,17 @@ class BaseTask(Generic[TSelfTask]):
     children: list[TDerivedTask] = dcs.field(default_factory=list, init=False, repr=False)
     chain: Chain = dcs.field(default_factory=Chain, init=False, repr=False)
 
-    @property
-    def has_parent(self) -> bool:
-        return len(self.chain) > 0
-
     @functools.cached_property
-    def parent(self) -> TDerivedTask:
-        if self.has_parent:
+    def parent(self) -> TDerivedTask | None:
+        if len(self.chain) > 0:
             return self.chain[-1]
         else:
             return None
 
     def with_parent(self: TSelfTask, parent: TDerivedTask) -> TSelfTask:
-        # Appending `parent.params`` to chain
+        # Appending `parent.params` to chain
         chains = parent.chain.copy()
-        chains.objs.append(parent.params)
+        chains.objs.append(parent.__params)
         self.chain = chains
         # Appending reverse hooks to `parent`
         parent.children.append(self)
@@ -79,29 +75,29 @@ class BaseTask(Generic[TSelfTask]):
         return dic
 
     @functools.cached_property
-    def taskinfo(self) -> list[dict]:
+    def __params(self) -> dict:
+        params = self.marshal()
+        return params
+
+    @functools.cached_property
+    def __taskinfo(self) -> list[dict]:
         taskinfo = self.chain.objs.copy()
-        taskinfo.append(self.params)
+        taskinfo.append(self.__params)
         return taskinfo
 
     @functools.cached_property
     def taskinfo_str(self) -> str:
-        return to_json(self.taskinfo, pretty=True)
+        return to_json(self.__taskinfo, pretty=True)
 
     @functools.cached_property
     def hash(self) -> str:
-        hashbytes = to_json(self.taskinfo).encode('utf-8')
-        hash_ = hashlib.sha1(hashbytes, usedforsecurity=False)
-        return hash_.hexdigest()
-
-    @property
-    def params(self) -> dict:
-        params = self.marshal()
-        return params
+        hashbytes = to_json(self.__taskinfo).encode('utf-8')
+        hashhex = xxhash.xxh3_64_hexdigest(hashbytes)
+        return hashhex
 
     @property
     def shorthash(self) -> str:
-        return self.hash[:8]
+        return self.hash[:4]
 
     @abc.abstractmethod
     @functools.cached_property
@@ -110,11 +106,16 @@ class BaseTask(Generic[TSelfTask]):
     @functools.cached_property
     def dstdir(self) -> Path:
         config = get_config()
-        return config.path.output / "playground" / self.dirname
+        if self.parent is not None and (parent_dirname := self.parent.dirname):
+            real_dirname = f"{self.task}-{parent_dirname}-{self.dirname}-{self.shorthash}"
+        else:
+            real_dirname = f"{self.task}-{self.dirname}-{self.shorthash}"
 
-    def dump_taskinfo(self) -> None:
+        return config.path.output / "tasks" / real_dirname
+
+    def __dump_taskinfo(self) -> None:
         with (self.dstdir / "task.json").open('w', encoding='utf-8') as f:
-            f.write(to_json(self.taskinfo, pretty=True))
+            f.write(self.taskinfo_str)
 
     @abc.abstractmethod
     def _run(self) -> None: ...
@@ -128,7 +129,7 @@ class BaseTask(Generic[TSelfTask]):
         except Exception:
             traceback.print_exc()
         else:
-            self.dump_taskinfo()
+            self.__dump_taskinfo()
             append(self, self.dstdir)
             log = get_logger()
             log.info(f"Task `{self.dirname}` completed!")

@@ -23,7 +23,7 @@ class CodecTask(BaseTask["CodecTask"]):
 
     @functools.cached_property
     def dirname(self) -> str:
-        return f"{self.task}-{self.seq_name}-{self.parent.shorthash}-{self.shorthash}"
+        return f"{self.vtm_type}-QP{self.qp}"
 
     def _run(self) -> None:
         config = get_config()
@@ -53,6 +53,7 @@ class CodecTask(BaseTask["CodecTask"]):
             "--InputBitDepth=8",
             "--OutputBitDepth=8",
             f"--FramesToBeEncoded={self.frames}",
+            "--Level=6.2",
             f"--QP={self.qp}",
             "-i",
             srcpath,

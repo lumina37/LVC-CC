@@ -14,9 +14,9 @@ def tasks(
 ) -> Generator[TDerivedTask]:
     config = get_config()
 
-    playground_path = config.path.output / "playground"
+    tasks_dir = config.path.output / "tasks"
     glob_pattern = f"{cls.task}*" if cls is not None else '*'
-    for d in playground_path.glob(glob_pattern):
+    for d in tasks_dir.glob(glob_pattern):
         if not d.is_dir():
             continue
 

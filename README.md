@@ -63,7 +63,7 @@ cmake --build ./build --config Release
 ```toml
 [path]
 input = "D:/MPEG/MPEG144/dataset/input"
-output = "E:/output"  # 修改该路径字段以指向解压出的output文件夹。output文件夹下应有包含中间yuv文件的playground文件夹
+output = "E:/output"  # 修改该路径字段以指向解压出的output文件夹。output文件夹下应有包含中间yuv文件的tasks文件夹
 
 ...
 

@@ -5,11 +5,9 @@ from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
-from ..config import RLCCfg, TLCTCfg
-from ..config.self import get_config
+from ..config import RLCCfg, TLCTCfg, get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
-from .const import DEFAULT_PATTERN
 from .copy import CopyTask
 from .infomap import query
 
@@ -60,11 +58,11 @@ class RenderTask(BaseTask["RenderTask"]):
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
         rlccfg.Calibration_xml = str(cfg_dstpath)
-        rlccfg.RawImage_Path = str(self.srcdir / DEFAULT_PATTERN)
+        rlccfg.RawImage_Path = str(self.srcdir / config.default_pattern)
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
-        rlccfg.Output_Path = str(img_dstdir / DEFAULT_PATTERN.rstrip('.png'))
+        rlccfg.Output_Path = str(img_dstdir / config.default_pattern.rstrip('.png'))
         rlccfg.viewNum = self.views
         # Render frames with id \in [start, end]
         rlccfg.start_frame = 1

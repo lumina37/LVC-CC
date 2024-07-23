@@ -48,7 +48,7 @@ def read_psnrlog(path: Path) -> PSNR:
 
     count = 0
     psnr = PSNR()
-    with path.open() as f:
+    with path.open(encoding='utf-8') as f:
         for row in f:
             row = row.rstrip('\n ')
             _, ypsnr_str, upsnr_str, vpsnr_str = row.rsplit(' ', maxsplit=3)

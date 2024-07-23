@@ -2,7 +2,7 @@ import csv
 import dataclasses as dcs
 import json
 
-from lvccc.config import set_config
+from lvccc.config import update_config
 from lvccc.logging import get_logger
 
 
@@ -20,7 +20,7 @@ class Stat:
 
 log = get_logger()
 
-config = set_config('config.toml')
+config = update_config('config.toml')
 
 summary_dir = config.path.output / 'summary'
 src_dir = summary_dir / 'compute'
@@ -52,9 +52,9 @@ with (dst_dir / "psnr.csv").open("w", encoding="utf-8", newline='') as csv_file:
         if not wmca_json_path.exists():
             continue
 
-        with womca_json_path.open() as f:
+        with womca_json_path.open(encoding='utf-8') as f:
             womca_dic: dict = json.load(f)
-        with wmca_json_path.open() as f:
+        with wmca_json_path.open(encoding='utf-8') as f:
             wmca_dic: dict = json.load(f)
 
         for vtm_type in config.cases.vtm_types:

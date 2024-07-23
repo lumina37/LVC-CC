@@ -3,10 +3,9 @@ import functools
 import cv2 as cv
 from pydantic.dataclasses import dataclass
 
-from ..config.self import get_config
+from ..config import get_config
 from ..utils import get_first_file, mkdir, run_cmds
 from .base import BaseTask
-from .const import DEFAULT_PATTERN
 from .infomap import query
 
 
@@ -43,7 +42,7 @@ class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
             "format=yuv444p",
             "-frames:v",
             self.frames,
-            img_dstdir / DEFAULT_PATTERN,
+            img_dstdir / config.default_pattern,
             "-v",
             "warning",
         ]

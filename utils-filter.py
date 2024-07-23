@@ -1,7 +1,7 @@
-from lvccc.config import set_config
+from lvccc.config import update_config
 from lvccc.task import CodecTask, RenderTask, get_codec_task, is_anchor, tasks
 
-set_config('config.toml')
+update_config('config.toml')
 
 
 def qp_filter(task: RenderTask):

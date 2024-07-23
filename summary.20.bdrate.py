@@ -5,7 +5,7 @@ import json
 import numpy as np
 import scipy.interpolate
 
-from lvccc.config import set_config
+from lvccc.config import update_config
 from lvccc.logging import get_logger
 
 
@@ -96,7 +96,7 @@ class PSNR:
 
 log = get_logger()
 
-config = set_config('config.toml')
+config = update_config('config.toml')
 
 dst_dir = config.path.output / 'summary'
 src_dir = dst_dir / 'compute'
@@ -109,7 +109,7 @@ with dst_p.open('w', encoding='utf-8', newline='') as csv_f:
     csv_writer.writerow(headers)
 
     for seq_name in config.cases.seqs:
-        with (src_dir / f'{seq_name}.json').open() as f:
+        with (src_dir / f'{seq_name}.json').open(encoding='utf-8') as f:
             seq_dic: dict = json.load(f)
         row = [seq_name]
 

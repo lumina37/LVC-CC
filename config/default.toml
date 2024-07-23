@@ -1,18 +1,14 @@
-frames = 1
+frames = 300
+
+default_pattern = "frame#%03d.png"
 
 [cases]
-vtm_types = ["RA"]
-seqs = [
-    "Boxer-IrishMan-Gladiator",
-    "ChessPieces-MovingCamera",
-    "NagoyaFujita",
-    "Boys",
-    "Matryoshka",
-]
+vtm_types = ["AI", "RA"]
+seqs = []
 
 [path]
-input = "D:/MPEG/MPEG144/dataset/input"
-output = "D:/MPEG/MPEG144/dataset/output"
+input = ""
+output = ""
 
 [path.pattern]
 "ComplexObjectMove" = "ComplexObjectMove/frame_%03d.png"
@@ -34,8 +30,6 @@ encoder = "EncoderApp"
 preproc = "mca-preproc"
 postproc = "mca-postproc"
 rlc = "RLC30"
-
-# Seldom Modify the Configurations Below
 
 [QP.woMCA]
 "NagoyaDataLeading" = [36, 40, 44, 48]

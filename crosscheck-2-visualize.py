@@ -4,7 +4,7 @@ import json
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
-from lvccc.config import set_config
+from lvccc.config import update_config
 from lvccc.logging import get_logger
 from lvccc.utils import mkdir
 
@@ -28,7 +28,7 @@ class Stat:
 
 log = get_logger()
 
-config = set_config('config.toml')
+config = update_config('config.toml')
 
 summary_dir = config.path.output / 'summary'
 src_dir = summary_dir / 'compute'
@@ -40,7 +40,7 @@ for seq_name in config.cases.seqs:
     if not json_path.exists():
         continue
 
-    with json_path.open() as f:
+    with json_path.open(encoding='utf-8') as f:
         seq_dic: dict = json.load(f)
 
     for vtm_type in config.cases.vtm_types:

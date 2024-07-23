@@ -1,7 +1,6 @@
 import dataclasses as dcs
-from io import TextIOBase
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, TextIO
 
 from pydantic.dataclasses import dataclass
 
@@ -31,12 +30,12 @@ class RLCCfg:
     height: int = 2048
     width: int = 2048
 
-    def dump(self, f: TextIOBase) -> None:
+    def dump(self, f: TextIO) -> None:
         f.writelines(f"{k}\t{v}\n" for k, v in dcs.asdict(self).items())
         f.flush()
 
     @staticmethod
-    def load(f: TextIOBase) -> "RLCCfg":
+    def load(f: TextIO) -> "RLCCfg":
         def _items():
             for row in f:
                 key, value = row.replace('\t', ' ').split(' ', maxsplit=1)
@@ -51,5 +50,5 @@ class RLCCfg:
 
     @staticmethod
     def from_file(path: Path) -> "RLCCfg":
-        with path.open() as f:
+        with path.open(encoding='utf-8') as f:
             return RLCCfg.load(f)

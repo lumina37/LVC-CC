@@ -1,8 +1,8 @@
-from lvccc.config import set_config
+from lvccc.config import update_config
 from lvccc.executor import Executor
 from lvccc.task import CopyTask, RenderTask
 
-set_config('config.toml')
+update_config('config.toml')
 
 tcopy = CopyTask(seq_name="NagoyaFujita", frames=1)
 trender = RenderTask().with_parent(tcopy)

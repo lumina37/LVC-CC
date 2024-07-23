@@ -1,12 +1,10 @@
-from lvccc.config import set_config
+from lvccc.config import update_config
 from lvccc.executor import Executor
 from lvccc.task import (
     CodecTask,
     ComposeTask,
     CopyTask,
     Png2yuvTask,
-    PostprocTask,
-    PreprocTask,
     RenderTask,
     Yuv2pngTask,
 )
@@ -21,14 +19,13 @@ name2pipeline = {
 }
 
 # 从指定路径加载config
-config = set_config('config.toml')
+config = update_config('config.toml')
 
 # 根任务
 # Executor会执行所有根任务和子结点任务
 roots = []
 
 for seq_name in config.cases.seqs:
-
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 

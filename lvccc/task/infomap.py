@@ -21,7 +21,7 @@ def init_infomap() -> TypeInfomap:
         taskinfo_path = d / "task.json"
         if not taskinfo_path.exists():
             continue
-        with taskinfo_path.open( encoding='utf-8') as f:
+        with taskinfo_path.open(encoding='utf-8') as f:
             taskinfo = json.load(f)
             chains = Chain(taskinfo)
             task = chains[-1]

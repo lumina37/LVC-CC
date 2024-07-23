@@ -1,7 +1,7 @@
 import dataclasses as dcs
 import math
-from io import TextIOBase
 from pathlib import Path
+from typing import TextIO
 
 from pydantic.dataclasses import dataclass
 
@@ -18,12 +18,12 @@ class MCACfg:
     width: int = 2048
     crop_ratio: float = 1 / math.sqrt(2)
 
-    def dump(self, f: TextIOBase) -> None:
+    def dump(self, f: TextIO) -> None:
         f.writelines(f"{k}\t{v}\n" for k, v in dcs.asdict(self).items())
         f.flush()
 
     @staticmethod
-    def load(f: TextIOBase) -> "MCACfg":
+    def load(f: TextIO) -> "MCACfg":
         def _items():
             for row in f:
                 key, value = row.replace('\t', ' ').split(' ', maxsplit=1)
@@ -38,5 +38,5 @@ class MCACfg:
 
     @staticmethod
     def from_file(path: Path) -> "MCACfg":
-        with path.open() as f:
+        with path.open(encoding='utf-8') as f:
             return MCACfg.load(f)

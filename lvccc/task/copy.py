@@ -7,6 +7,7 @@ from pydantic.dataclasses import dataclass
 from ..config import get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
+from .const import DEFAULT_PATTERN
 
 
 @dataclass
@@ -38,7 +39,7 @@ class CopyTask(BaseTask["CopyTask"]):
         if input_pattern.endswith('.png'):
             for cnt, idx in enumerate(range(self.start_idx, self.start_idx + self.frames), 1):
                 src_fpath = input_dir / (input_pattern % idx)
-                dst_fname = config.default_pattern % cnt
+                dst_fname = DEFAULT_PATTERN % cnt
                 shutil.copyfile(src_fpath, img_dstdir / dst_fname)
 
         else:
@@ -50,7 +51,7 @@ class CopyTask(BaseTask["CopyTask"]):
                 self.start_idx,
                 "-frames:v",
                 self.frames,
-                img_dstdir / config.default_pattern,
+                img_dstdir / DEFAULT_PATTERN,
                 "-v",
                 "warning",
                 "-y",
@@ -66,6 +67,6 @@ class CopyTask(BaseTask["CopyTask"]):
                 rg = []
 
             for i in rg:
-                src_fname = config.default_pattern % (self.start_idx + i - 1)
-                dst_fname = config.default_pattern % i
+                src_fname = DEFAULT_PATTERN % (self.start_idx + i - 1)
+                dst_fname = DEFAULT_PATTERN % i
                 (img_dstdir / src_fname).rename(img_dstdir / dst_fname)

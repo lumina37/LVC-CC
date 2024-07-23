@@ -41,12 +41,11 @@ class Config:
     cases: _Cases
     path: _Path
     app: _App
-    default_pattern: str
     QP: _QP
     start_idx: dict[str, int]
 
 
-_COMMON_CFG = None
+_CFG = None
 
 
 def load(f: IOBase) -> Config:
@@ -60,15 +59,15 @@ def from_file(path: Path) -> Config:
 
 
 def set_config(path: Path) -> Config:
-    global _COMMON_CFG
-    _COMMON_CFG = from_file(path)
-    return _COMMON_CFG
+    global _CFG
+    _CFG = from_file(path)
+    return _CFG
 
 
 def get_config() -> Config | None:
-    if _COMMON_CFG is None:
+    if _CFG is None:
         log = get_logger()
-        msg = "You should call `set_node_cfg` first!"
+        msg = "You should call `set_config` first!"
         log.critical(msg)
         raise RuntimeError(msg)
-    return _COMMON_CFG
+    return _CFG

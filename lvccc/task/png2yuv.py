@@ -6,6 +6,7 @@ from pydantic.dataclasses import dataclass
 from ..config.self import get_config
 from ..utils import mkdir, run_cmds
 from .base import BaseTask
+from .const import DEFAULT_PATTERN
 from .copy import CopyTask
 from .infomap import query
 
@@ -32,7 +33,7 @@ class Png2yuvTask(BaseTask["Png2yuvTask"]):
         cmds = [
             config.app.ffmpeg,
             "-i",
-            self.srcdir / config.default_pattern,
+            self.srcdir / DEFAULT_PATTERN,
             "-vf",
             "format=yuv420p",
             "-frames:v",

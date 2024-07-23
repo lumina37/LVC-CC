@@ -1,0 +1,20 @@
+<TSPCCalibData>
+  <diameter unit="pix">70</diameter>
+  <rotation unit="rad">1.57079632679</rotation>
+  <centers>
+    <rows>43</rows>
+    <cols>66</cols>
+    <ltop>
+      <x>45.25</x>
+      <y>37.5</y>
+    </ltop>
+    <rtop>
+      <x>4006.75</x>
+      <y>70.75</y>
+    </rtop>
+    <lbot>
+      <x>44.25</x>
+      <y>2996.75</y>
+    </lbot>
+  </centers>
+</TSPCCalibData>

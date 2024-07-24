@@ -10,6 +10,7 @@ def test_tasks() -> None:
     tpost = PostprocTask().with_parent(ty2p)
     trender = RenderTask().with_parent(tpost)
 
-    trender_rec = RenderTask.from_chain_objs(trender.chain_objs)
+    chain = trender.chain_with_self
+    trender_rec = chain[-1]
     assert trender_rec.chain[0].frames == tcopy.frames
     assert trender_rec.chain[3].qp == tcodec.qp

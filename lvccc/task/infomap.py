@@ -5,7 +5,7 @@ from ..config import get_config
 from ..utils import mkdir
 from .chain import Chain
 
-TypeInfomap = dict[str, Path]
+TypeInfomap = dict[int, Path]
 
 _INFOMAP: TypeInfomap = None
 
@@ -22,9 +22,9 @@ def init_infomap() -> TypeInfomap:
         if not taskinfo_path.exists():
             continue
         with taskinfo_path.open(encoding='utf-8') as f:
-            taskinfo = json.load(f)
-            chains = Chain(taskinfo)
-            task = chains[-1]
+            objs = json.load(f)
+            chain = Chain(objs)
+            task = chain[-1]
             infomap[task.hash] = taskinfo_path.parent
 
     return infomap

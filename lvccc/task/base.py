@@ -36,9 +36,9 @@ class BaseTask(Generic[TSelfTask]):
 
     def with_parent(self: TSelfTask, parent: TDerivedTask) -> TSelfTask:
         # Appending `parent.params` to chain
-        chains = parent.chain.copy()
-        chains.objs.append(parent.fields)
-        self.chain = chains
+        chain = parent.chain.copy()
+        chain.objs.append(parent.fields)
+        self.chain = chain
         # Appending reverse hooks to `parent`
         parent.children.append(self)
 
@@ -51,25 +51,19 @@ class BaseTask(Generic[TSelfTask]):
         return self
 
     @classmethod
-    def from_chain_objs(cls, objs: Chain) -> TSelfTask:
-        chains = Chain(objs)
-        self = chains[-1]
-        return self
-
-    @classmethod
-    def from_fields(cls, dic: dict) -> TSelfTask:
+    def deserialize(cls, fields: dict) -> TSelfTask:
         kwargs = {}
 
         for field in dcs.fields(cls):
             if not field.init:
                 continue
-            if not (val := dic.get(field.name, None)):
+            if not (val := fields.get(field.name, None)):
                 continue
             kwargs[field.name] = val
 
         return cls(**kwargs)
 
-    def _fields(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
+    def serialize(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
         dic = {}
 
         for field in dcs.fields(self):
@@ -82,28 +76,25 @@ class BaseTask(Generic[TSelfTask]):
 
     @functools.cached_property
     def fields(self) -> dict:
-        params = self._fields()
-        return params
+        fields = self.serialize()
+        return fields
 
     @functools.cached_property
-    def chain_objs(self) -> list[dict]:
-        taskinfo = self.chain.objs.copy()
-        taskinfo.append(self.fields)
-        return taskinfo
+    def chain_with_self(self) -> Chain:
+        objs = self.chain.objs.copy()
+        objs.append(self.fields)
+        chain = Chain(objs)
+        return chain
 
     @functools.cached_property
-    def chain_str(self) -> str:
-        return to_json(self.chain_objs, pretty=True)
-
-    @functools.cached_property
-    def hash(self) -> str:
-        hashbytes = to_json(self.chain_objs).encode('utf-8')
-        hashhex = xxhash.xxh3_64_hexdigest(hashbytes)
-        return hashhex
+    def hash(self) -> int:
+        hashbytes = to_json(self.chain_with_self.objs).encode('utf-8')
+        hashint = xxhash.xxh3_64_intdigest(hashbytes)
+        return hashint
 
     @property
     def shorthash(self) -> str:
-        return self.hash[:4]
+        return hex(self.hash)[2:6]
 
     @abc.abstractmethod
     @functools.cached_property
@@ -124,7 +115,8 @@ class BaseTask(Generic[TSelfTask]):
 
     def _dump_taskinfo(self) -> None:
         with (self.dstdir / "task.json").open('w', encoding='utf-8') as f:
-            f.write(self.chain_str)
+            taskinfo = self.chain_with_self.serialized_str
+            f.write(taskinfo)
 
     @abc.abstractmethod
     def _run(self) -> None: ...

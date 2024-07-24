@@ -1,5 +1,6 @@
 from . import factory
 from .base import TDerivedTask
+from .chain import Chain
 from .codec import CodecTask, VtmType
 from .compose import ComposeTask
 from .copy import CopyTask

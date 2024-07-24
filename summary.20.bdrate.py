@@ -38,8 +38,8 @@ def BD_PSNR(R1, PSNR1, R2, PSNR2, piecewise=0):
         v1 = scipy.interpolate.pchip_interpolate(np.sort(lR1), PSNR1[np.argsort(lR1)], samples)
         v2 = scipy.interpolate.pchip_interpolate(np.sort(lR2), PSNR2[np.argsort(lR2)], samples)
         # Calculate the integral using the trapezoid method on the samples.
-        int1 = np.trapz(v1, dx=interval)
-        int2 = np.trapz(v2, dx=interval)
+        int1 = np.trapezoid(v1, dx=interval)
+        int2 = np.trapezoid(v2, dx=interval)
 
     # find avg diff
     avg_diff = (int2 - int1) / (max_int - min_int)
@@ -73,8 +73,8 @@ def BD_RATE(R1, PSNR1, R2, PSNR2, piecewise=0):
         v1 = scipy.interpolate.pchip_interpolate(np.sort(PSNR1), lR1[np.argsort(PSNR1)], samples)
         v2 = scipy.interpolate.pchip_interpolate(np.sort(PSNR2), lR2[np.argsort(PSNR2)], samples)
         # Calculate the integral using the trapezoid method on the samples.
-        int1 = np.trapz(v1, dx=interval)
-        int2 = np.trapz(v2, dx=interval)
+        int1 = np.trapezoid(v1, dx=interval)
+        int2 = np.trapezoid(v2, dx=interval)
 
     # find avg diff
     avg_exp_diff = (int2 - int1) / (max_int - min_int)

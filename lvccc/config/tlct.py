@@ -19,9 +19,19 @@ class TLCTCfg:
     end_frame: int = 1
     height: int = 2048
     width: int = 2048
+    upsample: int = 1
+    patternSize: float = 0.325
+    gradientBlendingWidth: float = 0.225
+    psizeShortcutThreshold: float = -0.9
 
     def dump(self, f: TextIO) -> None:
-        f.writelines(f"{k}\t{v}\n" for k, v in dcs.asdict(self).items())
+        maxlen = 0
+        for field in dcs.fields(self):
+            if (flen := len(field.name)) > maxlen:
+                maxlen = flen
+
+        fstr = f"{{k:<{maxlen+2}}}{{v}}\n"
+        f.writelines(fstr.format(k=k, v=v) for k, v in dcs.asdict(self).items())
         f.flush()
 
     @staticmethod

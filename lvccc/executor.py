@@ -25,10 +25,11 @@ class Executor:
                     break
 
             else:
-                # Active before actually run
                 with active_count.get_lock():
                     active_count.value += 1
+
                 task.run()
+
                 with active_count.get_lock():
                     active_count.value -= 1
 
@@ -44,7 +45,7 @@ class Executor:
         queue = mp.Queue()
         for root in roots.values():
             queue.put(root)
-        active_count = mp.Value(ctypes.c_size_t, 0, lock=mp.Lock())
+        active_count = mp.Value(ctypes.c_size_t, 0)
         manager = mp.Manager()
         infomap = manager.dict()
         infomap.update(init_infomap())

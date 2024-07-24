@@ -21,4 +21,4 @@ def run_cmds(cmds: list, stdout_fpath: Path | None = None, cwd: Path | None = No
         raise
 
     else:
-        log.info(f"Completed! cmds={cmds}")
+        log.info(f"Completed! cmds={strcmds}")

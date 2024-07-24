@@ -19,7 +19,13 @@ class MCACfg:
     crop_ratio: float = 1 / math.sqrt(2)
 
     def dump(self, f: TextIO) -> None:
-        f.writelines(f"{k}\t{v}\n" for k, v in dcs.asdict(self).items())
+        maxlen = 0
+        for field in dcs.fields(self):
+            if (flen := len(field.name)) > maxlen:
+                maxlen = flen
+
+        fstr = f"{{k:<{maxlen+2}}}{{v}}\n"
+        f.writelines(fstr.format(k=k, v=v) for k, v in dcs.asdict(self).items())
         f.flush()
 
     @staticmethod

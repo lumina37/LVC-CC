@@ -1,5 +1,4 @@
 from lvccc.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
-from lvccc.task.chain import Chain
 
 
 def test_tasks() -> None:
@@ -11,8 +10,6 @@ def test_tasks() -> None:
     tpost = PostprocTask().with_parent(ty2p)
     trender = RenderTask().with_parent(tpost)
 
-    chain_dic = trender._taskinfo
-    chain = Chain(chain_dic)
-    trender_rec = chain[-1]
-
+    trender_rec = RenderTask.from_chain_objs(trender.chain_objs)
     assert trender_rec.chain[0].frames == tcopy.frames
+    assert trender_rec.chain[3].qp == tcodec.qp

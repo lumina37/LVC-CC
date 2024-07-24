@@ -37,7 +37,7 @@ class BaseTask(Generic[TSelfTask]):
     def with_parent(self: TSelfTask, parent: TDerivedTask) -> TSelfTask:
         # Appending `parent.params` to chain
         chains = parent.chain.copy()
-        chains.objs.append(parent._params)
+        chains.objs.append(parent.fields)
         self.chain = chains
         # Appending reverse hooks to `parent`
         parent.children.append(self)
@@ -51,7 +51,13 @@ class BaseTask(Generic[TSelfTask]):
         return self
 
     @classmethod
-    def _unmarshal(cls, dic: dict):
+    def from_chain_objs(cls, objs: Chain) -> TSelfTask:
+        chains = Chain(objs)
+        self = chains[-1]
+        return self
+
+    @classmethod
+    def from_fields(cls, dic: dict) -> TSelfTask:
         kwargs = {}
 
         for field in dcs.fields(cls):
@@ -63,7 +69,7 @@ class BaseTask(Generic[TSelfTask]):
 
         return cls(**kwargs)
 
-    def _marshal(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
+    def _fields(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
         dic = {}
 
         for field in dcs.fields(self):
@@ -75,23 +81,23 @@ class BaseTask(Generic[TSelfTask]):
         return dic
 
     @functools.cached_property
-    def _params(self) -> dict:
-        params = self._marshal()
+    def fields(self) -> dict:
+        params = self._fields()
         return params
 
     @functools.cached_property
-    def _taskinfo(self) -> list[dict]:
+    def chain_objs(self) -> list[dict]:
         taskinfo = self.chain.objs.copy()
-        taskinfo.append(self._params)
+        taskinfo.append(self.fields)
         return taskinfo
 
     @functools.cached_property
-    def taskinfo_str(self) -> str:
-        return to_json(self._taskinfo, pretty=True)
+    def chain_str(self) -> str:
+        return to_json(self.chain_objs, pretty=True)
 
     @functools.cached_property
     def hash(self) -> str:
-        hashbytes = to_json(self._taskinfo).encode('utf-8')
+        hashbytes = to_json(self.chain_objs).encode('utf-8')
         hashhex = xxhash.xxh3_64_hexdigest(hashbytes)
         return hashhex
 
@@ -118,7 +124,7 @@ class BaseTask(Generic[TSelfTask]):
 
     def _dump_taskinfo(self) -> None:
         with (self.dstdir / "task.json").open('w', encoding='utf-8') as f:
-            f.write(self.taskinfo_str)
+            f.write(self.chain_str)
 
     @abc.abstractmethod
     def _run(self) -> None: ...
@@ -135,4 +141,4 @@ class BaseTask(Generic[TSelfTask]):
             self._dump_taskinfo()
             append(self, self.dstdir)
             log = get_logger()
-            log.info(f"Task `{self.dirname}` completed!")
+            log.info(f"Task `{self.dstdir.name}` completed!")

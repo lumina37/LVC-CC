@@ -16,7 +16,7 @@ class Chain:
     def __getitem__(self, idx: SupportsIndex):
         dic = self.objs[idx]
         TaskType = get_task_type(dic['task'])
-        item = TaskType(**dic)
+        item = TaskType.from_fields(dic)
         item.chain.objs = self.objs[:idx]
         return item
 

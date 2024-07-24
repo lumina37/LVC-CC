@@ -18,4 +18,4 @@ for task in tasks(RenderTask, qp_filter):
         codec_dstdir = ctask.dstdir
         print(f'"{codec_dstdir}" is the dstdir of {ctask}')
 
-    print(f"Task Info: {task.taskinfo_str}")
+    print(f"Task Info: {task.chain_str}")

@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import enum
 import functools
 import shutil
@@ -27,9 +28,9 @@ PIPELINE_TO_CFG: dict[Pipeline, RLCCfg | TLCTCfg] = {
 class RenderTask(BaseTask["RenderTask"]):
     task: str = "render"
 
-    frames: int = 0
     views: int = 5
     pipeline: Pipeline = Pipeline.RLC
+    frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
     def dirname(self) -> str:

@@ -37,7 +37,7 @@ class BaseTask(Generic[TSelfTask]):
     def with_parent(self: TSelfTask, parent: TDerivedTask) -> TSelfTask:
         # Appending `parent.params` to chain
         chains = parent.chain.copy()
-        chains.objs.append(parent.__params)
+        chains.objs.append(parent._params)
         self.chain = chains
         # Appending reverse hooks to `parent`
         parent.children.append(self)
@@ -51,7 +51,7 @@ class BaseTask(Generic[TSelfTask]):
         return self
 
     @classmethod
-    def unmarshal(cls, dic: dict):
+    def _unmarshal(cls, dic: dict):
         kwargs = {}
 
         for field in dcs.fields(cls):
@@ -63,7 +63,7 @@ class BaseTask(Generic[TSelfTask]):
 
         return cls(**kwargs)
 
-    def marshal(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
+    def _marshal(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
         dic = {}
 
         for field in dcs.fields(self):
@@ -75,23 +75,23 @@ class BaseTask(Generic[TSelfTask]):
         return dic
 
     @functools.cached_property
-    def __params(self) -> dict:
-        params = self.marshal()
+    def _params(self) -> dict:
+        params = self._marshal()
         return params
 
     @functools.cached_property
-    def __taskinfo(self) -> list[dict]:
+    def _taskinfo(self) -> list[dict]:
         taskinfo = self.chain.objs.copy()
-        taskinfo.append(self.__params)
+        taskinfo.append(self._params)
         return taskinfo
 
     @functools.cached_property
     def taskinfo_str(self) -> str:
-        return to_json(self.__taskinfo, pretty=True)
+        return to_json(self._taskinfo, pretty=True)
 
     @functools.cached_property
     def hash(self) -> str:
-        hashbytes = to_json(self.__taskinfo).encode('utf-8')
+        hashbytes = to_json(self._taskinfo).encode('utf-8')
         hashhex = xxhash.xxh3_64_hexdigest(hashbytes)
         return hashhex
 
@@ -116,7 +116,7 @@ class BaseTask(Generic[TSelfTask]):
 
         return config.path.output / "tasks" / real_dirname
 
-    def __dump_taskinfo(self) -> None:
+    def _dump_taskinfo(self) -> None:
         with (self.dstdir / "task.json").open('w', encoding='utf-8') as f:
             f.write(self.taskinfo_str)
 
@@ -132,7 +132,7 @@ class BaseTask(Generic[TSelfTask]):
         except Exception:
             traceback.print_exc()
         else:
-            self.__dump_taskinfo()
+            self._dump_taskinfo()
             append(self, self.dstdir)
             log = get_logger()
             log.info(f"Task `{self.dirname}` completed!")

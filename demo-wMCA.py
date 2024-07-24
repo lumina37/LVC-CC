@@ -5,12 +5,12 @@ from lvccc.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTa
 update_config('config.toml')
 
 tcopy = CopyTask(seq_name="NagoyaFujita", frames=1)
-task1 = PreprocTask().with_parent(tcopy)
-task2 = Png2yuvTask().with_parent(task1)
-task3 = CodecTask(qp=46).with_parent(task2)
-task4 = Yuv2pngTask().with_parent(task3)
-task5 = PostprocTask().with_parent(task4)
-task6 = RenderTask().with_parent(task5)
+tpre = PreprocTask().with_parent(tcopy)
+tp2y = Png2yuvTask().with_parent(tpre)
+tcodec = CodecTask(qp=46).with_parent(tp2y)
+ty2p = Yuv2pngTask().with_parent(tcodec)
+tpost = PostprocTask().with_parent(ty2p)
+trender = RenderTask().with_parent(tpost)
 
 if __name__ == "__main__":
     executor = Executor([tcopy], process_num=1)

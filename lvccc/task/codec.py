@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import enum
 import functools
 from pathlib import Path
@@ -23,9 +24,9 @@ class CodecTask(BaseTask["CodecTask"]):
 
     DEFAULT_QP: ClassVar[int] = -1
 
-    frames: int = 0
     vtm_type: VtmType = VtmType.RA
     qp: int = DEFAULT_QP
+    frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
     def dirname(self) -> str:

@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import functools
 
 import cv2 as cv
@@ -13,7 +14,7 @@ from .infomap import query
 class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
     task: str = "yuv2png"
 
-    frames: int = 0
+    frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
     def dirname(self) -> str:

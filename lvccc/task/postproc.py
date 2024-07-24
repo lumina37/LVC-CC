@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import functools
 import math
 import shutil
@@ -15,7 +16,7 @@ from .infomap import query
 class PostprocTask(BaseTask["PostprocTask"]):
     task: str = "postproc"
 
-    frames: int = 0
+    frames: int = dcs.field(default=0, init=False)
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property

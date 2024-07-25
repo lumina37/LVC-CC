@@ -10,8 +10,8 @@ import xxhash
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
+from ..helper import to_json
 from ..logging import get_logger
-from ..utils import to_json
 from .chain import Chain
 from .infomap import append, query
 

@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 
 from ..config import get_config
-from .command import run_cmds
+from ..helper import run_cmds
 from .readlog import read_psnrlog
 
 

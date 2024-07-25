@@ -5,7 +5,7 @@ from typing import SupportsIndex
 
 from pydantic.dataclasses import dataclass
 
-from ..utils import to_json
+from ..helper import to_json
 from .factory import get_task_type
 
 

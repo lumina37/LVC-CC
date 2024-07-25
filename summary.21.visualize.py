@@ -5,8 +5,8 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
 from lvccc.config import update_config
+from lvccc.helper import mkdir
 from lvccc.logging import get_logger
-from lvccc.utils import mkdir
 
 plt.rcParams['font.sans-serif'] = ['Times New Roman']
 

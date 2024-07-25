@@ -7,7 +7,7 @@ from pathlib import Path
 from pydantic.dataclasses import dataclass
 
 from ..config import RLCCfg, TLCTCfg, get_config
-from ..utils import mkdir, run_cmds
+from ..helper import mkdir, run_cmds
 from .base import BaseTask
 from .copy import CopyTask
 from .infomap import query

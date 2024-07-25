@@ -8,7 +8,7 @@ import cv2 as cv
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
-from ..utils import get_first_file, mkdir, run_cmds
+from ..helper import get_first_file, mkdir, run_cmds
 from .base import BaseTask
 from .infomap import query
 

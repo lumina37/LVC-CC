@@ -1,7 +1,7 @@
 from lvccc.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
 
 
-def test_tasks() -> None:
+def test_tasks():
     tcopy = CopyTask(seq_name="NagoyaFujita", frames=1)
     tpre = PreprocTask().with_parent(tcopy)
     tp2y = Png2yuvTask().with_parent(tpre)
@@ -13,4 +13,5 @@ def test_tasks() -> None:
     chain = trender.chain_with_self
     trender_rec = chain[-1]
     assert trender_rec.chain[0].frames == tcopy.frames
+    assert trender_rec.chain[0].seq_name == tcopy.seq_name
     assert trender_rec.chain[3].qp == tcodec.qp

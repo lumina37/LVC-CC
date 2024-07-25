@@ -33,7 +33,7 @@ class RenderTask(BaseTask["RenderTask"]):
     frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
-    def dirname(self) -> str:
+    def tag(self) -> str:
         return "base" if isinstance(self.parent, CopyTask) else ""
 
     @functools.cached_property

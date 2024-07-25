@@ -17,7 +17,7 @@ class ComposeTask(BaseTask["ComposeTask"]):
     views: int = 5
 
     @functools.cached_property
-    def dirname(self) -> str:
+    def tag(self) -> str:
         return ""
 
     @functools.cached_property

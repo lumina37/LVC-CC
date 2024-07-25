@@ -17,7 +17,7 @@ class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
     frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
-    def dirname(self) -> str:
+    def tag(self) -> str:
         return ""
 
     def _run(self) -> None:

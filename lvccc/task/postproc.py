@@ -20,7 +20,7 @@ class PostprocTask(BaseTask["PostprocTask"]):
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property
-    def dirname(self) -> str:
+    def tag(self) -> str:
         return ""
 
     @functools.cached_property

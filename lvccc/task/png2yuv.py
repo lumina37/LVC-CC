@@ -17,7 +17,7 @@ class Png2yuvTask(BaseTask["Png2yuvTask"]):
     frames: int = 0
 
     @functools.cached_property
-    def dirname(self) -> str:
+    def tag(self) -> str:
         return "anchor" if isinstance(self.parent, CopyTask) else ""
 
     @functools.cached_property

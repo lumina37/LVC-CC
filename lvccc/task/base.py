@@ -98,19 +98,26 @@ class BaseTask(Generic[TSelfTask]):
 
     @abc.abstractmethod
     @functools.cached_property
-    def dirname(self) -> str: ...
+    def tag(self) -> str: ...
+
+    @functools.cached_property
+    def fulltag(self) -> str:
+        prefix = ''
+        if self.parent is not None and self.parent.fulltag:
+            parent_part = self.parent.fulltag
+            if self.tag:
+                prefix = '-'
+        else:
+            parent_part = ""
+        self_part = prefix + self.tag
+
+        fulltag = parent_part + self_part
+        return fulltag
 
     @functools.cached_property
     def dstdir(self) -> Path:
         config = get_config()
-
-        if self.parent is not None and self.parent.dirname:
-            parent_dirname = f"-{self.parent.dirname}"
-        else:
-            parent_dirname = ""
-        self_dirname = f"-{self.dirname}" if self.dirname else ""
-        real_dirname = f"{self.task}{parent_dirname}{self_dirname}-{self.shorthash}"
-
+        real_dirname = f"{self.task}-{self.fulltag}-{self.shorthash}"
         return config.path.output / "tasks" / real_dirname
 
     def _dump_taskinfo(self) -> None:

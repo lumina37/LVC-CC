@@ -19,7 +19,7 @@ class PreprocTask(BaseTask["PreprocTask"]):
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property
-    def dirname(self) -> str:
+    def tag(self) -> str:
         return "mca"
 
     @functools.cached_property

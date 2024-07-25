@@ -29,7 +29,7 @@ class CodecTask(BaseTask["CodecTask"]):
     frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
-    def dirname(self) -> str:
+    def tag(self) -> str:
         return f"{self.vtm_type}-QP{self.qp}"
 
     def _run(self) -> None:

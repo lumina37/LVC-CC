@@ -8,15 +8,14 @@ from pydantic.dataclasses import dataclass
 
 from ..config import MCACfg, get_config
 from ..helper import mkdir, run_cmds
-from .base import BaseTask
+from .base import NonRootTask
 from .infomap import query
 
 
 @dataclass
-class PostprocTask(BaseTask["PostprocTask"]):
+class PostprocTask(NonRootTask["PostprocTask"]):
     task: str = "postproc"
 
-    frames: int = dcs.field(default=0, init=False)
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property

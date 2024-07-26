@@ -3,13 +3,13 @@ import dataclasses as dcs
 import multiprocessing as mp
 import queue
 
-from .task.base import TDerivedTask
+from .task.base import TRetTask
 from .task.infomap import TypeInfomap, init_infomap, register_infomap
 
 
 @dcs.dataclass
 class Executor:
-    root_tasks: list[TDerivedTask]
+    root_tasks: list[TRetTask]
     process_num: int = 1
 
     @staticmethod
@@ -18,7 +18,7 @@ class Executor:
 
         while 1:
             try:
-                task: TDerivedTask = que.get(timeout=5.0)
+                task: TRetTask = que.get(timeout=5.0)
 
             except queue.Empty:  # noqa: PERF203
                 if active_count.value == 0 and que.empty():

@@ -1,15 +1,6 @@
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import (
-    CodecTask,
-    ComposeTask,
-    CopyTask,
-    Png2yuvTask,
-    PostprocTask,
-    PreprocTask,
-    RenderTask,
-    Yuv2pngTask,
-)
+from lvccc.task import CodecTask, ComposeTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
 from lvccc.task.render import Pipeline
 
 name2pipeline = {
@@ -32,30 +23,32 @@ for seq_name in config.cases.seqs:
     roots.append(tcopy)
 
     # Anchor
-    task1 = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(tcopy)
-    task2 = ComposeTask().with_parent(task1)
+    trender = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(tcopy)
+    tcompose = ComposeTask().with_parent(trender)
 
     # 不带MCA（不想跑就直接注释掉下面这坨）
-    task1 = Png2yuvTask().with_parent(tcopy)
-    for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.woMCA[seq_name]:
-            task2 = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task1)
-            task3 = Yuv2pngTask().with_parent(task2)
-            task4 = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(task3)
-            task5 = ComposeTask().with_parent(task4)
+    if qps := config.QP.woMCA[seq_name]:
+        tpng2yuv = Png2yuvTask().with_parent(tcopy)
+        for vtm_type in config.cases.vtm_types:
+            for qp in qps:
+                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpng2yuv)
+                tyuv2png = Yuv2pngTask().with_parent(tcodec)
+                trender = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(tyuv2png)
+                tcompose = ComposeTask().with_parent(trender)
 
     # 带MCA
-    task1 = PreprocTask().with_parent(tcopy)
-    task2 = Png2yuvTask().with_parent(task1)
-    for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.wMCA[seq_name]:
-            task3 = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(task2)
-            task4 = Yuv2pngTask().with_parent(task3)
-            task5 = PostprocTask().with_parent(task4)
-            task6 = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(task5)
-            task7 = ComposeTask().with_parent(task6)
+    if qps := config.QP.wMCA[seq_name]:
+        tpreproc = PreprocTask().with_parent(tcopy)
+        tpng2yuv = Png2yuvTask().with_parent(tpreproc)
+        for vtm_type in config.cases.vtm_types:
+            for qp in qps:
+                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpng2yuv)
+                tyuv2png = Yuv2pngTask().with_parent(tcodec)
+                tpostproc = PostprocTask().with_parent(tyuv2png)
+                trender = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(tpostproc)
+                tcompose = ComposeTask().with_parent(trender)
 
 
 if __name__ == "__main__":
-    executor = Executor(roots, process_num=4)
+    executor = Executor(roots, process_num=2)
     executor.run()

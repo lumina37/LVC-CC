@@ -8,7 +8,7 @@ from pydantic.dataclasses import dataclass
 
 from ..config import RLCCfg, TLCTCfg, get_config
 from ..helper import mkdir, run_cmds
-from .base import BaseTask
+from .base import NonRootTask
 from .copy import CopyTask
 from .infomap import query
 
@@ -25,12 +25,11 @@ PIPELINE_TO_CFG: dict[Pipeline, RLCCfg | TLCTCfg] = {
 
 
 @dataclass
-class RenderTask(BaseTask["RenderTask"]):
+class RenderTask(NonRootTask["RenderTask"]):
     task: str = "render"
 
     views: int = 5
     pipeline: Pipeline = Pipeline.RLC
-    frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
     def tag(self) -> str:

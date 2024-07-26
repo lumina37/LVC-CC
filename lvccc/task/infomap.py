@@ -3,6 +3,7 @@ from pathlib import Path
 
 from ..config import get_config
 from ..helper import mkdir
+from .abc import TVarTask
 from .chain import Chain
 
 TypeInfomap = dict[int, Path]
@@ -44,12 +45,12 @@ def get_infomap() -> TypeInfomap:
     return _INFOMAP
 
 
-def query(task) -> Path | None:
+def query(task: TVarTask) -> Path | None:
     infomap = get_infomap()
     path = infomap.get(task.hash, None)
     return path
 
 
-def append(task, path: Path) -> None:
+def append(task: TVarTask, path: Path) -> None:
     infomap = get_infomap()
     infomap[task.hash] = path

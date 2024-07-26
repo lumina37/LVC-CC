@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import functools
 from pathlib import Path
 
@@ -5,15 +6,14 @@ from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import mkdir, run_cmds
-from .base import BaseTask
+from .base import NonRootTask
 from .infomap import query
 
 
 @dataclass
-class ComposeTask(BaseTask["ComposeTask"]):
+class ComposeTask(NonRootTask["ComposeTask"]):
     task: str = "compose"
 
-    frames: int = 0
     views: int = 5
 
     @functools.cached_property

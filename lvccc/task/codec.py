@@ -9,7 +9,7 @@ from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import get_first_file, mkdir, run_cmds
-from .base import BaseTask
+from .base import NonRootTask
 from .infomap import query
 
 
@@ -19,14 +19,13 @@ class VtmType(enum.StrEnum):
 
 
 @dataclass
-class CodecTask(BaseTask["CodecTask"]):
+class CodecTask(NonRootTask["CodecTask"]):
     task: str = "codec"
 
     DEFAULT_QP: ClassVar[int] = -1
 
     vtm_type: VtmType = VtmType.RA
     qp: int = DEFAULT_QP
-    frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
     def tag(self) -> str:
@@ -53,9 +52,12 @@ class CodecTask(BaseTask["CodecTask"]):
             config.app.encoder,
             "-c",
             vtm_type_cfg_path,
-            f"-wdt={width}",
-            f"-hgt={height}",
-            "-fr=30",
+            "-wdt",
+            width,
+            "-hgt",
+            height,
+            "-fr",
+            30,
             "--InputBitDepth=8",
             "--OutputBitDepth=8",
             f"--FramesToBeEncoded={self.frames}",

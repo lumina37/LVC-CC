@@ -12,9 +12,6 @@ ty2p = Yuv2pngTask().with_parent(tcodec)
 tpost = PostprocTask().with_parent(ty2p)
 trender = RenderTask().with_parent(tpost)
 
-print(trender.fulltag)
-print(trender.dstdir)
-
-# if __name__ == "__main__":
-#     executor = Executor([tcopy], process_num=1)
-#     executor.run()
+if __name__ == "__main__":
+    executor = Executor([tcopy], process_num=1)
+    executor.run()

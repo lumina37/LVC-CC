@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import functools
 import math
 import shutil
@@ -7,15 +8,14 @@ from pydantic.dataclasses import dataclass
 
 from ..config import MCACfg, get_config
 from ..helper import mkdir, run_cmds
-from .base import BaseTask
+from .base import NonRootTask
 from .infomap import query
 
 
 @dataclass
-class PreprocTask(BaseTask["PreprocTask"]):
+class PreprocTask(NonRootTask["PreprocTask"]):
     task: str = "preproc"
 
-    frames: int = 0
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property

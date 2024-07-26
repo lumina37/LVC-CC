@@ -12,11 +12,11 @@ from pydantic.dataclasses import dataclass
 from ..config import get_config
 from ..helper import to_json
 from ..logging import get_logger
+from .abc import TRetTask, TSelfTask, TVarTask
 from .chain import Chain
 from .infomap import append, query
 
-TSelfTask = TypeVar("TSelfTask", bound="BaseTask")
-TDerivedTask = TypeVar("TDerivedTask", bound="BaseTask")
+TTask = TypeVar("TTask", bound="BaseTask")
 
 
 @dataclass
@@ -24,17 +24,17 @@ class BaseTask(Generic[TSelfTask]):
     task: str = ""
     seq_name: str = ""
 
-    children: list[TDerivedTask] = dcs.field(default_factory=list, init=False, repr=False)
+    children: list[TTask] = dcs.field(default_factory=list, init=False, repr=False)
     chain: Chain = dcs.field(default_factory=Chain, init=False, repr=False)
 
     @functools.cached_property
-    def parent(self) -> TDerivedTask | None:
+    def parent(self) -> TRetTask | None:
         if len(self.chain) > 0:
             return self.chain[-1]
         else:
             return None
 
-    def with_parent(self: TSelfTask, parent: TDerivedTask) -> TSelfTask:
+    def with_parent(self: TSelfTask, parent: TVarTask) -> TRetTask:
         # Appending `parent.params` to chain
         chain = parent.chain.copy()
         chain.objs.append(parent.fields)
@@ -101,27 +101,19 @@ class BaseTask(Generic[TSelfTask]):
     def tag(self) -> str: ...
 
     @functools.cached_property
-    def fulltag(self) -> str:
-        prefix = ''
-        if self.parent is not None and self.parent.fulltag:
-            parent_part = self.parent.fulltag
-            if self.tag:
-                prefix = '-'
-        else:
-            parent_part = ""
-        self_part = prefix + self.tag
-
-        fulltag = parent_part + self_part
-        return fulltag
+    def full_tag(self) -> str:
+        return self.tag
 
     @functools.cached_property
     def dstdir(self) -> Path:
         config = get_config()
-        real_dirname = f"{self.task}-{self.fulltag}-{self.shorthash}"
+        real_dirname = f"{self.task}-{self.full_tag}-{self.shorthash}"
         return config.path.output / "tasks" / real_dirname
 
-    def _dump_taskinfo(self) -> None:
-        with (self.dstdir / "task.json").open('w', encoding='utf-8') as f:
+    def dump_taskinfo(self, target: Path | None = None) -> None:
+        if target is None:
+            target = self.dstdir / "task.json"
+        with target.open('w', encoding='utf-8') as f:
             taskinfo = self.chain_with_self.serialized_str
             f.write(taskinfo)
 
@@ -137,7 +129,25 @@ class BaseTask(Generic[TSelfTask]):
         except Exception:
             traceback.print_exc()
         else:
-            self._dump_taskinfo()
+            self.dump_taskinfo()
             append(self, self.dstdir)
             log = get_logger()
             log.info(f"Task `{self.dstdir.name}` completed!")
+
+
+class NonRootTask(Generic[TSelfTask], BaseTask[TSelfTask]):
+    @functools.cached_property
+    def full_tag(self) -> str:
+        parent_part = self.parent.full_tag
+        prefix = '-' if self.tag else ''
+        self_part = prefix + self.tag
+        fulltag = parent_part + self_part
+        return fulltag
+
+    @functools.cached_property
+    def seq_name(self) -> str:
+        return self.chain[0].seq_name
+
+    @functools.cached_property
+    def frames(self) -> int:
+        return self.chain[0].frames

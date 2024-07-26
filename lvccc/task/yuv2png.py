@@ -6,15 +6,13 @@ from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import get_first_file, mkdir, run_cmds
-from .base import BaseTask
+from .base import NonRootTask
 from .infomap import query
 
 
 @dataclass
-class Yuv2pngTask(BaseTask["Yuv2pngTask"]):
+class Yuv2pngTask(NonRootTask["Yuv2pngTask"]):
     task: str = "yuv2png"
-
-    frames: int = dcs.field(default=0, init=False)
 
     @functools.cached_property
     def tag(self) -> str:

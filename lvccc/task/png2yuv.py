@@ -1,3 +1,4 @@
+import dataclasses as dcs
 import functools
 from pathlib import Path
 
@@ -5,16 +6,14 @@ from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import mkdir, run_cmds
-from .base import BaseTask
+from .base import NonRootTask
 from .copy import CopyTask
 from .infomap import query
 
 
 @dataclass
-class Png2yuvTask(BaseTask["Png2yuvTask"]):
+class Png2yuvTask(NonRootTask["Png2yuvTask"]):
     task: str = "png2yuv"
-
-    frames: int = 0
 
     @functools.cached_property
     def tag(self) -> str:

@@ -10,11 +10,13 @@ from ..helper import mkdir, run_cmds
 from .base import NonRootTask
 from .copy import CopyTask
 from .infomap import query
+from .abc import TSelfTask, TVarTask
 
 
 class Pipeline(enum.IntEnum):
-    RLC = enum.auto()
-    TLCT = enum.auto()
+    UNDEFINED = -1
+    RLC = 0
+    TLCT = 1
 
 
 PIPELINE_TO_CFG: dict[Pipeline, RLCCfg | TLCTCfg] = {
@@ -28,7 +30,17 @@ class RenderTask(NonRootTask["RenderTask"]):
     task: str = "render"
 
     views: int = 5
-    pipeline: Pipeline = Pipeline.RLC
+    pipeline: Pipeline = Pipeline.UNDEFINED
+
+    def with_parent(self, parent: TVarTask) -> TSelfTask:
+        super().with_parent(parent)
+
+        if self.pipeline == Pipeline.UNDEFINED:
+            config = get_config()
+            pipeline = Pipeline(config.pipeline[self.seq_name])
+            self.pipeline = pipeline
+
+        return self
 
     @functools.cached_property
     def tag(self) -> str:

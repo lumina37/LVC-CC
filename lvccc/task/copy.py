@@ -6,11 +6,11 @@ from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import mkdir, run_cmds
-from .base import BaseTask
+from .base import RootTask
 
 
 @dataclass
-class CopyTask(BaseTask["CopyTask"]):
+class CopyTask(RootTask["CopyTask"]):
     task: str = "copy"
 
     DEFAULT_START_IDX: ClassVar[int] = -1

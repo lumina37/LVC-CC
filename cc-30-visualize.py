@@ -7,8 +7,7 @@ from matplotlib.axes import Axes
 from lvccc.config import update_config
 from lvccc.helper import mkdir
 from lvccc.logging import get_logger
-
-plt.rcParams['font.sans-serif'] = ['Times New Roman']
+from lvccc.task import gen_infomap
 
 
 @dcs.dataclass
@@ -26,7 +25,7 @@ class Stat:
         return self.bitrate < rhs.bitrate
 
 
-log = get_logger()
+plt.rcParams['font.sans-serif'] = ['Times New Roman']
 
 config = update_config('config.toml')
 
@@ -34,6 +33,10 @@ summary_dir = config.path.output / 'summary'
 src_dir = summary_dir / 'compute'
 dst_dir = summary_dir / 'figs'
 mkdir(dst_dir)
+
+infomap = gen_infomap(src_dir)
+log = get_logger()
+
 
 for seq_name in config.cases.seqs:
     json_path = src_dir / f'{seq_name}.json'
@@ -53,7 +56,7 @@ for seq_name in config.cases.seqs:
 
         for tp, label, color in [
             ('wMCA', 'W/ MCA', 'orange'),
-            ('woMCA', 'W/O MCA', 'blue'),
+            ('woMCA', 'Anchor', 'blue'),
         ]:
             psnrs = [Stat(**d) for d in seq_dic[tp][vtm_type]]
             psnrs.sort()

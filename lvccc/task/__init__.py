@@ -1,9 +1,10 @@
 from . import factory
-from .abc import TRetTask, TSelfTask, TVarTask
+from .abc import ProtoChain, ProtoTask, TRetTask, TSelfTask, TVarTask
 from .chain import Chain
 from .codec import CodecTask, VtmType
 from .compose import ComposeTask
 from .copy import CopyTask
+from .infomap import gen_infomap, get_infomap, query, register_infomap
 from .png2yuv import Png2yuvTask
 from .postproc import PostprocTask
 from .preproc import PreprocTask

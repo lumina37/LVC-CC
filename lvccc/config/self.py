@@ -47,7 +47,7 @@ class _App(_UpdateImpl):
 @dataclass
 class _QP(_UpdateImpl):
     wMCA: dict[str, list[int]] = dcs.field(default_factory=dict)
-    woMCA: dict[str, list[int]] = dcs.field(default_factory=dict)
+    anchor: dict[str, list[int]] = dcs.field(default_factory=dict)
 
 
 @dataclass
@@ -59,6 +59,7 @@ class Config(_UpdateImpl):
     default_pattern: str = ""
     QP: _QP = dcs.field(default_factory=_QP)
     start_idx: dict[str, int] = dcs.field(default_factory=dict)
+    pipeline: dict[str, int] = dcs.field(default_factory=dict)
 
 
 def load(f: BinaryIO) -> Config:

@@ -12,40 +12,27 @@ from lvccc.task import (
     PreprocTask,
     RenderTask,
     Yuv2pngTask,
+    query,
 )
-from lvccc.task.infomap import query
-from lvccc.task.render import Pipeline
-from lvccc.utils import lenslet_psnr, mv_psnr, read_enclog
-
-name2pipeline = {
-    "Boxer-IrishMan-Gladiator": Pipeline.RLC,
-    "ChessPieces": Pipeline.RLC,
-    "NagoyaFujita": Pipeline.RLC,
-    "Boys": Pipeline.TLCT,
-    "Matryoshka": Pipeline.TLCT,
-}
+from lvccc.utils import calc_lenslet_psnr, calc_mv_psnr, read_enclog
 
 config = update_config('config.toml')
 
 log = get_logger()
 
-summary_dir = config.path.output / 'summary/compute'
+summary_dir = config.path.output / 'summary/tasks'
 
 
 for seq_name in config.cases.seqs:
-    # Anchor
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
-    trender = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(tcopy)
-    tcompose = ComposeTask().with_parent(trender)
-
-    # W/O MCA
+    # Anchor
     tpng2yuv = Png2yuvTask().with_parent(tcopy)
     for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.woMCA[seq_name]:
+        for qp in config.QP.anchor[seq_name]:
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpng2yuv)
             tyuv2png = Yuv2pngTask().with_parent(tcodec)
-            trender = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(tyuv2png)
+            trender = RenderTask().with_parent(tyuv2png)
             tcompose = ComposeTask().with_parent(trender)
 
             if query(tcompose) is None:
@@ -55,8 +42,8 @@ for seq_name in config.cases.seqs:
             log_path = query(tcodec) / "out.log"
             enclog = read_enclog(log_path)
 
-            llpsnr = lenslet_psnr(tcompose)
-            mvpsnr = mv_psnr(tcompose)
+            llpsnr = calc_lenslet_psnr(tcompose)
+            mvpsnr = calc_mv_psnr(tcompose)
 
             metrics = {
                 'bitrate': enclog.bitrate,
@@ -82,7 +69,7 @@ for seq_name in config.cases.seqs:
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpng2yuv)
             tyuv2png = Yuv2pngTask().with_parent(tcodec)
             tpostproc = PostprocTask().with_parent(tyuv2png)
-            trender = RenderTask(pipeline=name2pipeline[seq_name]).with_parent(tpostproc)
+            trender = RenderTask().with_parent(tpostproc)
             tcompose = ComposeTask().with_parent(trender)
 
             if query(tcompose) is None:
@@ -92,8 +79,8 @@ for seq_name in config.cases.seqs:
             log_path = query(tcodec) / "out.log"
             enclog = read_enclog(log_path)
 
-            llpsnr = lenslet_psnr(tcompose)
-            mvpsnr = mv_psnr(tcompose)
+            llpsnr = calc_lenslet_psnr(tcompose)
+            mvpsnr = calc_mv_psnr(tcompose)
 
             metrics = {
                 'bitrate': enclog.bitrate,

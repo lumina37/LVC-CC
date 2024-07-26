@@ -4,36 +4,33 @@ import functools
 import traceback
 from collections.abc import Callable
 from pathlib import Path
+from types import UnionType
 from typing import Generic, TypeVar
 
 import xxhash
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
-from ..helper import to_json
 from ..logging import get_logger
 from .abc import TRetTask, TSelfTask, TVarTask
 from .chain import Chain
 from .infomap import append, query
 
-TTask = TypeVar("TTask", bound="BaseTask")
+TTask = TypeVar("TTask", bound="RootTask")
 
 
 @dataclass
-class BaseTask(Generic[TSelfTask]):
+class RootTask(Generic[TSelfTask]):
     task: str = ""
 
     children: list[TTask] = dcs.field(default_factory=list, init=False, repr=False)
     chain: Chain = dcs.field(default_factory=Chain, init=False, repr=False)
 
-    @functools.cached_property
-    def parent(self) -> TRetTask | None:
-        if len(self.chain) > 0:
-            return self.chain[-1]
-        else:
-            return None
+    @property
+    def parent(self) -> None:
+        return None
 
-    def with_parent(self: TSelfTask, parent: TVarTask) -> TSelfTask:
+    def with_parent(self, parent: TVarTask) -> TSelfTask:
         # Appending `parent.params` to chain
         chain = parent.chain.copy()
         chain.objs.append(parent.fields)
@@ -129,7 +126,11 @@ class BaseTask(Generic[TSelfTask]):
             log.info(f"Task `{self.dstdir.name}` completed!")
 
 
-class NonRootTask(Generic[TSelfTask], BaseTask[TSelfTask]):
+class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
+    @functools.cached_property
+    def parent(self) -> TRetTask:
+        return self.chain[-1]
+
     @functools.cached_property
     def full_tag(self) -> str:
         parent_part = self.parent.full_tag

@@ -8,5 +8,5 @@ def register(task_tp: type[ProtoTask]):
     _TASKMAP[task_tp.task] = task_tp
 
 
-def get_task_type(task_name) -> type[ProtoTask]:
+def get_task_type(task_name: str) -> type[ProtoTask]:
     return _TASKMAP[task_name]

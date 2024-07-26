@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 from ..config import get_config
-from ..helper import mkdir
 from .abc import TVarTask
 from .chain import Chain
 
@@ -11,12 +10,7 @@ TypeInfomap = dict[int, Path]
 _INFOMAP: TypeInfomap = None
 
 
-def init_infomap() -> TypeInfomap:
-    config = get_config()
-
-    tasks_dir = config.path.output / "tasks"
-    mkdir(tasks_dir)
-
+def gen_infomap(tasks_dir: Path) -> TypeInfomap:
     infomap = {}
     for d in tasks_dir.iterdir():
         taskinfo_path = d / "task.json"
@@ -40,7 +34,8 @@ def get_infomap() -> TypeInfomap:
     global _INFOMAP
 
     if _INFOMAP is None:
-        _INFOMAP = init_infomap()
+        config = get_config()
+        _INFOMAP = gen_infomap(config.path.output / "tasks")
 
     return _INFOMAP
 

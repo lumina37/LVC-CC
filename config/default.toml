@@ -31,7 +31,7 @@ preproc = "mca-preproc"
 postproc = "mca-postproc"
 rlc = "RLC30"
 
-[QP.woMCA]
+[QP.anchor]
 "NagoyaDataLeading" = []
 "NagoyaFujita" = []
 "NagoyaOrigami" = []
@@ -66,3 +66,17 @@ rlc = "RLC30"
 "Tri-viewpoint" = 0
 "Matryoshka" = 0
 "Motherboard" = 0
+
+[pipeline]
+"ComplexObjectMove" = 0
+"UnicornLinearCam" = 0
+"NagoyaDataLeading" = 0
+"NagoyaFujita" = 0
+"NagoyaOrigami" = 0
+"Tunnel_Train" = 0
+"Boys" = 1
+"Cars" = 1
+"Experimenting" = 1
+"Tri-viewpoint" = 1
+"Matryoshka" = 1
+"Motherboard" = 1

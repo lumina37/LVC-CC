@@ -12,7 +12,7 @@ from .backtrack import get_ancestor
 from .read_log import read_psnrlog
 
 
-def yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
+def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
     with tempfile.NamedTemporaryFile('w', delete_on_close=False) as tf:
         tf.close()
 
@@ -68,7 +68,7 @@ def get_copy_wh(task: TVarTask) -> tuple[int, int]:
     return (height, width)
 
 
-def mv_psnr(task: ComposeTask) -> np.ndarray:
+def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
     views = task.parent.views
     compose_task = ComposeTask().with_parent(RenderTask(views=views).with_parent(copy_task))
@@ -83,14 +83,14 @@ def mv_psnr(task: ComposeTask) -> np.ndarray:
 
     count = 0
     for lhs, rhs in zip(base_dir.iterdir(), self_dir.iterdir(), strict=True):
-        accpsnr += yuv_psnr(lhs, rhs, width, height)
+        accpsnr += calc_yuv_psnr(lhs, rhs, width, height)
         count += 1
     accpsnr /= count
 
     return accpsnr
 
 
-def lenslet_psnr(task: ComposeTask) -> np.ndarray:
+def calc_lenslet_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
     base_task = Png2yuvTask().with_parent(copy_task)
     codec_task = get_ancestor(task, CodecTask)
@@ -99,5 +99,5 @@ def lenslet_psnr(task: ComposeTask) -> np.ndarray:
 
     width, height = get_copy_wh(task)
 
-    psnr = yuv_psnr(lhs, rhs, width, height)
+    psnr = calc_yuv_psnr(lhs, rhs, width, height)
     return psnr

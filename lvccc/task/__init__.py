@@ -1,5 +1,6 @@
 from . import factory
 from .abc import ProtoChain, ProtoTask, TRetTask, TSelfTask, TVarTask
+from .base import NonRootTask, RootTask
 from .chain import Chain
 from .codec import CodecTask, VtmType
 from .compose import ComposeTask

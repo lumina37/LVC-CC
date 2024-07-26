@@ -3,7 +3,6 @@ import json
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.logging import get_logger
 from lvccc.task import (
     CodecTask,
     ComposeTask,
@@ -24,9 +23,9 @@ dst_dir = summary_dir / 'csv'
 mkdir(dst_dir)
 
 infomap = gen_infomap(src_dir)
-log = get_logger()
 
-with (dst_dir / "metrics-wMCA.csv").open("w", encoding="utf-8", newline='') as csv_file:
+
+with (dst_dir / "mca.csv").open("w", encoding="utf-8", newline='') as csv_file:
     csv_writer = csv.writer(csv_file)
     headers = [
         'Sequence',
@@ -58,7 +57,7 @@ with (dst_dir / "metrics-wMCA.csv").open("w", encoding="utf-8", newline='') as c
                 if not json_path.exists():
                     csv_writer.writerow(['Not Found'] + [0] * (len(headers) - 1))
 
-                with json_path.open('r') as f:
+                with json_path.open() as f:
                     metrics: dict = json.load(f)
 
                 csv_writer.writerow(

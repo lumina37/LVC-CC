@@ -6,7 +6,7 @@ import numpy as np
 
 from ..config import get_config
 from ..helper import get_first_file, run_cmds
-from ..task import ComposeTask, Png2yuvTask, RenderTask, TVarTask
+from ..task import CodecTask, ComposeTask, Png2yuvTask, RenderTask, TVarTask
 from ..task.infomap import query
 from .backtrack import get_ancestor
 from .read_log import read_psnrlog
@@ -71,9 +71,9 @@ def get_copy_wh(task: TVarTask) -> tuple[int, int]:
 def mv_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
     views = task.parent.views
-    base_task = RenderTask(views=views).with_parent(copy_task)
+    compose_task = ComposeTask().with_parent(RenderTask(views=views).with_parent(copy_task))
 
-    base_dir = query(base_task) / "yuv"
+    base_dir = query(compose_task) / "yuv"
     self_dir = query(task) / "yuv"
 
     width, height = get_render_wh(task)
@@ -93,8 +93,9 @@ def mv_psnr(task: ComposeTask) -> np.ndarray:
 def lenslet_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
     base_task = Png2yuvTask().with_parent(copy_task)
+    codec_task = get_ancestor(task, CodecTask)
     lhs = query(base_task) / "out.yuv"
-    rhs = query(task) / "out.yuv"
+    rhs = query(codec_task) / "out.yuv"
 
     width, height = get_copy_wh(task)
 

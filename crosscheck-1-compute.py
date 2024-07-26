@@ -71,7 +71,7 @@ for seq_name in config.cases.seqs:
             case_dir = summary_dir / tcodec.full_tag
             mkdir(case_dir)
             with (case_dir / "psnr.json").open('w') as f:
-                json.dump(metrics, f, indent=2)
+                json.dump(metrics, f, indent=4)
             tcompose.dump_taskinfo(case_dir / "task.json")
 
     # W MCA
@@ -92,6 +92,7 @@ for seq_name in config.cases.seqs:
             log_path = query(tcodec) / "out.log"
             enclog = read_enclog(log_path)
 
+            llpsnr = lenslet_psnr(tcompose)
             mvpsnr = mv_psnr(tcompose)
 
             metrics = {
@@ -99,10 +100,13 @@ for seq_name in config.cases.seqs:
                 'mvpsnr_y': mvpsnr[0],
                 'mvpsnr_u': mvpsnr[1],
                 'mvpsnr_v': mvpsnr[2],
+                'llpsnr_y': llpsnr[0],
+                'llpsnr_u': llpsnr[1],
+                'llpsnr_v': llpsnr[2],
             }
 
             case_dir = summary_dir / tcodec.full_tag
             mkdir(case_dir)
             with (case_dir / "psnr.json").open('w') as f:
-                json.dump(metrics, f, indent=2)
+                json.dump(metrics, f, indent=4)
             tcompose.dump_taskinfo(case_dir / "task.json")

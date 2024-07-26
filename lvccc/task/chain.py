@@ -27,9 +27,8 @@ class Chain:
     def copy(self) -> Chain:
         return Chain(self.objs.copy())
 
-    @property
-    def serialized_str(self) -> str:
+    def to_json(self, pretty: bool = False) -> str:
         for i, task in enumerate(self):
             task: ProtoTask = task
             self.objs[i] = task.fields
-        return to_json(self.objs, pretty=True)
+        return to_json(self.objs, pretty)

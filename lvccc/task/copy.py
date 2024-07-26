@@ -15,8 +15,9 @@ class CopyTask(BaseTask["CopyTask"]):
 
     DEFAULT_START_IDX: ClassVar[int] = -1
 
-    start_idx: int = DEFAULT_START_IDX
+    seq_name: str = ""
     frames: int = 0
+    start_idx: int = DEFAULT_START_IDX
 
     def __post_init__(self) -> None:
         common_cfg = get_config()

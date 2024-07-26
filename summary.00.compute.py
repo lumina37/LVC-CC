@@ -120,4 +120,4 @@ for seq_name in config.cases.seqs:
             )
 
     with (summary_dir / f'{seq_name}.json').open('w') as f:
-        json.dump(seq_dic, f, indent=2)
+        json.dump(seq_dic, f, indent=4)

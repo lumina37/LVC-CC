@@ -22,7 +22,6 @@ TTask = TypeVar("TTask", bound="BaseTask")
 @dataclass
 class BaseTask(Generic[TSelfTask]):
     task: str = ""
-    seq_name: str = ""
 
     children: list[TTask] = dcs.field(default_factory=list, init=False, repr=False)
     chain: Chain = dcs.field(default_factory=Chain, init=False, repr=False)
@@ -34,19 +33,14 @@ class BaseTask(Generic[TSelfTask]):
         else:
             return None
 
-    def with_parent(self: TSelfTask, parent: TVarTask) -> TRetTask:
+    def with_parent(self: TSelfTask, parent: TVarTask) -> TSelfTask:
         # Appending `parent.params` to chain
         chain = parent.chain.copy()
         chain.objs.append(parent.fields)
         self.chain = chain
+
         # Appending reverse hooks to `parent`
         parent.children.append(self)
-
-        # Infer `seq_name` from `parent`
-        if not self.seq_name:
-            self.seq_name = parent.seq_name
-        if not self.frames:
-            self.frames = parent.frames
 
         return self
 
@@ -88,7 +82,7 @@ class BaseTask(Generic[TSelfTask]):
 
     @functools.cached_property
     def hash(self) -> int:
-        hashbytes = to_json(self.chain_with_self.objs).encode('utf-8')
+        hashbytes = self.chain_with_self.to_json().encode('utf-8')
         hashint = xxhash.xxh3_64_intdigest(hashbytes)
         return hashint
 
@@ -114,7 +108,7 @@ class BaseTask(Generic[TSelfTask]):
         if target is None:
             target = self.dstdir / "task.json"
         with target.open('w', encoding='utf-8') as f:
-            taskinfo = self.chain_with_self.serialized_str
+            taskinfo = self.chain_with_self.to_json(pretty=True)
             f.write(taskinfo)
 
     @abc.abstractmethod

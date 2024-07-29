@@ -14,6 +14,7 @@ from .infomap import query
 
 
 class Pipeline(enum.IntEnum):
+    NOTSET = -1
     RLC = 0
     TLCT = 1
 
@@ -29,11 +30,11 @@ class RenderTask(NonRootTask["RenderTask"]):
     task: str = "render"
 
     views: int = 5
-    pipeline: Pipeline = Pipeline.RLC
+    pipeline: Pipeline = Pipeline.NOTSET
 
     def _post_with_parent(self) -> None:
         super()._post_with_parent()
-        if self.pipeline == Pipeline.RLC:
+        if self.pipeline == Pipeline.NOTSET:
             config = get_config()
             pipeline = Pipeline(config.pipeline[self.seq_name])
             self.pipeline = pipeline

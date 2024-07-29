@@ -52,7 +52,7 @@ class RootTask(Generic[TSelfTask]):
         for field in dcs.fields(cls):
             if not field.init:
                 continue
-            if not (val := fields.get(field.name, None)):
+            if (val := fields.get(field.name, None)) is None:
                 continue
             kwargs[field.name] = val
 

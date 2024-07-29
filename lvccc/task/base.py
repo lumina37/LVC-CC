@@ -29,10 +29,26 @@ class RootTask(Generic[TSelfTask]):
     def parent(self) -> None:
         return None
 
-    @classmethod
-    def deserialize(cls, fields: dict) -> TSelfTask:
-        kwargs = {}
+    def fields(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
+        fields = {}
+        for field in dcs.fields(self):
+            if exclude_if(field):
+                continue
+            val = getattr(self, field.name)
+            fields[field.name] = val
+        return fields
 
+    def serialize(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> list[dict]:
+        fields = self.fields(exclude_if)
+        objs = self.chain.objs.copy()
+        objs.append(fields)
+        return objs
+
+    @classmethod
+    def deserialize(cls, objs: list[dict]) -> TSelfTask:
+        fields = objs[-1]
+
+        kwargs = {}
         for field in dcs.fields(cls):
             if not field.init:
                 continue
@@ -40,29 +56,14 @@ class RootTask(Generic[TSelfTask]):
                 continue
             kwargs[field.name] = val
 
-        return cls(**kwargs)
+        self = cls(**kwargs)
+        self.chain.objs = objs[:-1]
 
-    def serialize(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
-        dic = {}
-
-        for field in dcs.fields(self):
-            if exclude_if(field):
-                continue
-            val = getattr(self, field.name)
-            dic[field.name] = val
-
-        return dic
-
-    @functools.cached_property
-    def fields(self) -> dict:
-        fields = self.serialize()
-        return fields
+        return self
 
     @functools.cached_property
     def chain_with_self(self) -> Chain:
-        objs = self.chain.objs.copy()
-        objs.append(self.fields)
-        chain = Chain(objs)
+        chain = Chain(self.serialize())
         return chain
 
     @functools.cached_property
@@ -138,7 +139,7 @@ class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
     def with_parent(self, parent: TVarTask) -> TSelfTask:
         # Appending `parent.params` to chain
         chain = parent.chain.copy()
-        chain.objs.append(parent.fields)
+        chain.objs.append(parent.fields())
         self.chain = chain
 
         # Appending reverse hooks to `parent`
@@ -148,4 +149,5 @@ class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
 
         return self
 
+    @abc.abstractmethod
     def _post_with_parent(self) -> None: ...

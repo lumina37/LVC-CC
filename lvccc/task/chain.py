@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import dataclasses as dcs
-from typing import SupportsIndex
+from typing import SupportsIndex, overload
 
 from pydantic.dataclasses import dataclass
 
@@ -17,12 +17,20 @@ class Chain:
     def __len__(self) -> int:
         return len(self.objs)
 
-    def __getitem__(self, idx: SupportsIndex) -> ProtoTask:
-        fields = self.objs[idx]
-        TaskType = get_task_type(fields['task'])
-        task: ProtoTask = TaskType.deserialize(fields)
-        task.chain.objs = self.objs[:idx]
-        return task
+    @overload
+    def __getitem__(self, idx: SupportsIndex) -> ProtoTask: ...
+
+    @overload
+    def __getitem__(self, idx: slice) -> Chain: ...
+
+    def __getitem__(self, idx):
+        if isinstance(idx, int):
+            TaskType = get_task_type(self.objs[idx]['task'])
+            endidx = len(self.objs) if idx == -1 else idx + 1
+            task: ProtoTask = TaskType.deserialize(self.objs[:endidx])
+            return task
+        else:
+            return Chain(self.objs[idx])
 
     def copy(self) -> Chain:
         return Chain(self.objs.copy())
@@ -30,5 +38,5 @@ class Chain:
     def to_json(self, pretty: bool = False) -> str:
         for i, task in enumerate(self):
             task: ProtoTask = task
-            self.objs[i] = task.fields
+            self.objs[i] = task.fields()
         return to_json(self.objs, pretty)

@@ -4,7 +4,7 @@ import multiprocessing as mp
 import queue
 
 from .task.base import TRetTask
-from .task.infomap import TypeInfomap, gen_infomap, register_infomap
+from .task.infomap import TypeInfomap, get_infomap, register_infomap
 
 
 @dcs.dataclass
@@ -48,7 +48,7 @@ class Executor:
         active_count = mp.Value(ctypes.c_size_t, 0)
         manager = mp.Manager()
         infomap = manager.dict()
-        infomap.update(gen_infomap())
+        infomap.update(get_infomap())
 
         workers: list[mp.Process] = []
         for _ in range(self.process_num):

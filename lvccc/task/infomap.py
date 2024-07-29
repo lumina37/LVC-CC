@@ -12,15 +12,16 @@ _INFOMAP: TypeInfomap = None
 
 def gen_infomap(tasks_dir: Path) -> TypeInfomap:
     infomap = {}
-    for d in tasks_dir.iterdir():
-        taskinfo_path = d / "task.json"
-        if not taskinfo_path.exists():
-            continue
-        with taskinfo_path.open(encoding='utf-8') as f:
-            objs = json.load(f)
-            chain = Chain(objs)
-            task = chain[-1]
-            infomap[task.hash] = taskinfo_path.parent
+    if tasks_dir.is_dir():
+        for d in tasks_dir.iterdir():
+            taskinfo_path = d / "task.json"
+            if not taskinfo_path.exists():
+                continue
+            with taskinfo_path.open(encoding='utf-8') as f:
+                objs = json.load(f)
+                chain = Chain(objs)
+                task = chain[-1]
+                infomap[task.hash] = taskinfo_path.parent
 
     return infomap
 

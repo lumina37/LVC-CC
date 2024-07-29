@@ -39,7 +39,7 @@ for seq_name in config.cases.seqs:
                 continue
             log.info(f"Handling {tcompose}")
 
-            log_path = query(tcodec) / "out.log"
+            log_path = next(query(tcodec).glob('*.log'))
             enclog = read_enclog(log_path)
 
             llpsnr = calc_lenslet_psnr(tcompose)
@@ -76,7 +76,7 @@ for seq_name in config.cases.seqs:
                 continue
             log.info(f"Handling {tcompose}")
 
-            log_path = query(tcodec) / "out.log"
+            log_path = next(query(tcodec).glob('*.log'))
             enclog = read_enclog(log_path)
 
             llpsnr = calc_lenslet_psnr(tcompose)

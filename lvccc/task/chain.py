@@ -20,9 +20,9 @@ class Chain:
     def __getitem__(self, idx: SupportsIndex) -> ProtoTask:
         fields = self.objs[idx]
         TaskType = get_task_type(fields['task'])
-        item: ProtoTask = TaskType.deserialize(fields)
-        item.chain.objs = self.objs[:idx]
-        return item
+        task: ProtoTask = TaskType.deserialize(fields)
+        task.chain.objs = self.objs[:idx]
+        return task
 
     def copy(self) -> Chain:
         return Chain(self.objs.copy())

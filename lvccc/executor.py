@@ -3,7 +3,7 @@ import dataclasses as dcs
 import multiprocessing as mp
 import queue
 
-from .task.base import TRetTask
+from .task.abc import TRetTask
 from .task.infomap import TypeInfomap, get_infomap, register_infomap
 
 

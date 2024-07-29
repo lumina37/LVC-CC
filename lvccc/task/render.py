@@ -14,7 +14,6 @@ from .infomap import query
 
 
 class Pipeline(enum.IntEnum):
-    UNDEFINED = -1
     RLC = 0
     TLCT = 1
 
@@ -30,17 +29,14 @@ class RenderTask(NonRootTask["RenderTask"]):
     task: str = "render"
 
     views: int = 5
-    pipeline: Pipeline = Pipeline.UNDEFINED
+    pipeline: Pipeline = Pipeline.RLC
 
-    def with_parent(self, parent: TVarTask) -> TSelfTask:
-        super().with_parent(parent)
-
-        if self.pipeline == Pipeline.UNDEFINED:
+    def _post_with_parent(self) -> None:
+        super()._post_with_parent()
+        if self.pipeline == Pipeline.RLC:
             config = get_config()
             pipeline = Pipeline(config.pipeline[self.seq_name])
             self.pipeline = pipeline
-
-        return self
 
     @functools.cached_property
     def tag(self) -> str:

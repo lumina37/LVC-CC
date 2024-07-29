@@ -4,7 +4,6 @@ import functools
 import traceback
 from collections.abc import Callable
 from pathlib import Path
-from types import UnionType
 from typing import Generic, TypeVar
 
 import xxhash
@@ -29,17 +28,6 @@ class RootTask(Generic[TSelfTask]):
     @property
     def parent(self) -> None:
         return None
-
-    def with_parent(self, parent: TVarTask) -> TSelfTask:
-        # Appending `parent.params` to chain
-        chain = parent.chain.copy()
-        chain.objs.append(parent.fields)
-        self.chain = chain
-
-        # Appending reverse hooks to `parent`
-        parent.children.append(self)
-
-        return self
 
     @classmethod
     def deserialize(cls, fields: dict) -> TSelfTask:
@@ -87,9 +75,9 @@ class RootTask(Generic[TSelfTask]):
     def shorthash(self) -> str:
         return hex(self.hash)[2:6]
 
-    @abc.abstractmethod
-    @functools.cached_property
-    def tag(self) -> str: ...
+    @property
+    def tag(self) -> str:
+        return ""
 
     @functools.cached_property
     def full_tag(self) -> str:
@@ -146,3 +134,18 @@ class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
     @functools.cached_property
     def frames(self) -> int:
         return self.chain[0].frames
+
+    def with_parent(self, parent: TVarTask) -> TSelfTask:
+        # Appending `parent.params` to chain
+        chain = parent.chain.copy()
+        chain.objs.append(parent.fields)
+        self.chain = chain
+
+        # Appending reverse hooks to `parent`
+        parent.children.append(self)
+
+        self._post_with_parent()
+
+        return self
+
+    def _post_with_parent(self) -> None: ...

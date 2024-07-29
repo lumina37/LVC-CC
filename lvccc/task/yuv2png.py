@@ -13,10 +13,6 @@ from .infomap import query
 class Yuv2pngTask(NonRootTask["Yuv2pngTask"]):
     task: str = "yuv2png"
 
-    @functools.cached_property
-    def tag(self) -> str:
-        return ""
-
     def _run(self) -> None:
         config = get_config()
 

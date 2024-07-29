@@ -73,21 +73,13 @@ def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
     views = task.parent.views
     compose_task = ComposeTask().with_parent(RenderTask(views=views).with_parent(copy_task))
 
-    base_dir = query(compose_task) / "yuv"
-    self_dir = query(task) / "yuv"
+    lhs = next(query(compose_task).glob('*.yuv'))
+    rhs = next(query(task).glob('*.yuv'))
 
     width, height = get_render_wh(task)
 
-    channels = 3
-    accpsnr = np.zeros(channels)
-
-    count = 0
-    for lhs, rhs in zip(base_dir.iterdir(), self_dir.iterdir(), strict=True):
-        accpsnr += calc_yuv_psnr(lhs, rhs, width, height)
-        count += 1
-    accpsnr /= count
-
-    return accpsnr
+    psnr = calc_yuv_psnr(lhs, rhs, width, height)
+    return psnr
 
 
 def calc_lenslet_psnr(task: ComposeTask) -> np.ndarray:

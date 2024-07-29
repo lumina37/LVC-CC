@@ -18,10 +18,6 @@ class PostprocTask(NonRootTask["PostprocTask"]):
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property
-    def tag(self) -> str:
-        return ""
-
-    @functools.cached_property
     def srcdir(self) -> Path:
         srcdir = query(self.parent) / "img"
         return srcdir

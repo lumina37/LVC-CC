@@ -7,7 +7,6 @@ from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import get_first_file, mkdir, rm, run_cmds
-from .abc import TSelfTask, TVarTask
 from .base import NonRootTask
 from .infomap import query
 
@@ -18,13 +17,10 @@ class ComposeTask(NonRootTask["ComposeTask"]):
 
     frames_per_view: int = 0
 
-    def with_parent(self, parent: TVarTask) -> TSelfTask:
-        super().with_parent(parent)
-
-        if self.frames_per_view <= 0:
-            self.frames_per_view = int(self.frames / (self.views**2))
-
-        return self
+    def _post_with_parent(self) -> None:
+        super()._post_with_parent()
+        if self.frames_per_view == 0:
+            self.frames_per_view = self.frames
 
     @functools.cached_property
     def views(self) -> int:
@@ -32,7 +28,7 @@ class ComposeTask(NonRootTask["ComposeTask"]):
 
     @functools.cached_property
     def tag(self) -> str:
-        return ""
+        return f"fpv{self.frames_per_view}"
 
     @functools.cached_property
     def srcdir(self) -> Path:
@@ -46,16 +42,19 @@ class ComposeTask(NonRootTask["ComposeTask"]):
         mkdir(tmp_dstdir)
 
         frame_count = 1
+        frame_idx = 1
         for view_idx in range(1, self.views**2 + 1):
-            fiew_fname = f"image_{view_idx:0>3}.png"
+            view_fname = f"image_{view_idx:0>3}.png"
 
             for _ in range(self.frames_per_view):
                 shutil.copyfile(
-                    self.srcdir / f"frame#{frame_count:0>3}" / fiew_fname, tmp_dstdir / f"frame#{frame_count:0>3}.png"
+                    self.srcdir / f"frame#{frame_idx:0>3}" / view_fname, tmp_dstdir / f"frame#{frame_count:0>3}.png"
                 )
+
                 frame_count += 1
-                if frame_count > self.frames:
-                    frame_count -= self.frames
+                frame_idx += 1
+                if frame_idx > self.frames:
+                    frame_idx -= self.frames
 
         refimg_path = get_first_file(self.srcdir / "frame#001")
         refimg = cv.imread(str(refimg_path))
@@ -68,7 +67,7 @@ class ComposeTask(NonRootTask["ComposeTask"]):
             "-vf",
             "format=yuv420p",
             "-frames:v",
-            self.frames,
+            self.frames_per_view * (self.views**2),
             self.dstdir / f"{self.full_tag}-{width}x{height}.yuv",
             "-v",
             "warning",

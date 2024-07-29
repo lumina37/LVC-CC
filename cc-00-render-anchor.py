@@ -24,5 +24,5 @@ for seq_name in config.cases.seqs:
 
 
 if __name__ == "__main__":
-    executor = Executor(roots, process_num=2)
+    executor = Executor(roots, process_num=1)
     executor.run()

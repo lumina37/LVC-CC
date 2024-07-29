@@ -25,7 +25,7 @@ class Yuv2pngTask(NonRootTask["Yuv2pngTask"]):
         height, width = refimg.shape[:2]
 
         srcdir = query(self.parent)
-        srcpath = srcdir / "out.yuv"
+        srcpath = next(srcdir.glob('*.yuv'))
 
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)

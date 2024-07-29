@@ -94,8 +94,8 @@ def calc_lenslet_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
     base_task = Png2yuvTask().with_parent(copy_task)
     codec_task = get_ancestor(task, CodecTask)
-    lhs = query(base_task) / "out.yuv"
-    rhs = query(codec_task) / "out.yuv"
+    lhs = next(query(base_task).glob('*.yuv'))
+    rhs = next(query(codec_task).glob('*.yuv'))
 
     width, height = get_copy_wh(task)
 

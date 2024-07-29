@@ -41,11 +41,12 @@ class CodecTask(NonRootTask["CodecTask"]):
         height, width = refimg.shape[:2]
 
         srcdir = query(self.parent)
-        srcpath = srcdir / "out.yuv"
+        srcpath = next(srcdir.glob('*.yuv'))
 
-        log_path = self.dstdir / "out.log"
-        encoded_path = self.dstdir / "out.bin"
-        decoded_path = self.dstdir / "out.yuv"
+        dstpath_pattern = self.dstdir / self.full_tag
+        log_path = dstpath_pattern.with_suffix('.log')
+        encoded_path = dstpath_pattern.with_suffix('.bin')
+        decoded_path = (self.dstdir / f"{self.full_tag}-{width}x{height}").with_suffix('.yuv')
 
         cmds = [
             config.app.encoder,

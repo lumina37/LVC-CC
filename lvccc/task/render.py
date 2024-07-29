@@ -6,11 +6,11 @@ from pathlib import Path
 from pydantic.dataclasses import dataclass
 
 from ..config import RLCCfg, TLCTCfg, get_config
-from ..helper import mkdir, run_cmds
+from ..helper import mkdir, rm, run_cmds
+from .abc import TSelfTask, TVarTask
 from .base import NonRootTask
 from .copy import CopyTask
 from .infomap import query
-from .abc import TSelfTask, TVarTask
 
 
 class Pipeline(enum.IntEnum):
@@ -95,3 +95,6 @@ class RenderTask(NonRootTask["RenderTask"]):
             tmpwd = None
 
         run_cmds(cmds, cwd=tmpwd)
+
+        if tmpwd is not None:
+            rm(tmpwd)

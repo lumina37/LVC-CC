@@ -119,3 +119,13 @@ python cc-30-figure-anchor.py
 ```
 
 RD-Curve会输出到`${output}/summary/figure`下
+
+### 输出格式
+
+LVC-CC是一套以任务（`Task`）为单元的crosscheck框架，通过多个`Task`的串联来组织编码测试。
+
+每个`Task`都有一个目标文件夹。这个目标文件夹位于`${output}/tasks`文件夹下。目标文件夹的名称包含了该任务链路上所有前置任务的重点信息。
+
+以任务文件夹名`compose-Matryoshka-f1-anchor-RA-QP52-8f7e`为例，`compose`是当前任务的类型，`Matryoshka`为测试序列名，`f1`表明帧数量为1，`anchor`表明该任务链路仅包含VTM而不包含额外的编码工具（如MCA等），`RA`表明VVC编码使用random_access相关预设，`QP48`表明编码QP为48，`8f7e`为避免名称重复的hash。
+
+各个yuv也使用了和目标文件夹相同的命名规则。

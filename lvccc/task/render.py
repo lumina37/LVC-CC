@@ -8,7 +8,7 @@ from pydantic.dataclasses import dataclass
 from ..config import RLCCfg, TLCTCfg, get_config
 from ..helper import mkdir, rm, run_cmds
 from .base import NonRootTask
-from .copy import ImgCopyTask
+from .copy import ImgCopyTask, YuvCopyTask
 from .infomap import query
 
 
@@ -40,7 +40,11 @@ class RenderTask(NonRootTask["RenderTask"]):
 
     @functools.cached_property
     def tag(self) -> str:
-        return "base" if isinstance(self.parent, ImgCopyTask) else ""
+        if len(self.chain) == 1 and isinstance(self.parent, ImgCopyTask):
+            return "base"
+        if len(self.chain) >= 2 and isinstance(self.chain[-2], YuvCopyTask):
+            return "base"
+        return ""
 
     @functools.cached_property
     def srcdir(self) -> Path:

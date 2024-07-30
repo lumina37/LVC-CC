@@ -8,6 +8,7 @@ from pydantic.dataclasses import dataclass
 from ..config import get_config
 from ..helper import mkdir, run_cmds, size_from_filename
 from .base import NonRootTask
+from .copy import ImgCopyTask, YuvCopyTask
 from .infomap import query
 
 
@@ -27,7 +28,12 @@ class CodecTask(NonRootTask["CodecTask"]):
 
     @functools.cached_property
     def tag(self) -> str:
-        return f"{self.vtm_type}-QP{self.qp}"
+        tag = f"{self.vtm_type}-QP{self.qp}"
+        if len(self.chain) == 1 and isinstance(self.parent, YuvCopyTask):
+            return "anchor-" + tag
+        if len(self.chain) >= 2 and isinstance(self.chain[-2], ImgCopyTask):
+            return "anchor-" + tag
+        return tag
 
     def _run(self) -> None:
         config = get_config()

@@ -8,7 +8,18 @@
 
 1. CMake>=3.15
 2. gcc或clang编译工具链，需支持C++20的concepts特性，gcc12实测够用，gcc10应该够用
-3. OpenCV>=4.9，必需模块包括imgcodecs、imgproc、highgui，还需要额外编译[opencv-contrib](https://github.com/opencv/opencv_contrib)中的quality模块。另，由于SSIM计算使用了大量小Mat运算，推荐关闭OpenCL（-DWITH_OPENCL=OFF）以加快RLC的速度
+3. OpenCV>=4.9，必需模块包括imgcodecs、imgproc，还需要额外编译[opencv-contrib](https://github.com/opencv/opencv_contrib)中的quality模块。另，由于SSIM计算使用了大量小Mat运算，推荐关闭OpenCL（-DWITH_OPENCL=OFF）以加快RLC的速度
+
+以下为我们目前使用的Dockerfile指令，仅供参考
+
+```Dockerfile
+# OpenCV
+ADD opencv-4.10.0.tar.gz opencv_contrib-4.10.0.tar.gz .
+RUN NPROC=$(nproc=`cat /proc/cpuinfo | grep processor | grep -v processors | wc -l`; if [ $nproc -gt 24 ]; then nproc=`expr 24 + $nproc / 10`; fi; echo $nproc); \
+    cmake -S opencv-4.10.0 -B opencv-4.10.0/build -DBUILD_LIST="imgcodecs,imgproc,quality" -DBUILD_SHARED_LIBS=OFF -DCV_TRACE=OFF -DENABLE_PRECOMPILED_HEADERS=OFF -DCPU_BASELINE=AVX2 -DCPU_DISPATCH=AVX2 -DBUILD_OpenCV_apps=OFF -DWITH_ADE=OFF -DWITH_DSHOW=OFF -DWITH_FFMPEG=OFF -DWITH_FLATBUFFERS=OFF -DWITH_GSTREAMER=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IPP=OFF -DWITH_JASPER=OFF -DWITH_JPEG=OFF -DWITH_LAPACK=OFF -DWITH_MSMF=OFF -DWITH_MSMF_DXVA=OFF -DWITH_OPENCL=OFF -DWITH_OPENEXR=OFF -DWITH_OPENJPEG=OFF -DWITH_PROTOBUF=OFF -DWITH_VTK=OFF -DWITH_WEBP=OFF -DWITH_TIFF=OFF -DOPENCV_EXTRA_MODULES_PATH="opencv_contrib-4.10.0/modules" && \
+    make -C opencv-4.10.0/build -j$NPROC && \
+    make -C opencv-4.10.0/build install
+```
 
 ### 该脚本所需的Python环境依赖
 

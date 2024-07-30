@@ -8,7 +8,7 @@
 
 1. CMake>=3.15
 2. gcc或clang编译工具链，需支持C++20的concepts特性，gcc12实测够用，gcc10应该够用
-3. OpenCV>=4.0，必需模块包括imgcodecs、imgproc、highgui，还需要额外编译[opencv-contrib](https://github.com/opencv/opencv_contrib)中的quality模块。另，由于SSIM计算使用了大量小Mat运算，推荐关闭OpenCL（-DWITH_OPENCL=OFF）以加快RLC的速度
+3. OpenCV>=4.9，必需模块包括imgcodecs、imgproc、highgui，还需要额外编译[opencv-contrib](https://github.com/opencv/opencv_contrib)中的quality模块。另，由于SSIM计算使用了大量小Mat运算，推荐关闭OpenCL（-DWITH_OPENCL=OFF）以加快RLC的速度
 
 ### 该脚本所需的Python环境依赖
 
@@ -34,35 +34,44 @@ pip install .
 
 ```
 unzip rlc-3.1.zip
-cd rlc-3.1
-cmake -S . -B ./build
-cmake --build ./build --config Release --target RLC31
+cmake -S rlc-3.1 -B rlc-3.1/build
+cmake --build rlc-3.1/build --config Release --target RLC31
 ```
 
-编译完成后，可在`./build/src/bin/...`下找到可执行文件`RLC31`
+编译完成后，可在`rlc-3.1/build/src/bin/...`下找到可执行文件`RLC31`
 
 ## 运行脚本
 
-### 修改配置文件`config.toml`
+### 配置文件`config.toml`
 
-参考下面的注释修改`config.toml`中对应字段的内容
+在当前目录下新建`config.toml`文件，并参考下面的注释填充`config.toml`中对应字段的内容
 
 ```toml
+frames = 30  # 跑几帧
+
+[cases]
+vtm_types = ["RA"]  # 填VTM编码模式，填什么跑什么
+seqs = ["Matryoshka", "ExampleSeq"]  # 填序列名称，填什么跑什么
+
 [path]
 input = "/path/to/input"  # 修改该路径字段以指向input文件夹。input文件夹下应有下载解压后的yuv文件
-output = "/path/to/output"  # 任意指定输出位置
-
-...
+output = "/path/to/output"  # 输出位置，随便设
 
 [app]
 ffmpeg = "ffmpeg"  # 指向ffmpeg的可执行文件ffmpeg
 encoder = "/path/to/EncoderApp"  # 指向VTM-11.0的编码器EncoderApp
 rlc = "/path/to/RLC31"  # 指向RLC3.1的可执行文件RLC31
+
+[QP.anchor]
+"Matryoshka" = [48, 52]  # 序列名以及对应的需要跑的QP
+"ExampleSeq" = [42, 44]  # 填什么跑什么，目前需要升序排序
 ```
 
-### 将yuv复制到input文件夹
+### 配置input文件夹
 
-input文件夹的目录结构应符合`${input}/${sequence_name}/xxx.yuv`的形式
+在任意位置创建一个input文件夹，并将yuv转移进input文件夹
+
+移入yuv后，input文件夹的目录结构应符合`${input}/${sequence_name}/xxx.yuv`的形式
 
 例如：`/path/to/input/Matryoshka/Matryoshka_4080x3068_30fps_8bit.yuv`
 

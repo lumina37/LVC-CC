@@ -1,8 +1,8 @@
-from lvccc.task import CodecTask, CopyTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
+from lvccc.task import CodecTask, ImgCopyTask, Png2yuvTask, PostprocTask, PreprocTask, RenderTask, Yuv2pngTask
 
 
 def test_tasks():
-    tcopy = CopyTask(seq_name="NagoyaFujita", frames=1)
+    tcopy = ImgCopyTask(seq_name="NagoyaFujita", frames=1)
     tpre = PreprocTask().with_parent(tcopy)
     tp2y = Png2yuvTask().with_parent(tpre)
     tcodec = CodecTask(qp=46).with_parent(tp2y)

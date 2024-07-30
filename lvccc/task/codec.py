@@ -3,11 +3,10 @@ import functools
 from pathlib import Path
 from typing import ClassVar
 
-import cv2 as cv
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
-from ..helper import get_first_file, mkdir, run_cmds
+from ..helper import mkdir, run_cmds, size_from_filename
 from .base import NonRootTask
 from .infomap import query
 
@@ -36,12 +35,10 @@ class CodecTask(NonRootTask["CodecTask"]):
 
         vtm_type_cfg_path = Path("config") / f"vtm_{self.vtm_type}.cfg"
 
-        refimg_path = get_first_file(self.parent.srcdir)
-        refimg = cv.imread(str(refimg_path))
-        height, width = refimg.shape[:2]
-
         srcdir = query(self.parent)
         srcpath = next(srcdir.glob('*.yuv'))
+
+        width, height = size_from_filename(srcpath.name)
 
         dstpath_pattern = self.dstdir / self.full_tag
         log_path = dstpath_pattern.with_suffix('.log')

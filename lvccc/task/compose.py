@@ -1,12 +1,11 @@
 import functools
-import shutil
 from pathlib import Path
 
 import cv2 as cv
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
-from ..helper import get_first_file, mkdir, rm, run_cmds
+from ..helper import get_first_file, mkdir, run_cmds
 from .base import NonRootTask
 from .infomap import query
 

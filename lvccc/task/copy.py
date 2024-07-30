@@ -1,17 +1,18 @@
 import functools
 import shutil
+from pathlib import Path
 from typing import ClassVar
 
 from pydantic.dataclasses import dataclass
 
-from ..config import get_config
+from ..config import RLCCfg, get_config
 from ..helper import mkdir, run_cmds
 from .base import RootTask
 
 
 @dataclass
-class CopyTask(RootTask["CopyTask"]):
-    task: str = "copy"
+class ImgCopyTask(RootTask["ImgCopyTask"]):
+    task: str = "imgcopy"
 
     DEFAULT_START_IDX: ClassVar[int] = -1
 
@@ -70,3 +71,65 @@ class CopyTask(RootTask["CopyTask"]):
                 src_fname = config.default_pattern % (self.start_idx + i - 1)
                 dst_fname = config.default_pattern % i
                 (img_dstdir / src_fname).rename(img_dstdir / dst_fname)
+
+
+@dataclass
+class YuvCopyTask(RootTask["YuvCopyTask"]):
+    task: str = "yuvcopy"
+
+    DEFAULT_START_IDX: ClassVar[int] = 0
+
+    seq_name: str = ""
+    frames: int = 0
+    start_idx: int = DEFAULT_START_IDX
+
+    @functools.cached_property
+    def tag(self) -> str:
+        return f"{self.seq_name}-f{self.frames}"
+
+    def _run(self) -> None:
+        config = get_config()
+
+        input_dir = config.path.input
+        srcyuv_path = next(input_dir.glob('*.yuv'))
+        mkdir(self.dstdir)
+
+        cfg_srcdir = Path("config") / self.seq_name
+        rlccfg_srcpath = cfg_srcdir / "rlc.cfg"
+        rlccfg = RLCCfg.from_file(rlccfg_srcpath)
+
+        width = rlccfg.width
+        height = rlccfg.height
+        yuvsize = srcyuv_path.stat().st_size
+        actual_frames = int(yuvsize / (width * height / 2 * 3))
+        dst_fname = f"{self.full_tag}-{width}x{height}.yuv"
+        dstyuv_path = self.dstdir / dst_fname
+
+        if self.start_idx == 0 and actual_frames == self.frames:
+            shutil.copyfile(srcyuv_path, dstyuv_path)
+
+        elif (self.frames + self.start_idx) < actual_frames:
+            cmds = [
+                config.app.ffmpeg,
+                "-s",
+                f"{width}x{height}",
+                "-pix_fmt",
+                "yuv420p",
+                "-i",
+                srcyuv_path,
+                "-vf",
+                f"select='between(n\\,{self.start_idx}\\,{self.start_idx+self.frames-1})'",
+                "-c:v",
+                "rawvideo",
+                "-pix_fmt",
+                "yuv420p",
+                dstyuv_path,
+                "-v",
+                "warning",
+                "-y",
+            ]
+
+            run_cmds(cmds)
+
+        else:
+            raise ValueError(f"start_idx+frames>actual_frames: {self.start_idx+self.frames}>{actual_frames}")

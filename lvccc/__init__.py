@@ -4,7 +4,7 @@ from .logging import get_logger
 from .task import (
     CodecTask,
     ComposeTask,
-    CopyTask,
+    ImgCopyTask,
     Pipeline,
     Png2yuvTask,
     PostprocTask,
@@ -12,4 +12,5 @@ from .task import (
     RenderTask,
     VtmType,
     Yuv2pngTask,
+    YuvCopyTask,
 )

@@ -6,7 +6,7 @@ from lvccc.helper import mkdir
 from lvccc.task import (
     CodecTask,
     ComposeTask,
-    CopyTask,
+    ImgCopyTask,
     Png2yuvTask,
     PostprocTask,
     PreprocTask,
@@ -41,7 +41,7 @@ with (dst_dir / "mca.csv").open("w", encoding="utf-8", newline='') as csv_file:
     csv_writer.writerow(headers)
 
     for seq_name in config.cases.seqs:
-        tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
+        tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
         tpreproc = PreprocTask().with_parent(tcopy)
         tpng2yuv = Png2yuvTask().with_parent(tpreproc)
 

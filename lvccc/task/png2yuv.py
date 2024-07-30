@@ -7,7 +7,7 @@ from pydantic.dataclasses import dataclass
 from ..config import get_config
 from ..helper import get_first_file, mkdir, run_cmds
 from .base import NonRootTask
-from .copy import CopyTask
+from .copy import ImgCopyTask
 from .infomap import query
 
 
@@ -17,7 +17,7 @@ class Png2yuvTask(NonRootTask["Png2yuvTask"]):
 
     @functools.cached_property
     def tag(self) -> str:
-        return "anchor" if isinstance(self.parent, CopyTask) else ""
+        return "anchor" if isinstance(self.parent, ImgCopyTask) else ""
 
     @functools.cached_property
     def srcdir(self) -> Path:

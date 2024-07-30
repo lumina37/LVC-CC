@@ -4,7 +4,7 @@ from .base import NonRootTask, RootTask
 from .chain import Chain
 from .codec import CodecTask, VtmType
 from .compose import ComposeTask
-from .copy import CopyTask
+from .copy import ImgCopyTask, YuvCopyTask
 from .infomap import gen_infomap, get_infomap, query, register_infomap
 from .png2yuv import Png2yuvTask
 from .postproc import PostprocTask
@@ -14,7 +14,8 @@ from .yuv2png import Yuv2pngTask
 
 factory.register(CodecTask)
 factory.register(ComposeTask)
-factory.register(CopyTask)
+factory.register(ImgCopyTask)
+factory.register(YuvCopyTask)
 factory.register(Png2yuvTask)
 factory.register(PostprocTask)
 factory.register(PreprocTask)

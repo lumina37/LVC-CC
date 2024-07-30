@@ -1,4 +1,3 @@
-import functools
 
 import cv2 as cv
 from pydantic.dataclasses import dataclass

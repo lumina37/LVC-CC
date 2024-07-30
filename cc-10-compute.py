@@ -6,7 +6,7 @@ from lvccc.logging import get_logger
 from lvccc.task import (
     CodecTask,
     ComposeTask,
-    CopyTask,
+    ImgCopyTask,
     Png2yuvTask,
     PostprocTask,
     PreprocTask,
@@ -24,7 +24,7 @@ summary_dir = config.path.output / 'summary/tasks'
 
 
 for seq_name in config.cases.seqs:
-    tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
+    tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
 
     # Anchor
     tpng2yuv = Png2yuvTask().with_parent(tcopy)

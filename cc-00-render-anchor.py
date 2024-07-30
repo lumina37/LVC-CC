@@ -1,13 +1,13 @@
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CodecTask, ComposeTask, CopyTask, Png2yuvTask, RenderTask, Yuv2pngTask
+from lvccc.task import CodecTask, ComposeTask, ImgCopyTask, Png2yuvTask, RenderTask, Yuv2pngTask
 
 config = update_config('config.toml')
 
 roots = []
 
 for seq_name in config.cases.seqs:
-    tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
+    tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
     trender = RenderTask().with_parent(tcopy)

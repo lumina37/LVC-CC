@@ -6,12 +6,12 @@ from lvccc.logging import get_logger
 from lvccc.task import (
     CodecTask,
     ComposeTask,
-    ImgCopyTask,
     Png2yuvTask,
     PostprocTask,
     PreprocTask,
     RenderTask,
     Yuv2pngTask,
+    YuvCopyTask,
     query,
 )
 from lvccc.utils import calc_lenslet_psnr, calc_mv_psnr, read_enclog
@@ -24,13 +24,12 @@ summary_dir = config.path.output / 'summary/tasks'
 
 
 for seq_name in config.cases.seqs:
-    tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
+    tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
 
     # Anchor
-    tpng2yuv = Png2yuvTask().with_parent(tcopy)
     for vtm_type in config.cases.vtm_types:
         for qp in config.QP.anchor[seq_name]:
-            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpng2yuv)
+            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
             tyuv2png = Yuv2pngTask().with_parent(tcodec)
             trender = RenderTask().with_parent(tyuv2png)
             tcompose = ComposeTask().with_parent(trender)
@@ -62,7 +61,8 @@ for seq_name in config.cases.seqs:
             tcompose.dump_taskinfo(case_dir / "task.json")
 
     # W MCA
-    tpreproc = PreprocTask().with_parent(tcopy)
+    tyuv2png = Yuv2pngTask().with_parent(tcopy)
+    tpreproc = PreprocTask().with_parent(tyuv2png)
     tpng2yuv = Png2yuvTask().with_parent(tpreproc)
     for vtm_type in config.cases.vtm_types:
         for qp in config.QP.wMCA[seq_name]:

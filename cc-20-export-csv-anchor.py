@@ -6,10 +6,9 @@ from lvccc.helper import mkdir
 from lvccc.task import (
     CodecTask,
     ComposeTask,
-    ImgCopyTask,
-    Png2yuvTask,
     RenderTask,
     Yuv2pngTask,
+    YuvCopyTask,
     gen_infomap,
 )
 
@@ -39,12 +38,11 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline='') as csv_fil
     csv_writer.writerow(headers)
 
     for seq_name in config.cases.seqs:
-        tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
-        tpng2yuv = Png2yuvTask().with_parent(tcopy)
+        tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
 
         for vtm_type in config.cases.vtm_types:
             for qp in config.QP.anchor[seq_name]:
-                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpng2yuv)
+                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
                 tyuv2png = Yuv2pngTask().with_parent(tcodec)
                 trender = RenderTask().with_parent(tyuv2png)
                 tcompose = ComposeTask().with_parent(trender)

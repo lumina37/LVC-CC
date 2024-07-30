@@ -1,6 +1,6 @@
 [project]
 name = "lvccc"
-version = "0.5.0"
+version = "0.5.1"
 description = ""
 authors = [{ name = "Zhuo Tan", email = "tz23@mails.tsinghua.edu.cn" }]
 dependencies = ["pydantic", "opencv-python", "matplotlib", 'xxhash']

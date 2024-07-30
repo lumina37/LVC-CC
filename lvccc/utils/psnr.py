@@ -5,8 +5,8 @@ import cv2 as cv
 import numpy as np
 
 from ..config import get_config
-from ..helper import get_first_file, run_cmds
-from ..task import CodecTask, ComposeTask, Png2yuvTask, RenderTask, TVarTask
+from ..helper import get_first_file, run_cmds, size_from_filename
+from ..task import CodecTask, ComposeTask, RenderTask, TVarTask, Yuv2pngTask
 from ..task.infomap import query
 from .backtrack import get_ancestor
 from .read_log import read_psnrlog
@@ -59,19 +59,13 @@ def get_render_wh(task: TVarTask) -> tuple[int, int]:
     return (height, width)
 
 
-def get_copy_wh(task: TVarTask) -> tuple[int, int]:
-    copy_task = task.chain[0]
-    copy_dir = query(copy_task) / 'img'
-    img_ref_p = get_first_file(copy_dir)
-    img_ref = cv.imread(str(img_ref_p))
-    height, width = img_ref.shape[:2]
-    return (height, width)
-
-
 def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
     views = task.parent.views
-    compose_task = ComposeTask().with_parent(RenderTask(views=views).with_parent(copy_task))
+
+    yuv2png_task = Yuv2pngTask().with_parent(copy_task)
+    render_task = RenderTask(views=views).with_parent(yuv2png_task)
+    compose_task = ComposeTask().with_parent(render_task)
 
     base_dir = query(compose_task) / "yuv"
     self_dir = query(task) / "yuv"
@@ -92,12 +86,11 @@ def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
 
 def calc_lenslet_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
-    base_task = Png2yuvTask().with_parent(copy_task)
     codec_task = get_ancestor(task, CodecTask)
-    lhs = next(query(base_task).glob('*.yuv'))
+    lhs = next(query(copy_task).glob('*.yuv'))
     rhs = next(query(codec_task).glob('*.yuv'))
 
-    width, height = get_copy_wh(task)
+    width, height = size_from_filename(lhs.name)
 
     psnr = calc_yuv_psnr(lhs, rhs, width, height)
     return psnr

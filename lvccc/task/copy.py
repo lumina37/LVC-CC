@@ -91,7 +91,8 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
         config = get_config()
 
         input_dir = config.path.input
-        srcyuv_path = next(input_dir.glob('*.yuv'))
+        srcdir = input_dir / self.seq_name
+        srcpath = next(srcdir.glob('*.yuv'))
         mkdir(self.dstdir)
 
         cfg_srcdir = Path("config") / self.seq_name
@@ -100,13 +101,13 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
 
         width = rlccfg.width
         height = rlccfg.height
-        yuvsize = srcyuv_path.stat().st_size
+        yuvsize = srcpath.stat().st_size
         actual_frames = int(yuvsize / (width * height / 2 * 3))
         dst_fname = f"{self.full_tag}-{width}x{height}.yuv"
-        dstyuv_path = self.dstdir / dst_fname
+        dstpath = self.dstdir / dst_fname
 
         if self.start_idx == 0 and actual_frames == self.frames:
-            shutil.copyfile(srcyuv_path, dstyuv_path)
+            shutil.copyfile(srcpath, dstpath)
 
         elif (self.frames + self.start_idx) < actual_frames:
             cmds = [
@@ -116,14 +117,14 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
                 "-pix_fmt",
                 "yuv420p",
                 "-i",
-                srcyuv_path,
+                srcpath,
                 "-vf",
                 f"select='between(n\\,{self.start_idx}\\,{self.start_idx+self.frames-1})'",
                 "-c:v",
                 "rawvideo",
                 "-pix_fmt",
                 "yuv420p",
-                dstyuv_path,
+                dstpath,
                 "-v",
                 "warning",
                 "-y",

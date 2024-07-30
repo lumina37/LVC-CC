@@ -42,7 +42,8 @@ with (dst_dir / "mca.csv").open("w", encoding="utf-8", newline='') as csv_file:
 
     for seq_name in config.cases.seqs:
         tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
-        tpreproc = PreprocTask().with_parent(tcopy)
+        tyuv2png = Yuv2pngTask().with_parent(tcopy)
+        tpreproc = PreprocTask().with_parent(tyuv2png)
         tpng2yuv = Png2yuvTask().with_parent(tpreproc)
 
         for vtm_type in config.cases.vtm_types:

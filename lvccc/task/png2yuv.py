@@ -40,10 +40,10 @@ class Png2yuvTask(NonRootTask["Png2yuvTask"]):
             "format=yuv420p",
             "-frames:v",
             self.frames,
-            self.dstdir / f"{self.full_tag}-{width}x{height}.yuv",
+            f"{self.full_tag}-{width}x{height}.yuv",
             "-v",
             "warning",
             "-y",
         ]
 
-        run_cmds(cmds)
+        run_cmds(cmds, cwd=self.dstdir)

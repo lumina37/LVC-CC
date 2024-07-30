@@ -8,12 +8,12 @@ from lvccc.helper import mkdir
 from lvccc.task import (
     CodecTask,
     ComposeTask,
-    ImgCopyTask,
     Png2yuvTask,
     PostprocTask,
     PreprocTask,
     RenderTask,
     Yuv2pngTask,
+    YuvCopyTask,
     gen_infomap,
 )
 
@@ -30,8 +30,9 @@ infomap = gen_infomap(src_dir)
 
 
 for seq_name in config.cases.seqs:
-    tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
-    tpreproc = PreprocTask().with_parent(tcopy)
+    tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
+    tyuv2png = Yuv2pngTask().with_parent(tcopy)
+    tpreproc = PreprocTask().with_parent(tyuv2png)
     tpng2yuv = Png2yuvTask().with_parent(tpreproc)
 
     for vtm_type in config.cases.vtm_types:

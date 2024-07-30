@@ -19,11 +19,12 @@ for seq_name in config.cases.seqs:
     tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    trender = RenderTask().with_parent(tcopy)
+    tyuv2png = Yuv2pngTask().with_parent(tcopy)
+    trender = RenderTask().with_parent(tyuv2png)
     tcompose = ComposeTask().with_parent(trender)
 
     if qps := config.QP.wMCA[seq_name]:
-        tpreproc = PreprocTask().with_parent(tcopy)
+        tpreproc = PreprocTask().with_parent(tyuv2png)
         tpng2yuv = Png2yuvTask().with_parent(tpreproc)
         for vtm_type in config.cases.vtm_types:
             for qp in qps:

@@ -1,6 +1,6 @@
 ## 简介
 
-以下教程将执行大全套crosscheck并输出RD-Curve
+本项目用于LVC相关的crosscheck
 
 ## 安装依赖项
 
@@ -8,7 +8,7 @@
 
 1. CMake>=3.15
 2. gcc或clang编译工具链，需支持C++20的concepts特性，gcc12实测够用，gcc10应该够用
-3. OpenCV>=4.0，必需模块包括core、imgcodecs、imgproc、highgui，还需要额外编译[opencv-contrib](https://github.com/opencv/opencv_contrib)中的quality模块。另，由于SSIM计算使用了大量小Mat运算，推荐关闭OpenCL（-DWITH_OPENCL=OFF）以加快RLC的速度
+3. OpenCV>=4.0，必需模块包括imgcodecs、imgproc、highgui，还需要额外编译[opencv-contrib](https://github.com/opencv/opencv_contrib)中的quality模块。另，由于SSIM计算使用了大量小Mat运算，推荐关闭OpenCL（-DWITH_OPENCL=OFF）以加快RLC的速度
 
 ### 该脚本所需的Python环境依赖
 
@@ -28,31 +28,18 @@ pip install .
 
 参考官方文档编译`EncoderApp`
 
-### 编译MCA
+### 编译RLC3.1
 
-以下命令行将解压MCA，进入工程文件夹并编译目标
+以下命令行将解压RLC3.1，进入工程文件夹并编译目标
 
 ```
-unzip MCA.zip
-cd MCA
+unzip rlc-3.1.zip
+cd rlc-3.1
 cmake -S . -B ./build
-cmake --build ./build --config Release
+cmake --build ./build --config Release --target RLC31
 ```
 
-编译完成后，可在`./build/src/bin/...`下找到可执行文件`mca-preproc`和`mca-postproc`
-
-### 编译RLC3.0
-
-以下命令行将解压RLC3.0，进入工程文件夹并编译目标
-
-```
-unzip rlc.zip
-cd rlc/Program
-cmake -S . -B ./build
-cmake --build ./build --config Release
-```
-
-编译完成后，可在`./build/...`下找到可执行文件`RLC30`
+编译完成后，可在`./build/src/bin/...`下找到可执行文件`RLC31`
 
 ## 运行脚本
 
@@ -62,47 +49,53 @@ cmake --build ./build --config Release
 
 ```toml
 [path]
-input = "D:/MPEG/MPEG144/dataset/input"
-output = "E:/output"  # 修改该路径字段以指向解压出的output文件夹。output文件夹下应有包含中间yuv文件的tasks文件夹
+input = "/path/to/input"  # 修改该路径字段以指向input文件夹。input文件夹下应有下载解压后的yuv文件
+output = "/path/to/output"  # 任意指定输出位置
 
 ...
 
 [app]
-ffmpeg = "C:/Program Files/ffmpeg/bin/ffmpeg.exe"  # 指向ffmpeg的可执行文件ffmpeg
-encoder = "D:/MPEG/MPEG144/code/VVCSoftware_VTM/bin/ninja/msvc-19.37/x86_64/release/EncoderApp.exe"  # 指向VTM-11.0的编码器EncoderApp
-preproc = "D:/MPEG/MPEG143/code/MCA/cmake-build-release/src/bin/mca-preproc.exe"  # 指向MCA预处理的可执行文件mca-preproc
-postproc = "D:/MPEG/MPEG143/code/MCA/cmake-build-release/src/bin/mca-postproc.exe"  # 指向MCA逆处理的可执行文件mca-postproc
-rlc = "D:/MPEG/MPEG146/code/rlc/Program/cmake-build-release/RLC30.exe"  # 指向RLC3.0的可执行文件RLC30
+ffmpeg = "ffmpeg"  # 指向ffmpeg的可执行文件ffmpeg
+encoder = "/path/to/EncoderApp"  # 指向VTM-11.0的编码器EncoderApp
+rlc = "/path/to/RLC31"  # 指向RLC3.1的可执行文件RLC31
 ```
 
-### 迁移先前的编码结果
+### 将yuv复制到input文件夹
 
-上周我把QP点设错了，需要部分调整。ChessPieces序列我也搞错了（草台Orz）。需要以新上传的output.zip为准。
+input文件夹的目录结构应符合`${input}/${sequence_name}/xxx.yuv`的形式
 
-新output文件夹可直接合并进旧output文件夹。对于重名旧文件可跳过。
+例如：`/path/to/input/Matryoshka/Matryoshka_4080x3068_30fps_8bit.yuv`
 
-后续脚本会自动复用已完成的编码结果。
+yuv的文件名可随意设置
 
-### 启动大全套渲染（含编解码、多视角转换、MCA等）
+### 启动大全套渲染（含编解码与多视角转换）
 
 **执行前请确保output文件夹有4TB以上的空闲空间**
 
 ```shell
-python crosscheck-0-render.py
+python cc-00-render-anchor.py
 ```
 
 ### 计算PSNR指标
 
 ```shell
-python crosscheck-1-compute.py
+python cc-10-compute.py
 ```
 
-指标会输出到`${output}/summary/compute/*.json`中
+指标会输出到`${output}/summary/tasks`下
+
+### 导出csv
+
+```shell
+python cc-20-export-csv-anchor.py
+```
+
+包含Bitrate和PSNR的csv会输出到`${output}/summary/csv`下
 
 ### 绘制RD-Curve
 
 ```shell
-python crosscheck-2-visualize.py
+python cc-30-figure-anchor.py
 ```
 
-RD-Curve会输出到`${output}/summary/figs/*.svg`中
+RD-Curve会输出到`${output}/summary/figure`下

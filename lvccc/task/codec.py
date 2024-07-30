@@ -34,6 +34,7 @@ class CodecTask(NonRootTask["CodecTask"]):
         mkdir(self.dstdir)
 
         vtm_type_cfg_path = Path("config") / f"vtm_{self.vtm_type}.cfg"
+        vtm_type_cfg_path = vtm_type_cfg_path.absolute()
 
         srcdir = query(self.parent)
         srcpath = next(srcdir.glob('*.yuv'))
@@ -42,8 +43,6 @@ class CodecTask(NonRootTask["CodecTask"]):
 
         dstpath_pattern = self.dstdir / self.full_tag
         log_path = dstpath_pattern.with_suffix('.log')
-        encoded_path = dstpath_pattern.with_suffix('.bin')
-        decoded_path = (self.dstdir / f"{self.full_tag}-{width}x{height}").with_suffix('.yuv')
 
         cmds = [
             config.app.encoder,
@@ -59,13 +58,14 @@ class CodecTask(NonRootTask["CodecTask"]):
             "--OutputBitDepth=8",
             f"--FramesToBeEncoded={self.frames}",
             "--Level=6.2",
+            "--ConformanceMode=1",
             f"--QP={self.qp}",
             "-i",
             srcpath,
             "-b",
-            encoded_path,
+            f"{self.full_tag}.bin",
             "-o",
-            decoded_path,
+            f"{self.full_tag}-{width}x{height}.yuv",
         ]
 
-        run_cmds(cmds, stdout_fpath=log_path)
+        run_cmds(cmds, stdout_fpath=log_path, cwd=self.dstdir)

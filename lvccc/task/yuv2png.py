@@ -1,9 +1,7 @@
-
-import cv2 as cv
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
-from ..helper import get_first_file, mkdir, run_cmds
+from ..helper import mkdir, run_cmds, size_from_filename
 from .base import NonRootTask
 from .infomap import query
 
@@ -15,12 +13,10 @@ class Yuv2pngTask(NonRootTask["Yuv2pngTask"]):
     def _run(self) -> None:
         config = get_config()
 
-        refimg_path = get_first_file(self.parent.parent.srcdir)
-        refimg = cv.imread(str(refimg_path))
-        height, width = refimg.shape[:2]
-
         srcdir = query(self.parent)
         srcpath = next(srcdir.glob('*.yuv'))
+
+        width, height = size_from_filename(srcpath.name)
 
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)

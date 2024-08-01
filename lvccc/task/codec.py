@@ -27,6 +27,11 @@ class CodecTask(NonRootTask["CodecTask"]):
     qp: int = DEFAULT_QP
 
     @functools.cached_property
+    def srcdir(self) -> Path:
+        srcdir = query(self.parent)
+        return srcdir
+
+    @functools.cached_property
     def tag(self) -> str:
         tag = f"{self.vtm_type}-QP{self.qp}"
         if len(self.chain) == 1 and isinstance(self.parent, YuvCopyTask):
@@ -42,8 +47,7 @@ class CodecTask(NonRootTask["CodecTask"]):
         vtm_type_cfg_path = Path("config") / f"vtm_{self.vtm_type}.cfg"
         vtm_type_cfg_path = vtm_type_cfg_path.absolute()
 
-        srcdir = query(self.parent)
-        srcpath = next(srcdir.glob('*.yuv'))
+        srcpath = next(self.srcdir.glob('*.yuv'))
 
         width, height = size_from_filename(srcpath.name)
 

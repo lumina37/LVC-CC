@@ -1,3 +1,6 @@
+import functools
+from pathlib import Path
+
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
@@ -10,11 +13,15 @@ from .infomap import query
 class Yuv2pngTask(NonRootTask["Yuv2pngTask"]):
     task: str = "yuv2png"
 
+    @functools.cached_property
+    def srcdir(self) -> Path:
+        srcdir = query(self.parent)
+        return srcdir
+
     def _run(self) -> None:
         config = get_config()
 
-        srcdir = query(self.parent)
-        srcpath = next(srcdir.glob('*.yuv'))
+        srcpath = next(self.srcdir.glob('*.yuv'))
 
         width, height = size_from_filename(srcpath.name)
 

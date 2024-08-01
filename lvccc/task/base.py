@@ -110,7 +110,7 @@ class RootTask(Generic[TSelfTask]):
             traceback.print_exc()
         else:
             self.dump_taskinfo()
-            append(self, self.dstdir)
+            append(self, self.dstdir.absolute())
             log = get_logger()
             log.info(f"Task `{self.dstdir.name}` completed!")
 

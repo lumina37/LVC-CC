@@ -56,7 +56,7 @@ def get_render_wh(task: TVarTask) -> tuple[int, int]:
     img_ref_p = get_first_file(frame_dir)
     img_ref = cv.imread(str(img_ref_p))
     height, width = img_ref.shape[:2]
-    return (height, width)
+    return width, height
 
 
 def calc_mv_psnr(task: ComposeTask) -> np.ndarray:

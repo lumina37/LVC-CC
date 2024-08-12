@@ -14,8 +14,6 @@ from lvccc.task import (
     gen_infomap,
 )
 
-plt.rcParams['font.sans-serif'] = ['Times New Roman']
-
 config = update_config('config.toml')
 
 summary_dir = config.path.output / 'summary'

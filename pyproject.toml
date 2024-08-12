@@ -3,7 +3,7 @@ name = "lvccc"
 version = "0.5.4"
 description = ""
 authors = [{ name = "Zhuo Tan", email = "tz23@mails.tsinghua.edu.cn" }]
-dependencies = ["pydantic", "opencv-python", "matplotlib", 'xxhash']
+dependencies = ["pydantic", "opencv-python-headless", "matplotlib", 'xxhash']
 requires-python = ">=3.10,<3.13"
 readme = "README.md"
 license = { text = "MIT" }

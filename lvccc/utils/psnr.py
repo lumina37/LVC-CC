@@ -75,10 +75,12 @@ def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
     channels = 3
     accpsnr = np.zeros(channels)
 
-    count = 0
-    for lhs, rhs in zip(base_dir.iterdir(), self_dir.iterdir(), strict=True):
+    lhss = sorted(base_dir.iterdir())
+    rhss = sorted(self_dir.iterdir())
+    count = len(lhss)
+
+    for lhs, rhs in zip(lhss, rhss, strict=True):
         accpsnr += calc_yuv_psnr(lhs, rhs, width, height)
-        count += 1
     accpsnr /= count
 
     return accpsnr

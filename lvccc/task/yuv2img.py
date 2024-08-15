@@ -11,7 +11,7 @@ from .infomap import query
 
 @dataclass
 class Yuv2imgTask(NonRootTask["Yuv2imgTask"]):
-    task: str = "yuv2png"
+    task: str = "yuv2img"
 
     @functools.cached_property
     def srcdir(self) -> Path:

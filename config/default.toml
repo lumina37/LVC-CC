@@ -18,9 +18,7 @@ output = ""
 "NagoyaOrigami" = "NagoyaOrigami/NagoyaOrigami_f%04d.png"
 "Tunnel_Train" = "Tunnel_Train/Tunnel_Train_2c_f%04d.png"
 "Boys" = "Boys/Image%03d.bmp"
-"Cars" = "Cars/Image%d.bmp"
 "Experimenting" = "Experimenting/Image%03d.bmp"
-"Matryoshka" = "Matryoshka/Image%d.bmp"
 "Tri-viewpoint" = "Tri-viewpoint/frame%03d.png"
 "Motherboard" = "Motherboard/img_%03d.bmp"
 
@@ -37,9 +35,7 @@ rlc = "RLC30"
 "NagoyaOrigami" = []
 "Tunnel_Train" = []
 "Boys" = []
-"Cars" = []
 "Experimenting" = []
-"Matryoshka" = []
 "Motherboard" = []
 
 [QP.wMCA]
@@ -48,9 +44,7 @@ rlc = "RLC30"
 "NagoyaOrigami" = []
 "Tunnel_Train" = []
 "Boys" = []
-"Cars" = []
 "Experimenting" = []
-"Matryoshka" = []
 "Motherboard" = []
 
 [start_idx]
@@ -61,10 +55,7 @@ rlc = "RLC30"
 "NagoyaOrigami" = 1
 "Tunnel_Train" = 0
 "Boys" = 0
-"Cars" = 21
 "Experimenting" = 0
-"Tri-viewpoint" = 0
-"Matryoshka" = 0
 "Motherboard" = 0
 
 [pipeline]
@@ -75,8 +66,5 @@ rlc = "RLC30"
 "NagoyaOrigami" = 0
 "Tunnel_Train" = 0
 "Boys" = 1
-"Cars" = 1
 "Experimenting" = 1
-"Tri-viewpoint" = 1
-"Matryoshka" = 1
 "Motherboard" = 1

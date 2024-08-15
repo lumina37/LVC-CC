@@ -3,12 +3,12 @@ from lvccc.executor import Executor
 from lvccc.task import (
     CodecTask,
     ComposeTask,
+    Img2yuvTask,
     ImgCopyTask,
-    Png2yuvTask,
     PostprocTask,
     PreprocTask,
     RenderTask,
-    Yuv2pngTask,
+    Yuv2imgTask,
 )
 
 config = update_config('config.toml')
@@ -19,18 +19,18 @@ for seq_name in config.cases.seqs:
     tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    tyuv2png = Yuv2pngTask().with_parent(tcopy)
-    trender = RenderTask().with_parent(tyuv2png)
+    tyuv2img = Yuv2imgTask().with_parent(tcopy)
+    trender = RenderTask().with_parent(tyuv2img)
     tcompose = ComposeTask().with_parent(trender)
 
     if qps := config.QP.wMCA[seq_name]:
-        tpreproc = PreprocTask().with_parent(tyuv2png)
-        tpng2yuv = Png2yuvTask().with_parent(tpreproc)
+        tpreproc = PreprocTask().with_parent(tyuv2img)
+        timg2yuv = Img2yuvTask().with_parent(tpreproc)
         for vtm_type in config.cases.vtm_types:
             for qp in qps:
-                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpng2yuv)
-                tyuv2png = Yuv2pngTask().with_parent(tcodec)
-                tpostproc = PostprocTask().with_parent(tyuv2png)
+                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
+                tyuv2img = Yuv2imgTask().with_parent(tcodec)
+                tpostproc = PostprocTask().with_parent(tyuv2img)
                 trender = RenderTask().with_parent(tpostproc)
                 tcompose = ComposeTask().with_parent(trender)
 

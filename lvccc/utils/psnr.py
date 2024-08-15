@@ -6,7 +6,7 @@ import numpy as np
 
 from ..config import get_config
 from ..helper import get_first_file, run_cmds, size_from_filename
-from ..task import CodecTask, ComposeTask, RenderTask, TVarTask, Yuv2pngTask
+from ..task import CodecTask, ComposeTask, RenderTask, TVarTask, Yuv2imgTask
 from ..task.infomap import query
 from .backtrack import get_ancestor
 from .read_log import read_psnrlog
@@ -63,8 +63,8 @@ def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
     views = task.parent.views
 
-    yuv2png_task = Yuv2pngTask().with_parent(copy_task)
-    render_task = RenderTask(views=views).with_parent(yuv2png_task)
+    yuv2img_task = Yuv2imgTask().with_parent(copy_task)
+    render_task = RenderTask(views=views).with_parent(yuv2img_task)
     compose_task = ComposeTask().with_parent(render_task)
 
     base_dir = query(compose_task) / "yuv"

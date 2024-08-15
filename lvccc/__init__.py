@@ -4,13 +4,13 @@ from .logging import get_logger
 from .task import (
     CodecTask,
     ComposeTask,
+    Img2yuvTask,
     ImgCopyTask,
     Pipeline,
-    Png2yuvTask,
     PostprocTask,
     PreprocTask,
     RenderTask,
     VtmType,
-    Yuv2pngTask,
+    Yuv2imgTask,
     YuvCopyTask,
 )

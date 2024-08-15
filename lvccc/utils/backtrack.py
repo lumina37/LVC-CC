@@ -1,4 +1,4 @@
-from ..task import Png2yuvTask, RenderTask, TRetTask, TSelfTask, TVarTask
+from ..task import Img2yuvTask, RenderTask, TRetTask, TSelfTask, TVarTask
 
 
 def get_ancestor(task: TSelfTask, cls: type[TRetTask]) -> TRetTask:
@@ -10,7 +10,7 @@ def get_ancestor(task: TSelfTask, cls: type[TRetTask]) -> TRetTask:
 
 
 def is_anchor(task: TVarTask) -> bool:
-    return len(task.chain) > 1 and isinstance(task.chain[1], Png2yuvTask)
+    return len(task.chain) > 1 and isinstance(task.chain[1], Img2yuvTask)
 
 
 def is_base(task: TVarTask) -> bool:

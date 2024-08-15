@@ -8,11 +8,11 @@ from lvccc.helper import mkdir
 from lvccc.task import (
     CodecTask,
     ComposeTask,
-    Png2yuvTask,
+    Img2yuvTask,
     PostprocTask,
     PreprocTask,
     RenderTask,
-    Yuv2pngTask,
+    Yuv2imgTask,
     YuvCopyTask,
     gen_infomap,
 )
@@ -29,18 +29,18 @@ infomap = gen_infomap(src_dir)
 
 for seq_name in config.cases.seqs:
     tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
-    tyuv2png = Yuv2pngTask().with_parent(tcopy)
-    tpreproc = PreprocTask().with_parent(tyuv2png)
-    tpng2yuv = Png2yuvTask().with_parent(tpreproc)
+    tyuv2img = Yuv2imgTask().with_parent(tcopy)
+    tpreproc = PreprocTask().with_parent(tyuv2img)
+    timg2yuv = Img2yuvTask().with_parent(tpreproc)
 
     for vtm_type in config.cases.vtm_types:
         bitrates = []
         psnrs = []
 
         for qp in config.QP.wMCA[seq_name]:
-            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpng2yuv)
-            tyuv2png = Yuv2pngTask().with_parent(tcodec)
-            tpostproc = PostprocTask().with_parent(tyuv2png)
+            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
+            tyuv2img = Yuv2imgTask().with_parent(tcodec)
+            tpostproc = PostprocTask().with_parent(tyuv2img)
             trender = RenderTask().with_parent(tpostproc)
             tcompose = ComposeTask().with_parent(trender)
 

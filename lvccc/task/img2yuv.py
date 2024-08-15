@@ -12,7 +12,7 @@ from .infomap import query
 
 
 @dataclass
-class Png2yuvTask(NonRootTask["Png2yuvTask"]):
+class Img2yuvTask(NonRootTask["Img2yuvTask"]):
     task: str = "png2yuv"
 
     @functools.cached_property

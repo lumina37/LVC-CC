@@ -7,7 +7,7 @@ from typing import ClassVar
 from pydantic.dataclasses import dataclass
 
 from ..config import RenderCfg, get_config
-from ..helper import mkdir, rm, run_cmds
+from ..helper import mkdir, run_cmds
 from .base import NonRootTask
 from .copy import ImgCopyTask, YuvCopyTask
 from .infomap import query
@@ -89,13 +89,4 @@ class RenderTask(NonRootTask["RenderTask"]):
             rlccfg_dstpath,
         ]
 
-        if self.pipeline == Pipeline.RLC:
-            tmpwd = self.dstdir / "tmpwd"
-            mkdir(tmpwd)
-        else:
-            tmpwd = None
-
-        run_cmds(cmds, cwd=tmpwd)
-
-        if tmpwd is not None:
-            rm(tmpwd)
+        run_cmds(cmds)

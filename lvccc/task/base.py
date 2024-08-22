@@ -4,7 +4,7 @@ import functools
 import traceback
 from collections.abc import Callable
 from pathlib import Path
-from typing import Generic, TypeVar
+from typing import ClassVar, Generic, TypeVar
 
 import xxhash
 from pydantic.dataclasses import dataclass
@@ -20,7 +20,7 @@ TTask = TypeVar("TTask", bound="RootTask")
 
 @dataclass
 class RootTask(Generic[TSelfTask]):
-    task: str = ""
+    task: ClassVar[str] = ""
 
     children: list[TTask] = dcs.field(default_factory=list, init=False, repr=False)
     chain: Chain = dcs.field(default_factory=Chain, init=False, repr=False)
@@ -30,7 +30,7 @@ class RootTask(Generic[TSelfTask]):
         return None
 
     def fields(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
-        fields = {}
+        fields = {"task": self.task}
         for field in dcs.fields(self):
             if exclude_if(field):
                 continue

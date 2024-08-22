@@ -12,7 +12,7 @@ from .base import RootTask
 
 @dataclass
 class ImgCopyTask(RootTask["ImgCopyTask"]):
-    task: str = "imgcopy"
+    task: ClassVar[str] = "imgcopy"
 
     DEFAULT_START_IDX: ClassVar[int] = -1
 
@@ -75,7 +75,7 @@ class ImgCopyTask(RootTask["ImgCopyTask"]):
 
 @dataclass
 class YuvCopyTask(RootTask["YuvCopyTask"]):
-    task: str = "yuvcopy"
+    task: ClassVar[str] = "yuvcopy"
 
     seq_name: str = ""
     frames: int = 0

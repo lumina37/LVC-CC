@@ -1,5 +1,6 @@
 import functools
 from pathlib import Path
+from typing import ClassVar
 
 import cv2 as cv
 from pydantic.dataclasses import dataclass
@@ -13,7 +14,7 @@ from .infomap import query
 
 @dataclass
 class Img2yuvTask(NonRootTask["Img2yuvTask"]):
-    task: str = "img2yuv"
+    task: ClassVar[str] = "img2yuv"
 
     @functools.cached_property
     def tag(self) -> str:

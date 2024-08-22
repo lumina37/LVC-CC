@@ -1,5 +1,6 @@
 import functools
 from pathlib import Path
+from typing import ClassVar
 
 from pydantic.dataclasses import dataclass
 
@@ -11,7 +12,7 @@ from .infomap import query
 
 @dataclass
 class Yuv2imgTask(NonRootTask["Yuv2imgTask"]):
-    task: str = "yuv2img"
+    task: ClassVar[str] = "yuv2img"
 
     @functools.cached_property
     def srcdir(self) -> Path:

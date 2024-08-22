@@ -19,7 +19,7 @@ class VtmType(enum.StrEnum):
 
 @dataclass
 class CodecTask(NonRootTask["CodecTask"]):
-    task: str = "codec"
+    task: ClassVar[str] = "codec"
 
     DEFAULT_QP: ClassVar[int] = -1
 

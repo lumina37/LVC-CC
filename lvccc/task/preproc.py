@@ -2,6 +2,7 @@ import functools
 import math
 import shutil
 from pathlib import Path
+from typing import ClassVar
 
 from pydantic.dataclasses import dataclass
 
@@ -13,7 +14,7 @@ from .infomap import query
 
 @dataclass
 class PreprocTask(NonRootTask["PreprocTask"]):
-    task: str = "preproc"
+    task: ClassVar[str] = "preproc"
 
     crop_ratio: float = 1 / math.sqrt(2)
 

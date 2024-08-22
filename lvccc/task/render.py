@@ -2,6 +2,7 @@ import enum
 import functools
 import shutil
 from pathlib import Path
+from typing import ClassVar
 
 from pydantic.dataclasses import dataclass
 
@@ -26,7 +27,7 @@ PIPELINE_TO_CFG: dict[Pipeline, RLCCfg | TLCTCfg] = {
 
 @dataclass
 class RenderTask(NonRootTask["RenderTask"]):
-    task: str = "render"
+    task: ClassVar[str] = "render"
 
     views: int = 5
     pipeline: Pipeline = Pipeline.NOTSET

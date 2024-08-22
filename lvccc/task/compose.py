@@ -1,5 +1,6 @@
 import functools
 from pathlib import Path
+from typing import ClassVar
 
 import cv2 as cv
 from pydantic.dataclasses import dataclass
@@ -12,7 +13,7 @@ from .infomap import query
 
 @dataclass
 class ComposeTask(NonRootTask["ComposeTask"]):
-    task: str = "compose"
+    task: ClassVar[str] = "compose"
 
     @functools.cached_property
     def views(self) -> int:

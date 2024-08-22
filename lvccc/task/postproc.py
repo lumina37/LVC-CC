@@ -38,7 +38,7 @@ class PostprocTask(NonRootTask["PostprocTask"]):
         mcacfg_srcpath = cfg_srcdir / "mca.cfg"
         mcacfg = MCACfg.from_file(mcacfg_srcpath)
 
-        calib_cfg_name = "RLC.xml" if mcacfg.pipeline == 0 else "TLCT.xml"
+        calib_cfg_name = "rlc.xml" if mcacfg.pipeline == 0 else "tlct.xml"
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
         mcacfg.Calibration_xml = str(cfg_dstpath)

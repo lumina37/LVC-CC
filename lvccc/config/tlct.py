@@ -7,7 +7,7 @@ from pydantic.dataclasses import dataclass
 
 @dataclass
 class TLCTCfg:
-    CFG_NAME: ClassVar[str] = "TLCT"
+    CFG_NAME: ClassVar[str] = "tlct"
 
     pipeline: int = 1
     viewNum: int = 5

@@ -7,7 +7,7 @@ from pydantic.dataclasses import dataclass
 
 @dataclass
 class RLCCfg:
-    CFG_NAME: ClassVar[str] = "RLC"
+    CFG_NAME: ClassVar[str] = "rlc"
 
     viewNum: int = 5
     rmode: int = 1

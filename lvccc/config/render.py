@@ -1,34 +1,25 @@
 import dataclasses as dcs
 from pathlib import Path
-from typing import ClassVar, TextIO
+from typing import TextIO
 
 from pydantic.dataclasses import dataclass
 
 
 @dataclass
-class RLCCfg:
-    CFG_NAME: ClassVar[str] = "rlc"
-
+class RenderCfg:
+    pipeline: int = 1
     viewNum: int = 5
-    rmode: int = 1
-    pmode: int = 0
-    mmode: int = 2
-    lmode: int = 1
     Calibration_xml: str = ""
     RawImage_Path: str = ""
     Output_Path: str = ""
-    Debayer_mode: int = 0
-    Isfiltering: int = 0
-    isCLAHE: int = 0
-    Gamma: float = 1.0
-    Lambda: float = 0.05
-    Sigma: int = 0
-    input_model: int = 0
-    output_model: int = 0
     start_frame: int = 1
     end_frame: int = 1
     height: int = 2048
     width: int = 2048
+    upsample: int = 1
+    patternSize: float = 0.325
+    gradientBlendingWidth: float = 0.225
+    psizeShortcutThreshold: float = -0.875
 
     def dump(self, f: TextIO) -> None:
         maxlen = 0
@@ -41,20 +32,20 @@ class RLCCfg:
         f.flush()
 
     @staticmethod
-    def load(f: TextIO) -> "RLCCfg":
+    def load(f: TextIO) -> "RenderCfg":
         def _items():
             for row in f:
                 key, value = row.replace('\t', ' ').split(' ', maxsplit=1)
                 value = value.lstrip().rstrip('\n')
                 yield key, value
 
-        return RLCCfg(**dict(_items()))
+        return RenderCfg(**dict(_items()))
 
     def to_file(self, path: Path) -> None:
         with path.open('w') as f:
             self.dump(f)
 
     @staticmethod
-    def from_file(path: Path) -> "RLCCfg":
+    def from_file(path: Path) -> "RenderCfg":
         with path.open(encoding='utf-8') as f:
-            return RLCCfg.load(f)
+            return RenderCfg.load(f)

@@ -5,7 +5,7 @@ from typing import ClassVar
 
 from pydantic.dataclasses import dataclass
 
-from ..config import RLCCfg, get_config
+from ..config import MCACfg, get_config
 from ..helper import mkdir, run_cmds
 from .base import RootTask
 
@@ -94,11 +94,11 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
         mkdir(self.dstdir)
 
         cfg_srcdir = Path("config") / self.seq_name
-        rlccfg_srcpath = cfg_srcdir / "rlc.cfg"
-        rlccfg = RLCCfg.from_file(rlccfg_srcpath)
+        mcacfg_srcpath = cfg_srcdir / "mca.cfg"
+        mcacfg = MCACfg.from_file(mcacfg_srcpath)
 
-        width = rlccfg.width
-        height = rlccfg.height
+        width = mcacfg.width
+        height = mcacfg.height
         yuvsize = srcpath.stat().st_size
         actual_frames = int(yuvsize / (width * height / 2 * 3))
         dst_fname = f"{self.full_tag}-{width}x{height}.yuv"

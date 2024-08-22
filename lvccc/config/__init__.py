@@ -1,4 +1,3 @@
 from .mca import MCACfg
-from .rlc import RLCCfg
+from .render import RenderCfg
 from .self import get_config, update_config
-from .tlct import TLCTCfg

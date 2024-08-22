@@ -6,7 +6,7 @@ from typing import ClassVar
 
 from pydantic.dataclasses import dataclass
 
-from ..config import RLCCfg, TLCTCfg, get_config
+from ..config import RenderCfg, get_config
 from ..helper import mkdir, rm, run_cmds
 from .base import NonRootTask
 from .copy import ImgCopyTask, YuvCopyTask
@@ -19,9 +19,9 @@ class Pipeline(enum.IntEnum):
     TLCT = 1
 
 
-PIPELINE_TO_CFG: dict[Pipeline, RLCCfg | TLCTCfg] = {
-    Pipeline.RLC: RLCCfg,
-    Pipeline.TLCT: TLCTCfg,
+PIPELINE_TO_CFG: dict[Pipeline, RenderCfg] = {
+    Pipeline.RLC: RenderCfg,
+    Pipeline.TLCT: RenderCfg,
 }
 
 
@@ -62,11 +62,11 @@ class RenderTask(NonRootTask["RenderTask"]):
 
         # Mod and write cfg
         TypeCfg = PIPELINE_TO_CFG[self.pipeline]
-        cfg_name = f"{TypeCfg.CFG_NAME}.cfg"
+        cfg_name = "param.cfg"
         rlccfg_srcpath = cfg_srcdir / cfg_name
         rlccfg = TypeCfg.from_file(rlccfg_srcpath)
 
-        calib_cfg_name = f"{TypeCfg.CFG_NAME}.xml"
+        calib_cfg_name = "calib.xml"
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
         rlccfg.Calibration_xml = str(cfg_dstpath)

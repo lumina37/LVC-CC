@@ -77,11 +77,9 @@ class ImgCopyTask(RootTask["ImgCopyTask"]):
 class YuvCopyTask(RootTask["YuvCopyTask"]):
     task: str = "yuvcopy"
 
-    DEFAULT_START_IDX: ClassVar[int] = 0
-
     seq_name: str = ""
     frames: int = 0
-    start_idx: int = DEFAULT_START_IDX
+    start_idx: int = 0
 
     @functools.cached_property
     def tag(self) -> str:

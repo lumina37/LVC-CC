@@ -21,50 +21,51 @@ output = ""
 "Experimenting" = "Experimenting/Image%03d.bmp"
 "Tri-viewpoint" = "Tri-viewpoint/frame%03d.png"
 "Motherboard" = "Motherboard/img_%03d.bmp"
+"MiniGarden" = "MiniGarden/img_%03d.bmp"
 
 [app]
 ffmpeg = "ffmpeg"
 encoder = "EncoderApp"
 preproc = "mca-preproc"
 postproc = "mca-postproc"
-rlc = "RLC30"
+rlc = "RLC40"
 
 [QP.anchor]
-"NagoyaDataLeading" = []
 "NagoyaFujita" = []
 "NagoyaOrigami" = []
 "Tunnel_Train" = []
+"TempleBoatGiantR32" = []
 "Boys" = []
 "Experimenting" = []
 "Motherboard" = []
+"MiniGarden" = []
 
 [QP.wMCA]
-"NagoyaDataLeading" = []
 "NagoyaFujita" = []
 "NagoyaOrigami" = []
 "Tunnel_Train" = []
+"TempleBoatGiantR32" = []
 "Boys" = []
 "Experimenting" = []
 "Motherboard" = []
+"MiniGarden" = []
 
 [start_idx]
-"ComplexObjectMove" = 0
-"UnicornLinearCam" = 0
-"NagoyaDataLeading" = 1
 "NagoyaFujita" = 1
 "NagoyaOrigami" = 1
 "Tunnel_Train" = 0
+"TempleBoatGiantR32" = 0
 "Boys" = 0
 "Experimenting" = 0
 "Motherboard" = 0
+"MiniGarden" = 0
 
 [pipeline]
-"ComplexObjectMove" = 0
-"UnicornLinearCam" = 0
-"NagoyaDataLeading" = 0
 "NagoyaFujita" = 0
 "NagoyaOrigami" = 0
 "Tunnel_Train" = 0
+"TempleBoatGiantR32" = 0
 "Boys" = 1
 "Experimenting" = 1
 "Motherboard" = 1
+"MiniGarden" = 1

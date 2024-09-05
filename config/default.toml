@@ -11,15 +11,11 @@ input = ""
 output = ""
 
 [path.pattern]
-"ComplexObjectMove" = "ComplexObjectMove/frame_%03d.png"
-"UnicornLinearCam" = "UnicornLinearCam/frame_%03d.png"
-"NagoyaDataLeading" = "NagoyaDataLeading/NagoyaDataLeading_f%04d.png"
 "NagoyaFujita" = "NagoyaFujita/NagoyaFujita_f%04d.png"
 "NagoyaOrigami" = "NagoyaOrigami/NagoyaOrigami_f%04d.png"
-"Tunnel_Train" = "Tunnel_Train/Tunnel_Train_2c_f%04d.png"
+"TempleBoatGiantR32" = "TempleBoatGiantR32/R32-C-D-10G-E024-GS-Bcheckerboard_%010d_Processed.png"
 "Boys" = "Boys/Image%03d.bmp"
 "Experimenting" = "Experimenting/Image%03d.bmp"
-"Tri-viewpoint" = "Tri-viewpoint/frame%03d.png"
 "Motherboard" = "Motherboard/img_%03d.bmp"
 "MiniGarden" = "MiniGarden/img_%03d.bmp"
 
@@ -33,7 +29,6 @@ rlc = "RLC40"
 [QP.anchor]
 "NagoyaFujita" = []
 "NagoyaOrigami" = []
-"Tunnel_Train" = []
 "TempleBoatGiantR32" = []
 "Boys" = []
 "Experimenting" = []
@@ -43,7 +38,6 @@ rlc = "RLC40"
 [QP.wMCA]
 "NagoyaFujita" = []
 "NagoyaOrigami" = []
-"Tunnel_Train" = []
 "TempleBoatGiantR32" = []
 "Boys" = []
 "Experimenting" = []
@@ -53,7 +47,6 @@ rlc = "RLC40"
 [start_idx]
 "NagoyaFujita" = 1
 "NagoyaOrigami" = 1
-"Tunnel_Train" = 0
 "TempleBoatGiantR32" = 0
 "Boys" = 0
 "Experimenting" = 0
@@ -63,8 +56,7 @@ rlc = "RLC40"
 [pipeline]
 "NagoyaFujita" = 0
 "NagoyaOrigami" = 0
-"Tunnel_Train" = 0
-"TempleBoatGiantR32" = 0
+"TempleBoatGiantR32" = 1
 "Boys" = 1
 "Experimenting" = 1
 "Motherboard" = 1

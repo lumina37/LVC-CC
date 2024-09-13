@@ -28,7 +28,7 @@ for seq_name in config.cases.seqs:
 
     # Anchor
     for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.anchor[seq_name]:
+        for qp in config.QP.anchor.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
             tyuv2img = Yuv2imgTask().with_parent(tcodec)
             trender = RenderTask().with_parent(tyuv2img)
@@ -65,7 +65,7 @@ for seq_name in config.cases.seqs:
     tpreproc = PreprocTask().with_parent(tyuv2img)
     timg2yuv = Img2yuvTask().with_parent(tpreproc)
     for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.wMCA[seq_name]:
+        for qp in config.QP.wMCA.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
             tyuv2img = Yuv2imgTask().with_parent(tcodec)
             tpostproc = PostprocTask().with_parent(tyuv2img)

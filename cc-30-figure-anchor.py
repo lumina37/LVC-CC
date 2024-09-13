@@ -31,7 +31,7 @@ for seq_name in config.cases.seqs:
         bitrates = []
         psnrs = []
 
-        for qp in config.QP.anchor[seq_name]:
+        for qp in config.QP.anchor.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
             tyuv2img = Yuv2imgTask().with_parent(tcodec)
             trender = RenderTask().with_parent(tyuv2img)

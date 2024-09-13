@@ -47,7 +47,7 @@ with (dst_dir / "mca.csv").open("w", encoding="utf-8", newline='') as csv_file:
         timg2yuv = Img2yuvTask().with_parent(tpreproc)
 
         for vtm_type in config.cases.vtm_types:
-            for qp in config.QP.wMCA[seq_name]:
+            for qp in config.QP.wMCA.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
                 tyuv2img = Yuv2imgTask().with_parent(tcodec)
                 tpostproc = PostprocTask().with_parent(tyuv2img)

@@ -23,7 +23,7 @@ for seq_name in config.cases.seqs:
     trender = RenderTask().with_parent(tyuv2img)
     tcompose = ComposeTask().with_parent(trender)
 
-    if qps := config.QP.wMCA[seq_name]:
+    if qps := config.QP.wMCA.get(seq_name, []):
         tpreproc = PreprocTask().with_parent(tyuv2img)
         timg2yuv = Img2yuvTask().with_parent(tpreproc)
         for vtm_type in config.cases.vtm_types:

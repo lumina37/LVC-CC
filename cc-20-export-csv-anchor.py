@@ -41,7 +41,7 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline='') as csv_fil
         tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
 
         for vtm_type in config.cases.vtm_types:
-            for qp in config.QP.anchor[seq_name]:
+            for qp in config.QP.anchor.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
                 tyuv2img = Yuv2imgTask().with_parent(tcodec)
                 trender = RenderTask().with_parent(tyuv2img)

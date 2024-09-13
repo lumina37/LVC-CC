@@ -37,7 +37,7 @@ for seq_name in config.cases.seqs:
         bitrates = []
         psnrs = []
 
-        for qp in config.QP.wMCA[seq_name]:
+        for qp in config.QP.wMCA.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
             tyuv2img = Yuv2imgTask().with_parent(tcodec)
             tpostproc = PostprocTask().with_parent(tyuv2img)

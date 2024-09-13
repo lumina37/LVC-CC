@@ -14,7 +14,7 @@ for seq_name in config.cases.seqs:
     trender = RenderTask().with_parent(tyuv2img)
     tcompose = ComposeTask().with_parent(trender)
 
-    if qps := config.QP.anchor[seq_name]:
+    if qps := config.QP.anchor.get(seq_name, []):
         for vtm_type in config.cases.vtm_types:
             for qp in qps:
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)

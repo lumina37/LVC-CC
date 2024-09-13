@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import re
 import shutil
 from pathlib import Path
 
@@ -17,3 +20,13 @@ def rm(path: Path):
 
 def get_first_file(d: Path, glob_pattern: str = '*') -> Path:
     return next(d.glob(glob_pattern))
+
+
+def detect_pattern(name: str) -> tuple[str, int]:
+    match = list(re.finditer(r'(\d+)', name))[-1]
+    num_start = match.start(match.lastindex)
+    num_end = match.end(match.lastindex)
+    start_idx = int(name[num_start:num_end])
+    num_len = num_end - num_start
+    pattern = name[:num_start] + f'%0{num_len}d' + name[num_end:]
+    return pattern, start_idx

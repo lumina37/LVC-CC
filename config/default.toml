@@ -10,15 +10,6 @@ seqs = []
 input = ""
 output = ""
 
-[path.pattern]
-"NagoyaFujita" = "NagoyaFujita/NagoyaFujita_f%04d.png"
-"NagoyaOrigami" = "NagoyaOrigami/NagoyaOrigami_f%04d.png"
-"TempleBoatGiantR32" = "TempleBoatGiantR32/R32-C-D-10G-E024-GS-Bcheckerboard_%010d_Processed.png"
-"Boys" = "Boys/Image%03d.bmp"
-"Experimenting" = "Experimenting/Image%03d.bmp"
-"Motherboard" = "Motherboard/img_%03d.bmp"
-"MiniGarden" = "MiniGarden/img_%03d.bmp"
-
 [app]
 ffmpeg = "ffmpeg"
 encoder = "EncoderApp"
@@ -43,15 +34,6 @@ rlc = "RLC40"
 "Experimenting" = []
 "Motherboard" = []
 "MiniGarden" = []
-
-[start_idx]
-"NagoyaFujita" = 1
-"NagoyaOrigami" = 1
-"TempleBoatGiantR32" = 0
-"Boys" = 0
-"Experimenting" = 0
-"Motherboard" = 0
-"MiniGarden" = 0
 
 [pipeline]
 "NagoyaFujita" = 0

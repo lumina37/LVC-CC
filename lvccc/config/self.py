@@ -32,7 +32,6 @@ class _Cases(_UpdateImpl):
 class _Path(_UpdateImpl):
     input: Path = dcs.field(default_factory=Path)
     output: Path = dcs.field(default_factory=Path)
-    pattern: dict[str, str] = dcs.field(default_factory=dict)
 
 
 @dataclass
@@ -58,7 +57,6 @@ class Config(_UpdateImpl):
     app: _App = dcs.field(default_factory=_App)
     default_pattern: str = ""
     QP: _QP = dcs.field(default_factory=_QP)
-    start_idx: dict[str, int] = dcs.field(default_factory=dict)
     pipeline: dict[str, int] = dcs.field(default_factory=dict)
 
 

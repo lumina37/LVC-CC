@@ -25,7 +25,7 @@ class ImgCopyTask(RootTask["ImgCopyTask"]):
     def _run(self) -> None:
         config = get_config()
 
-        input_dir = config.path.input
+        input_dir = config.path.input / self.seq_name
         first_imgpath = get_first_file(input_dir)
         input_pattern, start_idx = detect_pattern(first_imgpath.name)
         start_idx += self.start_idx

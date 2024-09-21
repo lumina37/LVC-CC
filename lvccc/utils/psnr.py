@@ -1,8 +1,8 @@
 import tempfile
 from pathlib import Path
 
-import cv2 as cv
 import numpy as np
+from PIL import Image
 
 from ..config import get_config
 from ..helper import get_first_file, run_cmds, size_from_filename
@@ -54,8 +54,8 @@ def get_render_wh(task: TVarTask) -> tuple[int, int]:
     render_dir = query(render_task) / 'img'
     frame_dir = next(render_dir.glob('frame#*'))
     img_ref_p = get_first_file(frame_dir)
-    img_ref = cv.imread(str(img_ref_p))
-    height, width = img_ref.shape[:2]
+    refimg = Image.open(img_ref_p)
+    width, height = refimg.size
     return width, height
 
 

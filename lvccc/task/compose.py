@@ -2,7 +2,7 @@ import functools
 from pathlib import Path
 from typing import ClassVar
 
-import cv2 as cv
+from PIL import Image
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
@@ -31,8 +31,8 @@ class ComposeTask(NonRootTask["ComposeTask"]):
         mkdir(yuv_dstdir)
 
         refimg_path = get_first_file(self.srcdir / "frame#001")
-        refimg = cv.imread(str(refimg_path))
-        height, width = refimg.shape[:2]
+        refimg = Image.open(refimg_path)
+        width, height = refimg.size
 
         for view_idx in range(1, self.views * self.views + 1):
             cmds = [

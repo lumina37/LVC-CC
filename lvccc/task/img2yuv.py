@@ -2,7 +2,7 @@ import functools
 from pathlib import Path
 from typing import ClassVar
 
-import cv2 as cv
+from PIL import Image
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
@@ -30,8 +30,8 @@ class Img2yuvTask(NonRootTask["Img2yuvTask"]):
         mkdir(self.dstdir)
 
         refimg_path = get_first_file(self.srcdir)
-        refimg = cv.imread(str(refimg_path))
-        height, width = refimg.shape[:2]
+        refimg = Image.open(refimg_path)
+        width, height = refimg.size
 
         cmds = [
             config.app.ffmpeg,

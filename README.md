@@ -4,52 +4,79 @@
 
 ## 安装依赖项
 
-### VTM、RLC、MCA所需的C++环境依赖
-
-1. CMake>=3.15
-2. gcc或clang编译工具链，需支持C++20的concepts特性，gcc12实测够用，gcc10应该够用
-3. OpenCV>=4.9，必需模块包括imgcodec和imgproc
-
 以下为我们目前使用的Dockerfile指令，仅供参考
 
 ```Dockerfile
+FROM debian:12-slim AS builder
+
+RUN sed -i 's/deb\.debian\.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential cmake unzip && \
+    apt-get install -y git
+
+# VTM
+ADD VVCSoftware_VTM-VTM-11.0.tar.bz2 ./
+RUN cd VVCSoftware_VTM-VTM-11.0 && \
+    find . -type f -exec sed -i 's/-Werror//g' {} + && \
+    cmake -S . -B build && \
+    cmake --build build --config Release --parallel $($(nproc)-1) --target EncoderApp && \
+    cmake --install build
+
 # OpenCV
 ADD opencv-4.10.0.tar.gz ./
 RUN cd opencv-4.10.0 && \
     cmake -S . -B build -DBUILD_LIST="imgcodecs,imgproc" -DBUILD_SHARED_LIBS=OFF -DCV_TRACE=OFF -DENABLE_PRECOMPILED_HEADERS=OFF -DCPU_BASELINE=AVX2 -DCPU_DISPATCH=AVX2 -DBUILD_OpenCV_apps=OFF -DWITH_ADE=OFF -DWITH_DSHOW=OFF -DWITH_FFMPEG=OFF -DWITH_FLATBUFFERS=OFF -DWITH_GSTREAMER=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IPP=OFF -DWITH_JASPER=OFF -DWITH_JPEG=OFF -DWITH_LAPACK=OFF -DWITH_MSMF=OFF -DWITH_MSMF_DXVA=OFF -DWITH_OPENCL=OFF -DWITH_OPENEXR=OFF -DWITH_OPENJPEG=OFF -DWITH_PROTOBUF=OFF -DWITH_VTK=OFF -DWITH_WEBP=OFF -DWITH_TIFF=OFF && \
     make -C build -j$($(nproc)-1) && \
     make -C build install
+
+# FFMpeg
+ADD ffmpeg-release-amd64-static.tar.xz ./
+
+# argparse
+ADD argparse-3.1.tar.gz ./
+
+# pugixml
+ADD pugixml-1.14.tar.gz ./
+
+# RLC4.0
+RUN git clone --depth 1 https://github.com/SIGS-TZ/TLCT.git && \
+    cd TLCT && \
+    git checkout 97246a6 && \
+    cmake -S . -B build -DTLCT_ENABLE_LTO=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 && \
+    cmake --build build --config Release --parallel $($(nproc)-1) --target RLC40
+
+# MCA
+RUN git clone --depth 1 https://github.com/SIGS-TZ/MCA.git && \
+    cd MCA && \
+    git checkout a3fed08 && \
+    cmake -S . -B build -DMCA_ENABLE_LTO=ON -DMCA_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 -DMCA_TLCT_PATH=/TLCT && \
+    cmake --build build --config Release --parallel $($(nproc)-1) --target mca-preproc mca-postproc
+
+# LVC-CC
+RUN mkdir LVC-CC-Wrap && \
+    cd LVC-CC-Wrap && \
+    git clone --depth 1 https://github.com/SIGS-TZ/LVC-CC.git && \
+    cd LVC-CC && \
+    git checkout 13b716b
+
+
+FROM mcr.microsoft.com/devcontainers/python:3.12 AS prod
+
+COPY --from=builder /ffmpeg-7.0.1-amd64-static/ffmpeg /usr/bin
+COPY --from=builder VVCSoftware_VTM-VTM-11.0/bin/EncoderAppStatic /usr/bin
+COPY --from=builder TLCT/build/src/bin/RLC40 /usr/bin
+COPY --from=builder MCA/build/src/bin/mca-preproc /usr/bin
+COPY --from=builder MCA/build/src/bin/mca-postproc /usr/bin
+COPY --from=builder LVC-CC-Wrap ./
+
+RUN cd LVC-CC && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip install -U pip && \
+    pip install .
+
+WORKDIR /LVC-CC
+CMD ["/bin/zsh"]
 ```
-
-### 该脚本所需的Python环境依赖
-
-Python版本需大于等于3.10，推荐3.12
-
-使用
-
-```shell
-pip install .
-```
-
-安装该脚本所需的Python环境依赖
-
-### 编译VTM-11.0
-
-项目链接：https://vcgit.hhi.fraunhofer.de/jvet/VVCSoftware_VTM/-/tree/VTM-11.0
-
-参考官方文档编译`EncoderApp`
-
-### 编译RLC3.1
-
-以下命令行将解压RLC3.1，进入工程文件夹并编译目标
-
-```
-unzip rlc-3.1.zip
-cmake -S rlc-3.1 -B rlc-3.1/build
-cmake --build rlc-3.1/build --config Release --target RLC31
-```
-
-编译完成后，可在`rlc-3.1/build/src/bin/...`下找到可执行文件`RLC31`
 
 ## 运行脚本
 

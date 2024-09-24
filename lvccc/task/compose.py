@@ -45,7 +45,7 @@ class ComposeTask(NonRootTask["ComposeTask"]):
                 self.frames,
                 yuv_dstdir / f"{self.full_tag}-v{view_idx:0>3}-{width}x{height}.yuv",
                 "-v",
-                "warning",
+                "error",
                 "-y",
             ]
 

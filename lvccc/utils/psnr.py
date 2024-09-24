@@ -36,7 +36,7 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
             "-lavfi",
             f"psnr=stats_file='{temp_path_str}'",
             "-v",
-            "warning",
+            "error",
             "-f",
             "null",
             "-",

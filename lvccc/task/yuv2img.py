@@ -41,7 +41,7 @@ class Yuv2imgTask(NonRootTask["Yuv2imgTask"]):
             self.frames,
             img_dstdir / config.default_pattern,
             "-v",
-            "warning",
+            "error",
         ]
 
         run_cmds(cmds)

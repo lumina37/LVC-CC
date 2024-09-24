@@ -49,7 +49,7 @@ class ImgCopyTask(RootTask["ImgCopyTask"]):
                 self.frames,
                 img_dstdir / config.default_pattern,
                 "-v",
-                "warning",
+                "error",
                 "-y",
             ]
 
@@ -119,7 +119,7 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
                 "yuv420p",
                 dstpath,
                 "-v",
-                "warning",
+                "error",
                 "-y",
             ]
 

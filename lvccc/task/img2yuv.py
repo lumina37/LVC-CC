@@ -43,7 +43,7 @@ class Img2yuvTask(NonRootTask["Img2yuvTask"]):
             self.frames,
             f"{self.full_tag}-{width}x{height}.yuv",
             "-v",
-            "warning",
+            "error",
             "-y",
         ]
 

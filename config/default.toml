@@ -27,7 +27,8 @@ rlc = "RLC40"
 [pipeline]
 "NagoyaFujita" = 0
 "NagoyaOrigami" = 0
-"TempleBoatGiantR32" = 1
+"Tunnel_Train" = 0
+"TempleBoatGiantR32" = 0
 "Boys" = 1
 "Motherboard" = 1
 "MiniGarden" = 1

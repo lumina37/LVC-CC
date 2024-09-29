@@ -72,6 +72,7 @@ class RenderTask(NonRootTask["RenderTask"]):
         calib_cfg_name = "calib.xml"
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
+        rlccfg.pipeline = self.pipeline
         rlccfg.Calibration_xml = str(cfg_dstpath)
         rlccfg.RawImage_Path = str(self.srcdir / config.default_pattern)
         img_dstdir = self.dstdir / "img"

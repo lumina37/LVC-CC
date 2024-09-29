@@ -4,7 +4,7 @@ from lvccc.task import CodecTask, Img2yuvTask, ImgCopyTask, RenderTask, Yuv2imgT
 
 update_config('config.toml')
 
-tcopy = ImgCopyTask(seq_name="NagoyaFujita", frames=1)
+tcopy = ImgCopyTask(seq_name="NagoyaFujita")
 ti2y = Img2yuvTask().with_parent(tcopy)
 tcodec = CodecTask(qp=46).with_parent(ti2y)
 ty2i = Yuv2imgTask().with_parent(tcodec)

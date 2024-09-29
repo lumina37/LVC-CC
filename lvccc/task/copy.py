@@ -15,7 +15,7 @@ class ImgCopyTask(RootTask["ImgCopyTask"]):
     task: ClassVar[str] = "imgcopy"
 
     seq_name: str = ""
-    frames: int = 0
+    frames: int = 1
     start_idx: int = 0
 
     @functools.cached_property
@@ -73,7 +73,7 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
     task: ClassVar[str] = "yuvcopy"
 
     seq_name: str = ""
-    frames: int = 0
+    frames: int = 1
     start_idx: int = 0
 
     @functools.cached_property

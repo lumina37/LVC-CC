@@ -51,7 +51,8 @@ class _QP(_UpdateImpl):
 
 @dataclass
 class Config(_UpdateImpl):
-    frames: int = 0
+    frames: int = 1
+    views: int = 5
     cases: _Cases = dcs.field(default_factory=_Cases)
     path: _Path = dcs.field(default_factory=_Path)
     app: _App = dcs.field(default_factory=_App)

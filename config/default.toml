@@ -1,4 +1,5 @@
 frames = 300
+views = 5
 
 default_pattern = "frame#%03d.png"
 

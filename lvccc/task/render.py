@@ -29,7 +29,7 @@ PIPELINE_TO_CFG: dict[Pipeline, RenderCfg] = {
 class RenderTask(NonRootTask["RenderTask"]):
     task: ClassVar[str] = "render"
 
-    views: int = 5
+    views: int = 0
     pipeline: Pipeline = Pipeline.NOTSET
 
     def _post_with_parent(self) -> None:
@@ -38,6 +38,9 @@ class RenderTask(NonRootTask["RenderTask"]):
             config = get_config()
             pipeline = Pipeline(config.pipeline[self.seq_name])
             self.pipeline = pipeline
+        if self.views == 0:
+            config = get_config()
+            self.views = config.views
 
     @functools.cached_property
     def tag(self) -> str:

@@ -18,28 +18,16 @@ postproc = "mca-postproc"
 rlc = "RLC40"
 
 [QP.anchor]
-"NagoyaFujita" = []
-"NagoyaOrigami" = []
-"TempleBoatGiantR32" = []
-"Boys" = []
-"Experimenting" = []
-"Motherboard" = []
-"MiniGarden" = []
+"TBD" = []
 
 [QP.wMCA]
-"NagoyaFujita" = []
-"NagoyaOrigami" = []
-"TempleBoatGiantR32" = []
-"Boys" = []
-"Experimenting" = []
-"Motherboard" = []
-"MiniGarden" = []
+"TBD" = []
 
 [pipeline]
 "NagoyaFujita" = 0
 "NagoyaOrigami" = 0
 "TempleBoatGiantR32" = 1
 "Boys" = 1
-"Experimenting" = 1
 "Motherboard" = 1
 "MiniGarden" = 1
+"HandTools" = 1

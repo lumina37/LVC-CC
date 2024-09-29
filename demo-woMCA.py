@@ -11,5 +11,5 @@ ty2i = Yuv2imgTask().with_parent(tcodec)
 trender = RenderTask().with_parent(ty2i)
 
 if __name__ == "__main__":
-    executor = Executor([tcopy], process_num=1)
+    executor = Executor([tcopy])
     executor.run()

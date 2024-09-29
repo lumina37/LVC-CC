@@ -1,3 +1,5 @@
+import multiprocessing as mp
+
 from lvccc.config import update_config
 from lvccc.executor import Executor
 from lvccc.task import CodecTask, ComposeTask, RenderTask, Yuv2imgTask, YuvCopyTask
@@ -24,5 +26,5 @@ for seq_name in config.cases.seqs:
 
 
 if __name__ == "__main__":
-    executor = Executor(roots, process_num=2)
+    executor = Executor(roots, process_num=mp.cpu_count() >> 1)
     executor.run()

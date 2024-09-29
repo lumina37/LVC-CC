@@ -13,5 +13,5 @@ tpost = PostprocTask().with_parent(ty2i)
 trender = RenderTask().with_parent(tpost)
 
 if __name__ == "__main__":
-    executor = Executor([tcopy], process_num=1)
+    executor = Executor([tcopy])
     executor.run()

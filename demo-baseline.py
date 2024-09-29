@@ -8,5 +8,5 @@ tcopy = ImgCopyTask(seq_name="NagoyaFujita", frames=1)
 trender = RenderTask().with_parent(tcopy)
 
 if __name__ == "__main__":
-    executor = Executor([tcopy], process_num=1)
+    executor = Executor([tcopy])
     executor.run()

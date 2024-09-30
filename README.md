@@ -7,12 +7,12 @@
 以下为我们目前使用的Dockerfile指令，仅供参考
 
 ```Dockerfile
-FROM debian:12-slim AS builder
+FROM silkeh/clang:18 AS builder
 
-RUN sed -i 's/deb\.debian\.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources
+RUN sed -i 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/debian.sources
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential cmake unzip && \
-    apt-get install -y git
+    apt-get install -y --no-install-recommends make cmake unzip ca-certificates git && \
+    apt-get clean
 
 # VTM
 ADD VVCSoftware_VTM-VTM-11.0.tar.bz2 ./
@@ -39,25 +39,22 @@ ADD argparse-3.1.tar.gz ./
 ADD pugixml-1.14.tar.gz ./
 
 # RLC4.0
-RUN git clone --depth 1 https://github.com/SIGS-TZ/TLCT.git && \
+RUN git clone --depth 20 https://github.com/lumina37/TLCT.git && \
     cd TLCT && \
-    git checkout 97246a6 && \
     cmake -S . -B build -DTLCT_ENABLE_LTO=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 && \
     cmake --build build --config Release --parallel $($(nproc)-1) --target RLC40
 
 # MCA
-RUN git clone --depth 1 https://github.com/SIGS-TZ/MCA.git && \
+RUN git clone --depth 20 https://github.com/lumina37/MCA.git && \
     cd MCA && \
-    git checkout a3fed08 && \
     cmake -S . -B build -DMCA_ENABLE_LTO=ON -DMCA_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 -DMCA_TLCT_PATH=/TLCT && \
     cmake --build build --config Release --parallel $($(nproc)-1) --target mca-preproc mca-postproc
 
 # LVC-CC
 RUN mkdir LVC-CC-Wrap && \
     cd LVC-CC-Wrap && \
-    git clone --depth 1 https://github.com/SIGS-TZ/LVC-CC.git && \
-    cd LVC-CC && \
-    git checkout 13b716b
+    git clone --depth 1 https://github.com/lumina37/LVC-CC.git && \
+    cd LVC-CC
 
 
 FROM mcr.microsoft.com/devcontainers/python:3.12 AS prod
@@ -85,7 +82,8 @@ CMD ["/bin/zsh"]
 在当前目录下新建`config.toml`文件，并参考下面的注释填充`config.toml`中对应字段的内容
 
 ```toml
-frames = 30  # 跑几帧
+frames = 30  # 跑30帧
+views = 5    # 跑5x5的视角
 
 [cases]
 vtm_types = ["RA"]  # 填VTM编码模式，填什么跑什么
@@ -97,8 +95,8 @@ output = "/path/to/output"  # 输出位置，随便设
 
 [app]
 ffmpeg = "ffmpeg"  # 指向ffmpeg的可执行文件ffmpeg
-encoder = "/path/to/EncoderApp"  # 指向VTM-11.0的编码器EncoderApp
-rlc = "/path/to/RLC31"  # 指向RLC3.1的可执行文件RLC31
+encoder = "/path/to/EncoderAppStatic"  # 指向VTM-11.0的编码器EncoderApp
+rlc = "/path/to/RLC40"  # 指向RLC4.0的可执行文件RLC40
 
 [QP.anchor]
 "Boys" = [48, 52]  # 序列名以及对应的需要跑的QP

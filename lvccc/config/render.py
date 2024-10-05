@@ -19,7 +19,7 @@ class RenderCfg:
     upsample: int = 1
     patternSize: float = 0.325
     gradientBlendingWidth: float = 0.225
-    psizeShortcutThreshold: float = -0.875
+    psizeShortcutThreshold: int = 2
 
     def dump(self, f: TextIO) -> None:
         maxlen = 0

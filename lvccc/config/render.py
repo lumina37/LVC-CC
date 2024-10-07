@@ -21,7 +21,7 @@ class RenderCfg:
     psizeInflate: float = math.sqrt(3) * 1.5
     maxPsize: float = 0.5
     patternSize: float = 0.3
-    psizeShortcutThreshold: int = 16
+    psizeShortcutThreshold: int = 4
 
     def dump(self, f: TextIO) -> None:
         maxlen = 0

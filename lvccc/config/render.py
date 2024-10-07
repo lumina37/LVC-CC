@@ -1,4 +1,5 @@
 import dataclasses as dcs
+import math
 from pathlib import Path
 from typing import TextIO
 
@@ -16,10 +17,11 @@ class RenderCfg:
     end_frame: int = 1
     height: int = 2048
     width: int = 2048
-    upsample: int = 1
-    patternSize: float = 0.325
-    gradientBlendingWidth: float = 0.225
-    psizeShortcutThreshold: int = 2
+    upsample: int = 2
+    psizeInflate: float = math.sqrt(3) * 1.5
+    maxPsize: float = 0.5
+    patternSize: float = 0.3
+    psizeShortcutThreshold: int = 16
 
     def dump(self, f: TextIO) -> None:
         maxlen = 0

@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 
 from ..config import get_config
-from ..helper import get_first_file, run_cmds, size_from_filename
+from ..helper import get_any_file, run_cmds, size_from_filename
 from ..task import CodecTask, ComposeTask, RenderTask, TVarTask, Yuv2imgTask
 from ..task.infomap import query
 from .backtrack import get_ancestor
@@ -53,7 +53,7 @@ def get_render_wh(task: TVarTask) -> tuple[int, int]:
     render_task = get_ancestor(task, RenderTask)
     render_dir = query(render_task) / 'img'
     frame_dir = next(render_dir.glob('frame#*'))
-    img_ref_p = get_first_file(frame_dir)
+    img_ref_p = get_any_file(frame_dir)
     refimg = Image.open(img_ref_p)
     width, height = refimg.size
     return width, height

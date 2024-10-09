@@ -6,7 +6,7 @@ from PIL import Image
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
-from ..helper import get_first_file, mkdir, run_cmds
+from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .infomap import query
 
@@ -30,7 +30,7 @@ class ComposeTask(NonRootTask["ComposeTask"]):
         yuv_dstdir = self.dstdir / "yuv"
         mkdir(yuv_dstdir)
 
-        refimg_path = get_first_file(self.srcdir / "frame#001")
+        refimg_path = get_any_file(self.srcdir / "frame#001")
         refimg = Image.open(refimg_path)
         width, height = refimg.size
 

@@ -19,6 +19,10 @@ def rm(path: Path):
 
 
 def get_first_file(d: Path, glob_pattern: str = '*') -> Path:
+    return sorted(d.glob(glob_pattern))[0]
+
+
+def get_any_file(d: Path, glob_pattern: str = '*') -> Path:
     return next(d.glob(glob_pattern))
 
 

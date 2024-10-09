@@ -6,7 +6,7 @@ from PIL import Image
 from pydantic.dataclasses import dataclass
 
 from ..config import get_config
-from ..helper import get_first_file, mkdir, run_cmds
+from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .copy import ImgCopyTask
 from .infomap import query
@@ -29,7 +29,7 @@ class Img2yuvTask(NonRootTask["Img2yuvTask"]):
         config = get_config()
         mkdir(self.dstdir)
 
-        refimg_path = get_first_file(self.srcdir)
+        refimg_path = get_any_file(self.srcdir)
         refimg = Image.open(refimg_path)
         width, height = refimg.size
 

@@ -18,7 +18,7 @@ class RenderCfg:
     height: int = 2048
     width: int = 2048
     upsample: int = 2
-    psizeInflate: float = math.sqrt(3) * 1.5
+    psizeInflate: float = math.sqrt(3) / 3 * 2
     maxPsize: float = 0.5
     patternSize: float = 0.3
     psizeShortcutThreshold: int = 4

@@ -1,16 +1,15 @@
+import dataclasses as dcs
 import functools
 import shutil
 from pathlib import Path
 from typing import ClassVar
-
-from pydantic.dataclasses import dataclass
 
 from ..config import MCACfg, get_config
 from ..helper import detect_pattern, get_first_file, mkdir, run_cmds
 from .base import RootTask
 
 
-@dataclass
+@dcs.dataclass
 class ImgCopyTask(RootTask["ImgCopyTask"]):
     task: ClassVar[str] = "imgcopy"
 
@@ -68,7 +67,7 @@ class ImgCopyTask(RootTask["ImgCopyTask"]):
                 (img_dstdir / src_fname).rename(img_dstdir / dst_fname)
 
 
-@dataclass
+@dcs.dataclass
 class YuvCopyTask(RootTask["YuvCopyTask"]):
     task: ClassVar[str] = "yuvcopy"
 

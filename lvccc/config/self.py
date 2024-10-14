@@ -1,41 +1,26 @@
-from __future__ import annotations
-
 import dataclasses as dcs
 from pathlib import Path
 from typing import BinaryIO
 
 import tomllib
-from pydantic.dataclasses import dataclass
+
+from .base import UpdateImpl
 
 
-@dataclass
-class _UpdateImpl:
-    def update(self, rhs: _UpdateImpl) -> _UpdateImpl:
-        for field in dcs.fields(rhs):
-            rhs_value = getattr(rhs, field.name)
-            if not rhs_value:
-                continue
-            if hasattr(rhs_value, 'update'):
-                lhs_value = getattr(self, field.name)
-                lhs_value.update(rhs_value)
-            else:
-                setattr(self, field.name, rhs_value)
-
-
-@dataclass
-class _Cases(_UpdateImpl):
+@dcs.dataclass
+class _Cases(UpdateImpl):
     vtm_types: list[str] = dcs.field(default_factory=list)
     seqs: list[str] = dcs.field(default_factory=list)
 
 
-@dataclass
-class _Path(_UpdateImpl):
+@dcs.dataclass
+class _Path(UpdateImpl):
     input: Path = dcs.field(default_factory=Path)
     output: Path = dcs.field(default_factory=Path)
 
 
-@dataclass
-class _App(_UpdateImpl):
+@dcs.dataclass
+class _App(UpdateImpl):
     ffmpeg: str = ""
     encoder: str = ""
     preproc: str = ""
@@ -43,14 +28,14 @@ class _App(_UpdateImpl):
     rlc: str = ""
 
 
-@dataclass
-class _QP(_UpdateImpl):
+@dcs.dataclass
+class _QP(UpdateImpl):
     wMCA: dict[str, list[int]] = dcs.field(default_factory=dict)
     anchor: dict[str, list[int]] = dcs.field(default_factory=dict)
 
 
-@dataclass
-class Config(_UpdateImpl):
+@dcs.dataclass
+class Config(UpdateImpl):
     frames: int = 1
     views: int = 5
     cases: _Cases = dcs.field(default_factory=_Cases)

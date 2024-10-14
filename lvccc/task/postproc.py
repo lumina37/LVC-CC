@@ -1,10 +1,9 @@
+import dataclasses as dcs
 import functools
 import math
 import shutil
 from pathlib import Path
 from typing import ClassVar
-
-from pydantic.dataclasses import dataclass
 
 from ..config import MCACfg, get_config
 from ..helper import mkdir, run_cmds
@@ -12,7 +11,7 @@ from .base import NonRootTask
 from .infomap import query
 
 
-@dataclass
+@dcs.dataclass
 class PostprocTask(NonRootTask["PostprocTask"]):
     task: ClassVar[str] = "postproc"
 

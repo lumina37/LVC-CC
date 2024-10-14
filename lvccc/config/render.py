@@ -3,11 +3,11 @@ import math
 from pathlib import Path
 from typing import TextIO
 
-from pydantic.dataclasses import dataclass
+from .base import AdapterImpl
 
 
-@dataclass
-class RenderCfg:
+@dcs.dataclass
+class RenderCfg(AdapterImpl):
     pipeline: int = 1
     viewNum: int = 5
     Calibration_xml: str = ""

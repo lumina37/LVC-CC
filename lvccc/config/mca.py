@@ -3,11 +3,11 @@ import math
 from pathlib import Path
 from typing import TextIO
 
-from pydantic.dataclasses import dataclass
+from .base import AdapterImpl
 
 
-@dataclass
-class MCACfg:
+@dcs.dataclass
+class MCACfg(AdapterImpl):
     pipeline: int = 0
     Calibration_xml: str = ""
     RawImage_Path: str = ""

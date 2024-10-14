@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import ClassVar, Generic, TypeVar
 
 import xxhash
-from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..logging import get_logger
@@ -18,7 +17,7 @@ from .infomap import append, query
 TTask = TypeVar("TTask", bound="RootTask")
 
 
-@dataclass
+@dcs.dataclass
 class RootTask(Generic[TSelfTask]):
     task: ClassVar[str] = ""
 

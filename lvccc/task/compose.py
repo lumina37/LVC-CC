@@ -1,9 +1,9 @@
+import dataclasses as dcs
 import functools
 from pathlib import Path
 from typing import ClassVar
 
 from PIL import Image
-from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import get_any_file, mkdir, run_cmds
@@ -11,7 +11,7 @@ from .base import NonRootTask
 from .infomap import query
 
 
-@dataclass
+@dcs.dataclass
 class ComposeTask(NonRootTask["ComposeTask"]):
     task: ClassVar[str] = "compose"
 

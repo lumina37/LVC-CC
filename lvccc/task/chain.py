@@ -3,14 +3,12 @@ from __future__ import annotations
 import dataclasses as dcs
 from typing import SupportsIndex, overload
 
-from pydantic.dataclasses import dataclass
-
 from ..helper import to_json
 from .abc import ProtoTask
 from .factory import get_task_type
 
 
-@dataclass
+@dcs.dataclass
 class Chain:
     objs: list[dict] = dcs.field(default_factory=list)
 

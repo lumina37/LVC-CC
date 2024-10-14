@@ -1,10 +1,9 @@
+import dataclasses as dcs
 import enum
 import functools
 import shutil
 from pathlib import Path
 from typing import ClassVar
-
-from pydantic.dataclasses import dataclass
 
 from ..config import RenderCfg, get_config
 from ..helper import mkdir, run_cmds
@@ -25,7 +24,7 @@ PIPELINE_TO_CFG: dict[Pipeline, RenderCfg] = {
 }
 
 
-@dataclass
+@dcs.dataclass
 class RenderTask(NonRootTask["RenderTask"]):
     task: ClassVar[str] = "render"
 

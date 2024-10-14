@@ -1,9 +1,9 @@
+import dataclasses as dcs
 import functools
 from pathlib import Path
 from typing import ClassVar
 
 from PIL import Image
-from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import get_any_file, mkdir, run_cmds
@@ -12,7 +12,7 @@ from .copy import ImgCopyTask
 from .infomap import query
 
 
-@dataclass
+@dcs.dataclass
 class Img2yuvTask(NonRootTask["Img2yuvTask"]):
     task: ClassVar[str] = "img2yuv"
 

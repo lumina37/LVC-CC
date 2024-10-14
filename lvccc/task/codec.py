@@ -1,9 +1,8 @@
+import dataclasses as dcs
 import enum
 import functools
 from pathlib import Path
 from typing import ClassVar
-
-from pydantic.dataclasses import dataclass
 
 from ..config import get_config
 from ..helper import mkdir, run_cmds, size_from_filename
@@ -17,7 +16,7 @@ class VtmType(enum.StrEnum):
     RA = "RA"
 
 
-@dataclass
+@dcs.dataclass
 class CodecTask(NonRootTask["CodecTask"]):
     task: ClassVar[str] = "codec"
 

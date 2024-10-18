@@ -7,7 +7,7 @@
 以下为我们目前使用的Dockerfile指令，仅供参考
 
 ```Dockerfile
-FROM silkeh/clang:18 AS builder
+FROM silkeh/clang:19 AS builder
 
 RUN sed -i 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/debian.sources
 RUN apt-get update && \
@@ -25,7 +25,7 @@ RUN cd VVCSoftware_VTM-VTM-11.0 && \
 # OpenCV
 ADD opencv-4.10.0.tar.gz ./
 RUN cd opencv-4.10.0 && \
-    cmake -S . -B build -DBUILD_LIST="imgcodecs,imgproc" -DBUILD_SHARED_LIBS=OFF -DCV_TRACE=OFF -DENABLE_PRECOMPILED_HEADERS=OFF -DCPU_BASELINE=AVX2 -DCPU_DISPATCH=AVX2 -DBUILD_OpenCV_apps=OFF -DWITH_ADE=OFF -DWITH_DSHOW=OFF -DWITH_FFMPEG=OFF -DWITH_FLATBUFFERS=OFF -DWITH_GSTREAMER=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IPP=OFF -DWITH_JASPER=OFF -DWITH_JPEG=OFF -DWITH_LAPACK=OFF -DWITH_MSMF=OFF -DWITH_MSMF_DXVA=OFF -DWITH_OPENCL=OFF -DWITH_OPENEXR=OFF -DWITH_OPENJPEG=OFF -DWITH_PROTOBUF=OFF -DWITH_VTK=OFF -DWITH_WEBP=OFF -DWITH_TIFF=OFF && \
+    cmake -S . -B build -DBUILD_LIST="imgcodecs,imgproc" -DBUILD_SHARED_LIBS=OFF -DCV_TRACE=OFF -DCPU_BASELINE=AVX2 -DCPU_DISPATCH=AVX2 -DOPENCV_ENABLE_ALLOCATOR_STATS=OFF -DWITH_ADE=OFF -DWITH_DSHOW=OFF -DWITH_FFMPEG=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IPP=OFF -DWITH_ITT=OFF -DWITH_JASPER=OFF -DWITH_JPEG=OFF -DWITH_LAPACK=OFF -DWITH_OPENCL=OFF -DWITH_OPENEXR=OFF -DWITH_OPENJPEG=OFF -DWITH_PROTOBUF=OFF -DWITH_TIFF=OFF -DWITH_WEBP=OFF && \
     make -C build -j$($(nproc)-1) && \
     make -C build install
 
@@ -41,13 +41,13 @@ ADD pugixml-1.14.tar.gz ./
 # RLC4.0
 RUN git clone --depth 20 https://github.com/lumina37/TLCT.git && \
     cd TLCT && \
-    cmake -S . -B build -DTLCT_ENABLE_LTO=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 && \
+    cmake -S . -B build -DTLCT_ENABLE_LTO=ON -DTLCT_HEADER_ONLY=ON -DPUGIXML_HEADER_ONLY=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 && \
     cmake --build build --config Release --parallel $($(nproc)-1) --target RLC40
 
 # MCA
 RUN git clone --depth 20 https://github.com/lumina37/MCA.git && \
     cd MCA && \
-    cmake -S . -B build -DMCA_ENABLE_LTO=ON -DMCA_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 -DMCA_TLCT_PATH=/TLCT && \
+    cmake -S . -B build -DMCA_ENABLE_LTO=ON -DMCA_HEADER_ONLY=ON -DTLCT_HEADER_ONLY=ON -DPUGIXML_HEADER_ONLY=ON -DMCA_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 -DMCA_TLCT_PATH=/TLCT && \
     cmake --build build --config Release --parallel $($(nproc)-1) --target mca-preproc mca-postproc
 
 # LVC-CC
@@ -59,7 +59,7 @@ RUN mkdir LVC-CC-Wrap && \
 
 FROM mcr.microsoft.com/devcontainers/python:3.12 AS prod
 
-COPY --from=builder /ffmpeg-7.0.1-amd64-static/ffmpeg /usr/bin
+COPY --from=builder /ffmpeg-7.0.2-amd64-static/ffmpeg /usr/bin
 COPY --from=builder VVCSoftware_VTM-VTM-11.0/bin/EncoderAppStatic /usr/bin
 COPY --from=builder TLCT/build/src/bin/RLC40 /usr/bin
 COPY --from=builder MCA/build/src/bin/mca-preproc /usr/bin

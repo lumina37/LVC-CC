@@ -3,7 +3,7 @@ from typing import get_origin
 
 
 @dcs.dataclass
-class AdapterImpl:
+class AutoConvImpl:
     def __post_init__(self):
         for field in dcs.fields(self):
             value = getattr(self, field.name)
@@ -21,7 +21,7 @@ class AdapterImpl:
 
 
 @dcs.dataclass
-class UpdateImpl(AdapterImpl):
+class UpdateImpl(AutoConvImpl):
     def update(self, rhs: "UpdateImpl") -> "UpdateImpl":
         for field in dcs.fields(rhs):
             rhs_value = getattr(rhs, field.name)

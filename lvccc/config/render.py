@@ -3,11 +3,11 @@ import math
 from pathlib import Path
 from typing import TextIO
 
-from .base import AdapterImpl
+from .base import AutoConvImpl
 
 
 @dcs.dataclass
-class RenderCfg(AdapterImpl):
+class RenderCfg(AutoConvImpl):
     pipeline: int = 1
     viewNum: int = 5
     Calibration_xml: str = ""

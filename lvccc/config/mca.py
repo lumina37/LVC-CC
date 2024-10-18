@@ -3,11 +3,11 @@ import math
 from pathlib import Path
 from typing import TextIO
 
-from .base import AdapterImpl
+from .base import AutoConvImpl
 
 
 @dcs.dataclass
-class MCACfg(AdapterImpl):
+class MCACfg(AutoConvImpl):
     pipeline: int = 0
     Calibration_xml: str = ""
     RawImage_Path: str = ""

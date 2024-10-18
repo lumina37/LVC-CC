@@ -62,7 +62,7 @@ class RootTask(Generic[TSelfTask]):
 
     @functools.cached_property
     def chain_with_self(self) -> Chain:
-        chain = Chain(self.serialize())
+        chain = Chain(objs=self.serialize())
         return chain
 
     @functools.cached_property

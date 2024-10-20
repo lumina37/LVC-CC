@@ -57,7 +57,7 @@ RUN mkdir LVC-CC-Wrap && \
     cd LVC-CC
 
 
-FROM mcr.microsoft.com/devcontainers/python:3.12 AS prod
+FROM python:3.13-alpine AS prod
 
 COPY --from=builder /ffmpeg-7.0.2-amd64-static/ffmpeg /usr/bin
 COPY --from=builder VVCSoftware_VTM-VTM-11.0/bin/EncoderAppStatic /usr/bin
@@ -72,7 +72,7 @@ RUN cd LVC-CC && \
     pip install .
 
 WORKDIR /LVC-CC
-CMD ["/bin/zsh"]
+CMD ["sh"]
 ```
 
 ## 运行脚本

@@ -86,7 +86,7 @@ frames = 30  # 跑30帧
 views = 5    # 跑5x5的视角
 
 [cases]
-vtm_types = ["RA"]  # 填VTM编码模式，填什么跑什么
+vtm_types = ["AI", "RA"]  # 填VTM编码模式，填什么跑什么
 seqs = ["Boys", "ExampleSeq"]  # 填序列名称，填什么跑什么
 
 [path]

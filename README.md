@@ -10,9 +10,9 @@
 FROM silkeh/clang:19 AS builder
 
 RUN sed -i 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/debian.sources
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends make cmake unzip ca-certificates git && \
-    apt-get clean
+RUN apt update && \
+    apt install -y --no-install-recommends cmake unzip ca-certificates git && \
+    apt clean
 
 # VTM
 ADD VVCSoftware_VTM-VTM-11.0.tar.bz2 ./

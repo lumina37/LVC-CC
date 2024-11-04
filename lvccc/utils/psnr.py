@@ -13,12 +13,8 @@ from .read_log import read_psnrlog
 
 
 def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
-    with tempfile.NamedTemporaryFile('w', delete_on_close=False) as tf:
-        tf.close()
-
+    with tempfile.TemporaryFile('w+') as tf:
         config = get_config()
-        temp_path = Path(tf.name)
-        temp_path_str = str(temp_path).replace('\\', '/').replace(':', '\\:')
         cmds = [
             config.app.ffmpeg,
             "-s",
@@ -34,16 +30,15 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
             "-i",
             rhs,
             "-lavfi",
-            f"psnr=stats_file='{temp_path_str}'",
-            "-v",
-            "error",
+            "psnr",
             "-f",
             "null",
             "-",
         ]
-        run_cmds(cmds)
+        run_cmds(cmds, output=tf)
 
-        psnr = read_psnrlog(temp_path)
+        tf.seek(0)
+        psnr = read_psnrlog(tf)
 
     psnrarr = np.asarray([psnr.y, psnr.u, psnr.v])
     return psnrarr

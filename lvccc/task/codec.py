@@ -53,28 +53,29 @@ class CodecTask(NonRootTask["CodecTask"]):
         dstpath_pattern = self.dstdir / self.full_tag
         log_path = dstpath_pattern.with_suffix('.log')
 
-        cmds = [
-            config.app.encoder,
-            "-c",
-            vtm_type_cfg_path,
-            "-wdt",
-            width,
-            "-hgt",
-            height,
-            "-fr",
-            30,
-            "--InputBitDepth=8",
-            "--OutputBitDepth=8",
-            f"--FramesToBeEncoded={self.frames}",
-            "--Level=6.2",
-            "--ConformanceMode=1",
-            f"--QP={self.qp}",
-            "-i",
-            srcpath,
-            "-b",
-            f"{self.full_tag}.bin",
-            "-o",
-            f"{self.full_tag}-{width}x{height}.yuv",
-        ]
+        with log_path.open('w', encoding='utf-8') as logf:
+            cmds = [
+                config.app.encoder,
+                "-c",
+                vtm_type_cfg_path,
+                "-wdt",
+                width,
+                "-hgt",
+                height,
+                "-fr",
+                30,
+                "--InputBitDepth=8",
+                "--OutputBitDepth=8",
+                f"--FramesToBeEncoded={self.frames}",
+                "--Level=6.2",
+                "--ConformanceMode=1",
+                f"--QP={self.qp}",
+                "-i",
+                srcpath,
+                "-b",
+                f"{self.full_tag}.bin",
+                "-o",
+                f"{self.full_tag}-{width}x{height}.yuv",
+            ]
 
-        run_cmds(cmds, stdout_fpath=log_path, cwd=self.dstdir)
+            run_cmds(cmds, output=logf, cwd=self.dstdir)

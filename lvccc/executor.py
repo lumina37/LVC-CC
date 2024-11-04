@@ -13,12 +13,12 @@ class Executor:
     process_num: int = 1
 
     @staticmethod
-    def _worker(que: mp.Queue, active_count: mp.Value, infomap: TypeInfomap):
+    def _worker(que: mp.Queue, active_count, infomap: TypeInfomap):
         register_infomap(infomap)
 
         while 1:
             try:
-                task: TRetTask = que.get(timeout=5.0)
+                task: TRetTask = que.get(timeout=1.0)
 
             except queue.Empty:  # noqa: PERF203
                 if active_count.value == 0 and que.empty():

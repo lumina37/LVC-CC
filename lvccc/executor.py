@@ -46,8 +46,7 @@ class Executor:
         roots = {}
         for t in self.root_tasks:
             roots[t.hash] = t
-
-        for root in self.root_tasks:
+        for root in roots.values():
             self.task_queue.put(root)
 
         workers = [threading.Thread(target=self._worker) for _ in range(self.process_num)]

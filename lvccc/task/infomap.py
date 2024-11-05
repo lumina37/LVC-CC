@@ -26,11 +26,6 @@ def gen_infomap(tasks_dir: Path) -> TypeInfomap:
     return infomap
 
 
-def register_infomap(infomap: TypeInfomap) -> None:
-    global _INFOMAP
-    _INFOMAP = infomap
-
-
 def get_infomap() -> TypeInfomap:
     global _INFOMAP
 

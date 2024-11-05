@@ -1,4 +1,4 @@
-import multiprocessing as mp
+import os
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
@@ -38,5 +38,5 @@ for seq_name in config.cases.seqs:
 
 
 if __name__ == "__main__":
-    executor = Executor(roots, process_num=mp.cpu_count() >> 1)
+    executor = Executor(roots, process_num=os.cpu_count() >> 1)
     executor.run()

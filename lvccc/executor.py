@@ -1,10 +1,9 @@
-import ctypes
 import dataclasses as dcs
-import multiprocessing as mp
 import queue
+import threading
 
 from .task.abc import TRetTask
-from .task.infomap import TypeInfomap, get_infomap, register_infomap
+from .task.infomap import TypeInfomap, get_infomap
 
 
 @dcs.dataclass
@@ -12,47 +11,48 @@ class Executor:
     root_tasks: list[TRetTask]
     process_num: int = 1
 
-    @staticmethod
-    def _worker(que: mp.Queue, active_count, infomap: TypeInfomap):
-        register_infomap(infomap)
+    infomap: TypeInfomap = dcs.field(default_factory=get_infomap)
+    task_queue: queue.Queue = dcs.field(default_factory=queue.Queue)
+    active_count: int = 0
+    active_count_lock: threading.Lock = dcs.field(default_factory=threading.Lock)
 
+    def _worker(self):
         while 1:
             try:
-                task: TRetTask = que.get(timeout=1.0)
+                task: TRetTask = self.task_queue.get(block=False)
 
             except queue.Empty:  # noqa: PERF203
-                if active_count.value == 0 and que.empty():
-                    break
+                with self.active_count_lock:
+                    if self.active_count == 0:
+                        break
 
             else:
-                with active_count.get_lock():
-                    active_count.value += 1
+                with self.active_count_lock:
+                    self.active_count += 1
 
                 task.run()
 
-                with active_count.get_lock():
-                    active_count.value -= 1
+                with self.active_count_lock:
+                    self.active_count -= 1
 
-                if task.children:
-                    for child in task.children:
-                        que.put(child)
+                    if task.children:
+                        for child in task.children:
+                            self.task_queue.put(child)
 
     def run(self) -> None:
+        if self.process_num < 1:
+            return
+
         roots = {}
         for t in self.root_tasks:
             roots[t.hash] = t
 
-        queue = mp.Queue()
         for root in roots.values():
-            queue.put(root)
-        active_count = mp.Value(ctypes.c_size_t, 0)
-        manager = mp.Manager()
-        infomap = manager.dict()
-        infomap.update(get_infomap())
+            self.task_queue.put(root)
 
-        workers: list[mp.Process] = []
+        workers: list[threading.Thread] = []
         for _ in range(self.process_num):
-            worker = mp.Process(target=self._worker, args=(queue, active_count, infomap))
+            worker = threading.Thread(target=self._worker)
             worker.start()
             workers.append(worker)
 

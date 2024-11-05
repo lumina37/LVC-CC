@@ -6,7 +6,7 @@ from .codec import CodecTask, VtmType
 from .compose import ComposeTask
 from .copy import ImgCopyTask, YuvCopyTask
 from .img2yuv import Img2yuvTask
-from .infomap import gen_infomap, get_infomap, query, register_infomap
+from .infomap import gen_infomap, get_infomap, query
 from .postproc import PostprocTask
 from .preproc import PreprocTask
 from .render import Pipeline, RenderTask

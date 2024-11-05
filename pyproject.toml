@@ -1,6 +1,6 @@
 [project]
 name = "lvccc"
-version = "0.7.2"
+version = "0.8.0a1"
 description = "A crosscheck framework designed for LVC"
 authors = [{ name = "Lumina", email = "tz23@mails.tsinghua.edu.cn" }]
 dependencies = ["pillow", "matplotlib", "xxhash"]

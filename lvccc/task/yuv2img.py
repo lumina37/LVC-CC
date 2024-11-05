@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from ..config import get_config
-from ..helper import mkdir, run_cmds, size_from_filename
+from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
 from .base import NonRootTask
 from .infomap import query
 
@@ -21,8 +21,7 @@ class Yuv2imgTask(NonRootTask["Yuv2imgTask"]):
     def _run(self) -> None:
         config = get_config()
 
-        srcpath = next(self.srcdir.glob('*.yuv'))
-
+        srcpath = get_any_file(self.srcdir, '*.yuv')
         width, height = size_from_filename(srcpath.name)
 
         img_dstdir = self.dstdir / "img"

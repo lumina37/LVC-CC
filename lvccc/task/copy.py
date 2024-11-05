@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from ..config import MCACfg, get_config
-from ..helper import detect_pattern, get_first_file, mkdir, run_cmds
+from ..helper import detect_pattern, get_any_file, get_first_file, mkdir, run_cmds
 from .base import RootTask
 
 
@@ -84,7 +84,7 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
 
         input_dir = config.path.input
         srcdir = input_dir / self.seq_name
-        srcpath = next(srcdir.glob('*.yuv'))
+        srcpath = get_any_file(srcdir, '*.yuv')
         mkdir(self.dstdir)
 
         cfg_srcdir = Path("config") / self.seq_name

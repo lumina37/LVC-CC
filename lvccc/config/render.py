@@ -44,7 +44,7 @@ class RenderCfg(AutoConvImpl):
         return RenderCfg(**dict(_items()))
 
     def to_file(self, path: Path) -> None:
-        with path.open('w') as f:
+        with path.open('w', encoding='utf-8') as f:
             self.dump(f)
 
     @staticmethod

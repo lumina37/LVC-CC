@@ -57,12 +57,10 @@ class RenderTask(NonRootTask["RenderTask"]):
     def _run(self) -> None:
         config = get_config()
 
-        # Copy `calibration.xml`
         cfg_srcdir = Path("config") / self.seq_name
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        # Mod and write cfg
         TypeCfg = PIPELINE_TO_CFG[self.pipeline]
         cfg_name = "param.cfg"
         rlccfg_srcpath = cfg_srcdir / cfg_name
@@ -79,14 +77,12 @@ class RenderTask(NonRootTask["RenderTask"]):
 
         rlccfg.Output_Path = str(img_dstdir / config.default_pattern.rstrip('.png'))
         rlccfg.viewNum = self.views
-        # Render frames with id \in [start, end]
         rlccfg.start_frame = 1
         rlccfg.end_frame = self.frames
 
         rlccfg_dstpath = cfg_dstdir / cfg_name
         rlccfg.to_file(rlccfg_dstpath)
 
-        # Prepare and run command
         cmds = [
             config.app.rlc,
             rlccfg_dstpath,

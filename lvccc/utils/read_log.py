@@ -48,7 +48,7 @@ def read_psnrlog(logf: TextIOBase) -> PSNR:
     count = 0
     psnr = PSNR()
     for row in logf:
-        sobj = re.search(r'y:[\d.]+ u:[\d.]+ v:[\d.]+', row)
+        sobj = re.search(r"y:[\d.]+ u:[\d.]+ v:[\d.]+", row)
         if not sobj:
             continue
         ypsnr_str, upsnr_str, vpsnr_str = sobj.group().rsplit(' ', maxsplit=2)

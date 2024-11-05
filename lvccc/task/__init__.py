@@ -7,6 +7,7 @@ from .compose import ComposeTask
 from .copy import ImgCopyTask, YuvCopyTask
 from .img2yuv import Img2yuvTask
 from .infomap import gen_infomap, get_infomap, query
+from .posetrace import PosetraceTask
 from .postproc import PostprocTask
 from .preproc import PreprocTask
 from .render import Pipeline, RenderTask
@@ -21,3 +22,4 @@ factory.register(PostprocTask)
 factory.register(PreprocTask)
 factory.register(RenderTask)
 factory.register(Yuv2imgTask)
+factory.register(PosetraceTask)

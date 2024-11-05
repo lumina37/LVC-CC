@@ -48,7 +48,7 @@ for seq_name in config.cases.seqs:
             if not json_path.exists():
                 continue
 
-            with json_path.open() as f:
+            with json_path.open(encoding='utf-8') as f:
                 metrics: dict = json.load(f)
 
             bitrates.append(metrics['bitrate'])

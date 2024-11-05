@@ -1,7 +1,7 @@
 import json
 
 from lvccc.config import update_config
-from lvccc.helper import mkdir
+from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
 from lvccc.task import (
     CodecTask,
@@ -38,7 +38,7 @@ for seq_name in config.cases.seqs:
                 continue
             log.info(f"Handling {tcompose}")
 
-            log_path = next(query(tcodec).glob('*.log'))
+            log_path = get_any_file(query(tcodec), '*.log')
             with log_path.open(encoding='utf-8') as logf:
                 enclog = read_enclog(logf)
 
@@ -57,7 +57,7 @@ for seq_name in config.cases.seqs:
 
             case_dir = summary_dir / tcodec.full_tag
             mkdir(case_dir)
-            with (case_dir / "psnr.json").open('w') as f:
+            with (case_dir / "psnr.json").open('w', encoding='utf-8') as f:
                 json.dump(metrics, f, indent=4)
             tcompose.dump_taskinfo(case_dir / "task.json")
 
@@ -77,7 +77,7 @@ for seq_name in config.cases.seqs:
                 continue
             log.info(f"Handling {tcompose}")
 
-            log_path = next(query(tcodec).glob('*.log'))
+            log_path = get_any_file(query(tcodec), '*.log')
             enclog = read_enclog(log_path)
 
             llpsnr = calc_lenslet_psnr(tcompose)
@@ -95,6 +95,6 @@ for seq_name in config.cases.seqs:
 
             case_dir = summary_dir / tcodec.full_tag
             mkdir(case_dir)
-            with (case_dir / "psnr.json").open('w') as f:
+            with (case_dir / "psnr.json").open('w', encoding='utf-8') as f:
                 json.dump(metrics, f, indent=4)
             tcompose.dump_taskinfo(case_dir / "task.json")

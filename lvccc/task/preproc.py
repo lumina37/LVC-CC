@@ -29,16 +29,13 @@ class PreprocTask(NonRootTask["PreprocTask"]):
     def _run(self) -> None:
         config = get_config()
 
-        # Copy `calibration.xml`
         cfg_srcdir = Path("config") / self.seq_name
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        # Make dst dir
         img_dstdir = self.dstdir / "img"
         mkdir(img_dstdir)
 
-        # Mod and write `mca.cfg`
         mcacfg_srcpath = cfg_srcdir / "mca.cfg"
         mcacfg = MCACfg.from_file(mcacfg_srcpath)
 
@@ -55,7 +52,6 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         mcacfg_dstpath = cfg_dstdir / "mca.cfg"
         mcacfg.to_file(mcacfg_dstpath)
 
-        # Run command
         cmds = [
             config.app.preproc,
             mcacfg_dstpath,

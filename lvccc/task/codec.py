@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from ..config import get_config
-from ..helper import mkdir, run_cmds, size_from_filename
+from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
 from .base import NonRootTask
 from .copy import ImgCopyTask, YuvCopyTask
 from .infomap import query
@@ -46,8 +46,7 @@ class CodecTask(NonRootTask["CodecTask"]):
         vtm_type_cfg_path = Path("config") / f"vtm_{self.vtm_type}.cfg"
         vtm_type_cfg_path = vtm_type_cfg_path.absolute()
 
-        srcpath = next(self.srcdir.glob('*.yuv'))
-
+        srcpath = get_any_file(self.srcdir, '*.yuv')
         width, height = size_from_filename(srcpath.name)
 
         dstpath_pattern = self.dstdir / self.full_tag

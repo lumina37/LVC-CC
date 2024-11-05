@@ -22,7 +22,7 @@ mkdir(dst_dir)
 infomap = gen_infomap(src_dir)
 
 
-with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline='') as csv_file:
+with (dst_dir / "anchor.csv").open('w', encoding='utf-8', newline='') as csv_file:
     csv_writer = csv.writer(csv_file)
     headers = [
         'Sequence',
@@ -51,7 +51,7 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline='') as csv_fil
                 if not json_path.exists():
                     csv_writer.writerow(['Not Found'] + [0] * (len(headers) - 1))
 
-                with json_path.open() as f:
+                with json_path.open(encoding='utf-8') as f:
                     metrics: dict = json.load(f)
 
                 csv_writer.writerow(

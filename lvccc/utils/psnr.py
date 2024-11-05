@@ -84,8 +84,9 @@ def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
 def calc_lenslet_psnr(task: ComposeTask) -> np.ndarray:
     copy_task = task.chain[0]
     codec_task = get_ancestor(task, CodecTask)
-    lhs = next(query(copy_task).glob('*.yuv'))
-    rhs = next(query(codec_task).glob('*.yuv'))
+
+    lhs = get_any_file(query(copy_task), '*.yuv')
+    rhs = get_any_file(query(codec_task), '*.yuv')
 
     width, height = size_from_filename(lhs.name)
 

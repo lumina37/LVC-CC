@@ -33,6 +33,8 @@ class Img2yuvTask(NonRootTask["Img2yuvTask"]):
         refimg = Image.open(refimg_path)
         width, height = refimg.size
 
+        dst_fname = f"{self.full_tag}-{width}x{height}.yuv"
+
         cmds = [
             config.app.ffmpeg,
             "-i",
@@ -41,7 +43,7 @@ class Img2yuvTask(NonRootTask["Img2yuvTask"]):
             "format=yuv420p",
             "-frames:v",
             self.frames,
-            f"{self.full_tag}-{width}x{height}.yuv",
+            dst_fname,
             "-v",
             "error",
             "-y",

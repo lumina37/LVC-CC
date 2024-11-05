@@ -50,11 +50,10 @@ class Executor:
         for root in self.root_tasks:
             self.task_queue.put(root)
 
-        workers: list[threading.Thread] = []
-        for _ in range(self.process_num):
-            worker = threading.Thread(target=self._worker)
+        workers = [threading.Thread(target=self._worker) for _ in range(self.process_num)]
+
+        for worker in workers:
             worker.start()
-            workers.append(worker)
 
         for worker in workers:
             worker.join()

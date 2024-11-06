@@ -1,10 +1,10 @@
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import ImgCopyTask, RenderTask
+from lvccc.task import RenderTask, YuvCopyTask
 
 update_config('config.toml')
 
-tcopy = ImgCopyTask(seq_name="NagoyaFujita")
+tcopy = YuvCopyTask(seq_name="NagoyaFujita")
 trender = RenderTask().with_parent(tcopy)
 
 if __name__ == "__main__":

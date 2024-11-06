@@ -5,12 +5,10 @@ from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
 from lvccc.task import (
     CodecTask,
-    ComposeTask,
     Img2yuvTask,
     PostprocTask,
     PreprocTask,
     RenderTask,
-    Yuv2imgTask,
     YuvCopyTask,
     query,
 )
@@ -30,20 +28,18 @@ for seq_name in config.cases.seqs:
     for vtm_type in config.cases.vtm_types:
         for qp in config.QP.anchor.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-            tyuv2img = Yuv2imgTask().with_parent(tcodec)
-            trender = RenderTask().with_parent(tyuv2img)
-            tcompose = ComposeTask().with_parent(trender)
+            trender = RenderTask().with_parent(tcodec)
 
-            if query(tcompose) is None:
+            if query(trender) is None:
                 continue
-            log.info(f"Handling {tcompose}")
+            log.info(f"Handling {trender}")
 
             log_path = get_any_file(query(tcodec), '*.log')
             with log_path.open(encoding='utf-8') as logf:
                 enclog = read_enclog(logf)
 
-            llpsnr = calc_lenslet_psnr(tcompose)
-            mvpsnr = calc_mv_psnr(tcompose)
+            llpsnr = calc_lenslet_psnr(trender)
+            mvpsnr = calc_mv_psnr(trender)
 
             metrics = {
                 'bitrate': enclog.bitrate,
@@ -59,29 +55,26 @@ for seq_name in config.cases.seqs:
             mkdir(case_dir)
             with (case_dir / "psnr.json").open('w', encoding='utf-8') as f:
                 json.dump(metrics, f, indent=4)
-            tcompose.dump_taskinfo(case_dir / "task.json")
+            trender.dump_taskinfo(case_dir / "task.json")
 
     # W MCA
-    tyuv2img = Yuv2imgTask().with_parent(tcopy)
-    tpreproc = PreprocTask().with_parent(tyuv2img)
+    tpreproc = PreprocTask().with_parent(tcopy)
     timg2yuv = Img2yuvTask().with_parent(tpreproc)
     for vtm_type in config.cases.vtm_types:
         for qp in config.QP.wMCA.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
-            tyuv2img = Yuv2imgTask().with_parent(tcodec)
-            tpostproc = PostprocTask().with_parent(tyuv2img)
+            tpostproc = PostprocTask().with_parent(tcodec)
             trender = RenderTask().with_parent(tpostproc)
-            tcompose = ComposeTask().with_parent(trender)
 
-            if query(tcompose) is None:
+            if query(trender) is None:
                 continue
-            log.info(f"Handling {tcompose}")
+            log.info(f"Handling {trender}")
 
             log_path = get_any_file(query(tcodec), '*.log')
             enclog = read_enclog(log_path)
 
-            llpsnr = calc_lenslet_psnr(tcompose)
-            mvpsnr = calc_mv_psnr(tcompose)
+            llpsnr = calc_lenslet_psnr(trender)
+            mvpsnr = calc_mv_psnr(trender)
 
             metrics = {
                 'bitrate': enclog.bitrate,
@@ -97,4 +90,4 @@ for seq_name in config.cases.seqs:
             mkdir(case_dir)
             with (case_dir / "psnr.json").open('w', encoding='utf-8') as f:
                 json.dump(metrics, f, indent=4)
-            tcompose.dump_taskinfo(case_dir / "task.json")
+            trender.dump_taskinfo(case_dir / "task.json")

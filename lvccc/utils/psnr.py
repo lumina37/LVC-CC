@@ -6,7 +6,7 @@ from PIL import Image
 
 from ..config import get_config
 from ..helper import get_any_file, run_cmds, size_from_filename
-from ..task import CodecTask, ComposeTask, RenderTask, TVarTask, Yuv2imgTask
+from ..task import CodecTask, RenderTask, TVarTask, Yuv2imgTask
 from ..task.infomap import query
 from .backtrack import get_ancestor
 from .read_log import read_psnrlog
@@ -54,15 +54,11 @@ def get_render_wh(task: TVarTask) -> tuple[int, int]:
     return width, height
 
 
-def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
+def calc_mv_psnr(task: RenderTask) -> np.ndarray:
     copy_task = task.chain[0]
-    views = task.parent.views
+    render_task = RenderTask(views=task.views).with_parent(copy_task)
 
-    yuv2img_task = Yuv2imgTask().with_parent(copy_task)
-    render_task = RenderTask(views=views).with_parent(yuv2img_task)
-    compose_task = ComposeTask().with_parent(render_task)
-
-    base_dir = query(compose_task) / "yuv"
+    base_dir = query(render_task) / "yuv"
     self_dir = query(task) / "yuv"
 
     width, height = get_render_wh(task)
@@ -81,7 +77,7 @@ def calc_mv_psnr(task: ComposeTask) -> np.ndarray:
     return accpsnr
 
 
-def calc_lenslet_psnr(task: ComposeTask) -> np.ndarray:
+def calc_lenslet_psnr(task: RenderTask) -> np.ndarray:
     copy_task = task.chain[0]
     codec_task = get_ancestor(task, CodecTask)
 

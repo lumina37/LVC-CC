@@ -1,15 +1,13 @@
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CodecTask, Img2yuvTask, ImgCopyTask, PostprocTask, PreprocTask, RenderTask, Yuv2imgTask
+from lvccc.task import CodecTask, PostprocTask, PreprocTask, RenderTask, YuvCopyTask
 
 update_config('config.toml')
 
-tcopy = ImgCopyTask(seq_name="NagoyaFujita")
+tcopy = YuvCopyTask(seq_name="NagoyaFujita")
 tpre = PreprocTask().with_parent(tcopy)
-ti2y = Img2yuvTask().with_parent(tpre)
-tcodec = CodecTask(qp=46).with_parent(ti2y)
-ty2i = Yuv2imgTask().with_parent(tcodec)
-tpost = PostprocTask().with_parent(ty2i)
+tcodec = CodecTask(qp=46).with_parent(tpre)
+tpost = PostprocTask().with_parent(tcodec)
 trender = RenderTask().with_parent(tpost)
 
 if __name__ == "__main__":

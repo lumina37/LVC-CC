@@ -44,14 +44,6 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
     return psnrarr
 
 
-def get_render_wh(task: TVarTask) -> tuple[int, int]:
-    render_task = get_ancestor(task, RenderTask)
-    render_dir = query(render_task) / 'yuv'
-    yuv_ref_p = get_any_file(render_dir)
-    width, height = size_from_filename(yuv_ref_p)
-    return width, height
-
-
 def calc_mv_psnr(task: RenderTask) -> np.ndarray:
     copy_task = task.chain[0]
     render_task = RenderTask(views=task.views).with_parent(copy_task)
@@ -59,7 +51,7 @@ def calc_mv_psnr(task: RenderTask) -> np.ndarray:
     base_dir = query(render_task) / "yuv"
     self_dir = query(task) / "yuv"
 
-    width, height = get_render_wh(task)
+    width, height = size_from_filename(get_any_file(base_dir, '*.yuv').name)
 
     channels = 3
     accpsnr = np.zeros(channels)

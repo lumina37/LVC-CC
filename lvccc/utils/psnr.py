@@ -46,11 +46,9 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
 
 def get_render_wh(task: TVarTask) -> tuple[int, int]:
     render_task = get_ancestor(task, RenderTask)
-    render_dir = query(render_task) / 'img'
-    frame_dir = next(render_dir.glob('frame#*'))
-    img_ref_p = get_any_file(frame_dir)
-    refimg = Image.open(img_ref_p)
-    width, height = refimg.size
+    render_dir = query(render_task) / 'yuv'
+    yuv_ref_p = get_any_file(render_dir)
+    width, height = size_from_filename(yuv_ref_p)
     return width, height
 
 

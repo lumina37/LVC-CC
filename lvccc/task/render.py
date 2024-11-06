@@ -71,18 +71,18 @@ class RenderTask(NonRootTask["RenderTask"]):
         calib_cfg_name = "calib.xml"
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
-        rlccfg.Calibration_xml = str(cfg_dstpath)
+        rlccfg.calibFile = str(cfg_dstpath)
 
         yuv_srcpath = get_any_file(self.srcdir, '*.yuv')
-        rlccfg.RawImage_Path = str(yuv_srcpath)
+        rlccfg.inYuv = str(yuv_srcpath)
 
         yuv_dstdir = self.dstdir / "yuv"
         mkdir(yuv_dstdir)
-        rlccfg.Output_Path = str(yuv_dstdir)
+        rlccfg.outDir = str(yuv_dstdir)
 
         rlccfg.viewNum = self.views
-        rlccfg.start_frame = 0
-        rlccfg.end_frame = self.frames
+        rlccfg.frameBegin = 0
+        rlccfg.frameEnd = self.frames
 
         rlccfg_dstpath = cfg_dstdir / cfg_name
         rlccfg.to_file(rlccfg_dstpath)

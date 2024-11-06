@@ -43,9 +43,9 @@ class RenderTask(NonRootTask["RenderTask"]):
 
     @functools.cached_property
     def tag(self) -> str:
-        if len(self.chain) == 1 and isinstance(self.parent, ImgCopyTask):
+        if len(self.chain) == 1 and isinstance(self.parent, YuvCopyTask):
             return "base"
-        if len(self.chain) >= 2 and isinstance(self.chain[-2], YuvCopyTask):
+        if len(self.chain) >= 2 and isinstance(self.chain[-2], ImgCopyTask):
             return "base"
         return ""
 

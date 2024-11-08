@@ -9,7 +9,7 @@ from .base import AutoConvImpl
 @dcs.dataclass
 class RenderCfg(AutoConvImpl):
     pipeline: int = 1
-    viewNum: int = 5
+    views: int = 5
     calibFile: str = ""
     inYuv: str = ""
     outDir: str = ""

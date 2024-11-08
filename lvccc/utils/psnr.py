@@ -2,11 +2,10 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
 
 from ..config import get_config
 from ..helper import get_any_file, run_cmds, size_from_filename
-from ..task import CodecTask, RenderTask, TVarTask, Yuv2imgTask
+from ..task import CodecTask, RenderTask
 from ..task.infomap import query
 from .backtrack import get_ancestor
 from .read_log import read_psnrlog
@@ -17,6 +16,7 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
         config = get_config()
         cmds = [
             config.app.ffmpeg,
+            "-hide_banner",
             "-s",
             f"{width}x{height}",
             "-pix_fmt",

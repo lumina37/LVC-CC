@@ -80,7 +80,7 @@ class RenderTask(NonRootTask["RenderTask"]):
         mkdir(yuv_dstdir)
         rlccfg.outDir = str(yuv_dstdir)
 
-        rlccfg.viewNum = self.views
+        rlccfg.views = self.views
         rlccfg.frameBegin = 0
         rlccfg.frameEnd = self.frames
 

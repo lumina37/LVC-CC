@@ -5,9 +5,7 @@ from lvccc.config import update_config
 from lvccc.helper import mkdir
 from lvccc.task import (
     CodecTask,
-    ComposeTask,
     RenderTask,
-    Yuv2imgTask,
     YuvCopyTask,
     gen_infomap,
 )
@@ -43,9 +41,7 @@ with (dst_dir / "anchor.csv").open('w', encoding='utf-8', newline='') as csv_fil
         for vtm_type in config.cases.vtm_types:
             for qp in config.QP.anchor.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-                tyuv2img = Yuv2imgTask().with_parent(tcodec)
-                trender = RenderTask().with_parent(tyuv2img)
-                tcompose = ComposeTask().with_parent(trender)
+                trender = RenderTask().with_parent(tcodec)
 
                 json_path = src_dir / tcodec.full_tag / "psnr.json"
                 if not json_path.exists():

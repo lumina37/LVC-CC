@@ -7,12 +7,9 @@ from lvccc.config import update_config
 from lvccc.helper import mkdir
 from lvccc.task import (
     CodecTask,
-    ComposeTask,
-    Img2yuvTask,
     PostprocTask,
     PreprocTask,
     RenderTask,
-    Yuv2imgTask,
     YuvCopyTask,
     gen_infomap,
 )
@@ -29,20 +26,16 @@ infomap = gen_infomap(src_dir)
 
 for seq_name in config.cases.seqs:
     tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
-    tyuv2img = Yuv2imgTask().with_parent(tcopy)
-    tpreproc = PreprocTask().with_parent(tyuv2img)
-    timg2yuv = Img2yuvTask().with_parent(tpreproc)
+    tpreproc = PreprocTask().with_parent(tcopy)
 
     for vtm_type in config.cases.vtm_types:
         bitrates = []
         psnrs = []
 
         for qp in config.QP.wMCA.get(seq_name, []):
-            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
-            tyuv2img = Yuv2imgTask().with_parent(tcodec)
-            tpostproc = PostprocTask().with_parent(tyuv2img)
+            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
+            tpostproc = PostprocTask().with_parent(tcodec)
             trender = RenderTask().with_parent(tpostproc)
-            tcompose = ComposeTask().with_parent(trender)
 
             json_path = src_dir / tcodec.full_tag / "psnr.json"
             if not json_path.exists():

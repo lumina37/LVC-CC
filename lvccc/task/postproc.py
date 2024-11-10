@@ -38,11 +38,11 @@ class PostprocTask(NonRootTask["PostprocTask"]):
         calib_cfg_name = "calib.xml"
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
-        mcacfg.Calibration_xml = str(cfg_dstpath)
-        mcacfg.RawImage_Path = self.srcdir / config.default_pattern
-        mcacfg.Output_Path = img_dstdir / config.default_pattern
-        mcacfg.start_frame = 1
-        mcacfg.end_frame = self.frames
+        mcacfg.calibFile = str(cfg_dstpath)
+        mcacfg.inYuv = self.srcdir / config.default_pattern
+        mcacfg.outDir = img_dstdir / config.default_pattern
+        mcacfg.frameBegin = 1
+        mcacfg.frameEnd = self.frames
         mcacfg.crop_ratio = self.crop_ratio
 
         mcacfg_dstpath = cfg_dstdir / "mca.cfg"

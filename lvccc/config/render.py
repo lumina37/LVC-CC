@@ -9,12 +9,12 @@ from .base import AutoConvImpl
 @dcs.dataclass
 class RenderCfg(AutoConvImpl):
     pipeline: int = 1
-    viewNum: int = 5
-    Calibration_xml: str = ""
-    RawImage_Path: str = ""
-    Output_Path: str = ""
-    start_frame: int = 1
-    end_frame: int = 1
+    views: int = 5
+    calibFile: str = ""
+    inYuv: str = ""
+    outDir: str = ""
+    frameBegin: int = 0
+    frameEnd: int = 0
     height: int = 2048
     width: int = 2048
     upsample: int = 2

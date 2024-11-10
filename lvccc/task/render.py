@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from ..config import RenderCfg, get_config
-from ..helper import mkdir, run_cmds
+from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .copy import ImgCopyTask, YuvCopyTask
 from .infomap import query
@@ -43,15 +43,15 @@ class RenderTask(NonRootTask["RenderTask"]):
 
     @functools.cached_property
     def tag(self) -> str:
-        if len(self.chain) == 1 and isinstance(self.parent, ImgCopyTask):
+        if len(self.chain) == 1 and isinstance(self.parent, YuvCopyTask):
             return "base"
-        if len(self.chain) >= 2 and isinstance(self.chain[-2], YuvCopyTask):
+        if len(self.chain) >= 2 and isinstance(self.chain[-2], ImgCopyTask):
             return "base"
         return ""
 
     @functools.cached_property
     def srcdir(self) -> Path:
-        srcdir = query(self.parent) / "img"
+        srcdir = query(self.parent)
         return srcdir
 
     def _run(self) -> None:
@@ -66,19 +66,23 @@ class RenderTask(NonRootTask["RenderTask"]):
         rlccfg_srcpath = cfg_srcdir / cfg_name
         rlccfg = TypeCfg.from_file(rlccfg_srcpath)
 
+        rlccfg.pipeline = self.pipeline
+
         calib_cfg_name = "calib.xml"
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
-        rlccfg.pipeline = self.pipeline
-        rlccfg.Calibration_xml = str(cfg_dstpath)
-        rlccfg.RawImage_Path = str(self.srcdir / config.default_pattern)
-        img_dstdir = self.dstdir / "img"
-        mkdir(img_dstdir)
+        rlccfg.calibFile = str(cfg_dstpath)
 
-        rlccfg.Output_Path = str(img_dstdir / config.default_pattern.rstrip('.png'))
-        rlccfg.viewNum = self.views
-        rlccfg.start_frame = 1
-        rlccfg.end_frame = self.frames
+        yuv_srcpath = get_any_file(self.srcdir, '*.yuv')
+        rlccfg.inYuv = str(yuv_srcpath)
+
+        yuv_dstdir = self.dstdir / "yuv"
+        mkdir(yuv_dstdir)
+        rlccfg.outDir = str(yuv_dstdir)
+
+        rlccfg.views = self.views
+        rlccfg.frameBegin = 0
+        rlccfg.frameEnd = self.frames
 
         rlccfg_dstpath = cfg_dstdir / cfg_name
         rlccfg.to_file(rlccfg_dstpath)
@@ -89,3 +93,7 @@ class RenderTask(NonRootTask["RenderTask"]):
         ]
 
         run_cmds(cmds)
+
+        for yuv_path in list(yuv_dstdir.iterdir()):
+            new_fname = f"{self.full_tag}-{yuv_path.name}"
+            yuv_path.rename(yuv_path.with_name(new_fname))

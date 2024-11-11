@@ -11,7 +11,7 @@ class RenderCfg(AutoConvImpl):
     pipeline: int = 1
     views: int = 5
     calibFile: str = ""
-    inYuv: str = ""
+    inFile: str = ""
     outDir: str = ""
     frameBegin: int = 0
     frameEnd: int = 0

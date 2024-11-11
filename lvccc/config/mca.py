@@ -10,7 +10,7 @@ from .base import AutoConvImpl
 class MCACfg(AutoConvImpl):
     pipeline: int = 0
     calibFile: str = ""
-    inYuv: str = ""
+    inFile: str = ""
     outDir: str = ""
     frameBegin: int = 0
     frameEnd: int = 0

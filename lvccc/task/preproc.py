@@ -43,7 +43,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
         mcacfg.calibFile = str(cfg_dstpath)
-        mcacfg.inYuv = self.srcdir / config.default_pattern
+        mcacfg.inFile = self.srcdir / config.default_pattern
         mcacfg.outDir = img_dstdir / config.default_pattern
         mcacfg.frameBegin = 1
         mcacfg.frameEnd = self.frames

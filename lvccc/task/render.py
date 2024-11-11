@@ -74,7 +74,7 @@ class RenderTask(NonRootTask["RenderTask"]):
         rlccfg.calibFile = str(cfg_dstpath)
 
         yuv_srcpath = get_any_file(self.srcdir, '*.yuv')
-        rlccfg.inYuv = str(yuv_srcpath)
+        rlccfg.inFile = str(yuv_srcpath)
 
         yuv_dstdir = self.dstdir / "yuv"
         mkdir(yuv_dstdir)

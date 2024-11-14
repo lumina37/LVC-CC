@@ -32,12 +32,12 @@ class Executor:
 
                 task.run()
 
+                if task.children:
+                    for child in task.children:
+                        self.task_queue.put(child)
+
                 with self.active_count_lock:
                     self.active_count -= 1
-
-                    if task.children:
-                        for child in task.children:
-                            self.task_queue.put(child)
 
     def run(self) -> None:
         if self.process_num < 1:

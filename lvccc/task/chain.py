@@ -3,7 +3,6 @@ from __future__ import annotations
 import dataclasses as dcs
 from typing import SupportsIndex, overload
 
-from ..helper import to_json
 from .abc import ProtoTask
 from .factory import get_task_type
 
@@ -32,9 +31,3 @@ class Chain:
 
     def copy(self) -> Chain:
         return Chain(self.objs.copy())
-
-    def to_json(self, pretty: bool = False) -> str:
-        for i, task in enumerate(self):
-            task: ProtoTask = task
-            self.objs[i] = task.fields()
-        return to_json(self.objs, pretty)

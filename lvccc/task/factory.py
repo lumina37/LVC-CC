@@ -3,9 +3,9 @@ from .abc import ProtoTask
 _TASKMAP = {}
 
 
-def register(task_tp: type[ProtoTask]):
+def reg_task_type(task_type: type[ProtoTask]):
     global _TASKMAP
-    _TASKMAP[task_tp.task] = task_tp
+    _TASKMAP[task_type.task] = task_type
 
 
 def get_task_type(task_name: str) -> type[ProtoTask]:

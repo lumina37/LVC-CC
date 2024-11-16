@@ -22,7 +22,7 @@ class PostprocTask(NonRootTask["PostprocTask"]):
         srcdir = query(self.parent) / "img"
         return srcdir
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         config = get_config()
 
         cfg_srcdir = Path("config") / self.seq_name

@@ -42,7 +42,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
             self.views = config.views
 
     @functools.cached_property
-    def tag(self) -> str:
+    def self_tag(self) -> str:
         if len(self.chain) == 1 and isinstance(self.parent, YuvCopyTask):
             return "base"
         if len(self.chain) >= 2 and isinstance(self.chain[-2], ImgCopyTask):
@@ -54,7 +54,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         srcdir = query(self.parent)
         return srcdir
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         config = get_config()
 
         cfg_srcdir = Path("config") / self.seq_name
@@ -95,5 +95,5 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         run_cmds(cmds)
 
         for yuv_path in list(yuv_dstdir.iterdir()):
-            new_fname = f"{self.full_tag}-{yuv_path.name}"
+            new_fname = f"{self.tag}-{yuv_path.name}"
             yuv_path.rename(yuv_path.with_name(new_fname))

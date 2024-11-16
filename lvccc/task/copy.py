@@ -18,10 +18,10 @@ class ImgCopyTask(RootTask["ImgCopyTask"]):
     start_idx: int = 0
 
     @functools.cached_property
-    def tag(self) -> str:
+    def self_tag(self) -> str:
         return f"{self.seq_name}-f{self.frames}"
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         config = get_config()
 
         input_dir = config.path.input / self.seq_name
@@ -76,10 +76,10 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
     start_idx: int = 0
 
     @functools.cached_property
-    def tag(self) -> str:
+    def self_tag(self) -> str:
         return f"{self.seq_name}-f{self.frames}"
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         config = get_config()
 
         input_dir = config.path.input
@@ -95,7 +95,7 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
         height = mcacfg.height
         yuvsize = srcpath.stat().st_size
         actual_frames = int(yuvsize / (width * height / 2 * 3))
-        dst_fname = f"{self.full_tag}-{width}x{height}.yuv"
+        dst_fname = f"{self.tag}-{width}x{height}.yuv"
         dstpath = self.dstdir / dst_fname
 
         if self.start_idx == 0 and actual_frames == self.frames:

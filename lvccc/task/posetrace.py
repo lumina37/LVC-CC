@@ -85,7 +85,7 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
         srcdir = query(self.parent)
         return srcdir
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         views = get_views(self)
         is_rot = is_rotated(self.seq_name)
 
@@ -100,7 +100,7 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
         HALF_OUTSIZE = (OUTSIZE[0] // 2, OUTSIZE[1] // 2)
 
         mkdir(self.dstdir)
-        dst_fname = f"{self.full_tag}-{OUTSIZE[0]}x{OUTSIZE[1]}.yuv"
+        dst_fname = f"{self.tag}-{OUTSIZE[0]}x{OUTSIZE[1]}.yuv"
         dstpath = self.dstdir / dst_fname
 
         with dstpath.open('wb') as dstf:

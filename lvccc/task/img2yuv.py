@@ -17,7 +17,7 @@ class Img2yuvTask(NonRootTask["Img2yuvTask"]):
     task: ClassVar[str] = "img2yuv"
 
     @functools.cached_property
-    def tag(self) -> str:
+    def self_tag(self) -> str:
         return "anchor" if isinstance(self.parent, ImgCopyTask) else ""
 
     @functools.cached_property
@@ -25,7 +25,7 @@ class Img2yuvTask(NonRootTask["Img2yuvTask"]):
         srcdir = query(self.parent) / "img"
         return srcdir
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         config = get_config()
         mkdir(self.dstdir)
 
@@ -33,7 +33,7 @@ class Img2yuvTask(NonRootTask["Img2yuvTask"]):
         refimg = Image.open(refimg_path)
         width, height = refimg.size
 
-        dst_fname = f"{self.full_tag}-{width}x{height}.yuv"
+        dst_fname = f"{self.tag}-{width}x{height}.yuv"
 
         cmds = [
             config.app.ffmpeg,

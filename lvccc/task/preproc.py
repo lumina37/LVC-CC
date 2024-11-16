@@ -18,7 +18,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
     crop_ratio: float = 1 / math.sqrt(2)
 
     @functools.cached_property
-    def tag(self) -> str:
+    def self_tag(self) -> str:
         return "mca"
 
     @functools.cached_property
@@ -26,7 +26,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         srcdir = query(self.parent) / "img"
         return srcdir
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         config = get_config()
 
         cfg_srcdir = Path("config") / self.seq_name

@@ -43,7 +43,7 @@ with (dst_dir / "anchor.csv").open('w', encoding='utf-8', newline='') as csv_fil
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
                 tconvert = ConvertTask().with_parent(tcodec)
 
-                json_path = src_dir / tcodec.full_tag / "psnr.json"
+                json_path = src_dir / tcodec.tag / "psnr.json"
                 if not json_path.exists():
                     csv_writer.writerow(['Not Found'] + [0] * (len(headers) - 1))
 

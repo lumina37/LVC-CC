@@ -33,7 +33,7 @@ for seq_name in config.cases.seqs:
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
             tconvert = ConvertTask().with_parent(tcodec)
 
-            json_path = src_dir / tcodec.full_tag / "psnr.json"
+            json_path = src_dir / tcodec.tag / "psnr.json"
             if not json_path.exists():
                 continue
 

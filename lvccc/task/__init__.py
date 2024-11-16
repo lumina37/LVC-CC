@@ -12,12 +12,12 @@ from .postproc import PostprocTask
 from .preproc import PreprocTask
 from .yuv2img import Yuv2imgTask
 
-factory.register(CodecTask)
-factory.register(ImgCopyTask)
-factory.register(YuvCopyTask)
-factory.register(Img2yuvTask)
-factory.register(PostprocTask)
-factory.register(PreprocTask)
-factory.register(ConvertTask)
-factory.register(Yuv2imgTask)
-factory.register(PosetraceTask)
+factory.reg_task_type(CodecTask)
+factory.reg_task_type(ImgCopyTask)
+factory.reg_task_type(YuvCopyTask)
+factory.reg_task_type(Img2yuvTask)
+factory.reg_task_type(PostprocTask)
+factory.reg_task_type(PreprocTask)
+factory.reg_task_type(ConvertTask)
+factory.reg_task_type(Yuv2imgTask)
+factory.reg_task_type(PosetraceTask)

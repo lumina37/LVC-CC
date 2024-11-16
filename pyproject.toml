@@ -1,8 +1,8 @@
 [project]
 name = "lvccc"
-version = "0.8.1"
+version = "0.8.0"
 description = "A crosscheck framework designed for LVC"
-authors = [{ name = "Lumina", email = "tz23@mails.tsinghua.edu.cn" }]
+authors = [{ name = "lumina37", email = "tz23@mails.tsinghua.edu.cn" }]
 dependencies = ["pillow", "matplotlib", "xxhash"]
 requires-python = ">=3.10,<3.14"
 readme = "README.md"

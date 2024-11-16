@@ -31,7 +31,7 @@ class CodecTask(NonRootTask["CodecTask"]):
         return srcdir
 
     @functools.cached_property
-    def tag(self) -> str:
+    def self_tag(self) -> str:
         tag = f"{self.vtm_type}-QP{self.qp}"
         if len(self.chain) == 1 and isinstance(self.parent, YuvCopyTask):
             return "anchor-" + tag
@@ -39,7 +39,7 @@ class CodecTask(NonRootTask["CodecTask"]):
             return "anchor-" + tag
         return tag
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         config = get_config()
         mkdir(self.dstdir)
 
@@ -49,7 +49,7 @@ class CodecTask(NonRootTask["CodecTask"]):
         srcpath = get_any_file(self.srcdir, '*.yuv')
         width, height = size_from_filename(srcpath.name)
 
-        dstpath_pattern = self.dstdir / self.full_tag
+        dstpath_pattern = self.dstdir / self.tag
         log_path = dstpath_pattern.with_suffix('.log')
 
         with log_path.open('w', encoding='utf-8') as logf:
@@ -72,9 +72,9 @@ class CodecTask(NonRootTask["CodecTask"]):
                 "-i",
                 srcpath,
                 "-b",
-                f"{self.full_tag}.bin",
+                f"{self.tag}.bin",
                 "-o",
-                f"{self.full_tag}-{width}x{height}.yuv",
+                f"{self.tag}-{width}x{height}.yuv",
             ]
 
             run_cmds(cmds, output=logf, cwd=self.dstdir)

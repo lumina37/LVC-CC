@@ -18,7 +18,7 @@ class Yuv2imgTask(NonRootTask["Yuv2imgTask"]):
         srcdir = query(self.parent)
         return srcdir
 
-    def _run(self) -> None:
+    def _inner_run(self) -> None:
         config = get_config()
 
         srcpath = get_any_file(self.srcdir, '*.yuv')

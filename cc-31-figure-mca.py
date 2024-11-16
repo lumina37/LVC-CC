@@ -37,7 +37,7 @@ for seq_name in config.cases.seqs:
             tpostproc = PostprocTask().with_parent(tcodec)
             tconvert = ConvertTask().with_parent(tpostproc)
 
-            json_path = src_dir / tcodec.full_tag / "psnr.json"
+            json_path = src_dir / tcodec.tag / "psnr.json"
             if not json_path.exists():
                 continue
 

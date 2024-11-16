@@ -47,7 +47,7 @@ with (dst_dir / "mca.csv").open("w", encoding='utf-8', newline='') as csv_file:
                 tpostproc = PostprocTask().with_parent(tcodec)
                 tconvert = ConvertTask().with_parent(tpostproc)
 
-                json_path = src_dir / tcodec.full_tag / "psnr.json"
+                json_path = src_dir / tcodec.tag / "psnr.json"
                 if not json_path.exists():
                     csv_writer.writerow(['Not Found'] + [0] * (len(headers) - 1))
 

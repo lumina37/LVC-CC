@@ -51,7 +51,7 @@ for seq_name in config.cases.seqs:
                 'llpsnr_v': llpsnr[2],
             }
 
-            case_dir = summary_dir / tcodec.full_tag
+            case_dir = summary_dir / tcodec.tag
             mkdir(case_dir)
             with (case_dir / "psnr.json").open('w', encoding='utf-8') as f:
                 json.dump(metrics, f, indent=4)
@@ -86,7 +86,7 @@ for seq_name in config.cases.seqs:
                 'llpsnr_v': llpsnr[2],
             }
 
-            case_dir = summary_dir / tcodec.full_tag
+            case_dir = summary_dir / tcodec.tag
             mkdir(case_dir)
             with (case_dir / "psnr.json").open('w', encoding='utf-8') as f:
                 json.dump(metrics, f, indent=4)

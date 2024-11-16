@@ -9,6 +9,7 @@ from typing import ClassVar, Generic, TypeVar
 import xxhash
 
 from ..config import get_config
+from ..helper import to_json
 from ..logging import get_logger
 from .abc import TRetTask, TSelfTask, TVarTask
 from .chain import Chain
@@ -60,14 +61,13 @@ class RootTask(Generic[TSelfTask]):
 
         return self
 
-    @functools.cached_property
-    def chain_with_self(self) -> Chain:
-        chain = Chain(objs=self.serialize())
-        return chain
+    def to_json(self, pretty: bool = False) -> str:
+        json = to_json(self.serialize(), pretty=pretty)
+        return json
 
     @functools.cached_property
     def hash(self) -> int:
-        hashbytes = self.chain_with_self.to_json().encode('utf-8')
+        hashbytes = self.to_json().encode('utf-8')
         hashint = xxhash.xxh3_64_intdigest(hashbytes)
         return hashint
 
@@ -76,42 +76,42 @@ class RootTask(Generic[TSelfTask]):
         return hex(self.hash)[2:6]
 
     @property
-    def tag(self) -> str:
+    def self_tag(self) -> str:
         return ""
 
     @functools.cached_property
-    def full_tag(self) -> str:
-        return self.tag
+    def tag(self) -> str:
+        return self.self_tag
 
     @functools.cached_property
     def dstdir(self) -> Path:
         config = get_config()
-        real_dirname = f"{self.task}-{self.full_tag}-{self.shorthash}"
+        real_dirname = f"{self.task}-{self.tag}-{self.shorthash}"
         return config.path.output / "tasks" / real_dirname
 
-    def dump_taskinfo(self, target: Path | None = None) -> None:
-        if target is None:
-            target = self.dstdir / "task.json"
+    def dump_taskinfo(self, target: Path) -> None:
         with target.open('w', encoding='utf-8') as f:
-            taskinfo = self.chain_with_self.to_json(pretty=True)
+            taskinfo = self.to_json(pretty=True)
             f.write(taskinfo)
 
     @abc.abstractmethod
-    def _run(self) -> None: ...
+    def _inner_run(self) -> None: ...
 
     def run(self) -> None:
         if query(self):
             return
 
+        log = get_logger()
+
         try:
-            self._run()
+            self._inner_run()
         except Exception:
-            traceback.print_exc()
+            log.error("Task `%s` failed! Reason: %s", self.dstdir.name, traceback.format_exc())
+            raise
         else:
-            self.dump_taskinfo()
+            self.dump_taskinfo(self.dstdir / "task.json")
             append(self, self.dstdir.absolute())
-            log = get_logger()
-            log.info(f"Task `{self.dstdir.name}` completed!")
+            log.info("Task `%s` completed!", self.dstdir.name)
 
 
 class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
@@ -120,12 +120,12 @@ class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
         return self.chain[-1]
 
     @functools.cached_property
-    def full_tag(self) -> str:
-        parent_part = self.parent.full_tag
-        prefix = '-' if self.tag else ''
-        self_part = prefix + self.tag
-        fulltag = parent_part + self_part
-        return fulltag
+    def tag(self) -> str:
+        parent_part = self.parent.tag
+        prefix = '-' if self.self_tag else ''
+        self_part = prefix + self.self_tag
+        tag = parent_part + self_part
+        return tag
 
     @functools.cached_property
     def seq_name(self) -> str:

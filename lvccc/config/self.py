@@ -43,7 +43,6 @@ class Config(UpdateImpl):
     app: _App = dcs.field(default_factory=_App)
     default_pattern: str = ""
     QP: _QP = dcs.field(default_factory=_QP)
-    pipeline: dict[str, int] = dcs.field(default_factory=dict)
 
 
 def load(f: BinaryIO) -> Config:

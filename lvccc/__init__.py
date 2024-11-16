@@ -6,7 +6,6 @@ from .task import (
     ConvertTask,
     Img2yuvTask,
     ImgCopyTask,
-    Pipeline,
     PostprocTask,
     PreprocTask,
     VtmType,

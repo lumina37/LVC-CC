@@ -3,7 +3,7 @@ from .abc import ProtoChain, ProtoTask, TRetTask, TSelfTask, TVarTask
 from .base import NonRootTask, RootTask
 from .chain import Chain
 from .codec import CodecTask, VtmType
-from .convert import ConvertTask, Pipeline
+from .convert import ConvertTask
 from .copy import ImgCopyTask, YuvCopyTask
 from .img2yuv import Img2yuvTask
 from .infomap import gen_infomap, get_infomap, query

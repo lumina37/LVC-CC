@@ -23,12 +23,3 @@ convertor = "tlct"
 
 [QP.wMCA]
 "TBD" = []
-
-[pipeline]
-"NagoyaFujita" = 0
-"NagoyaOrigami" = 0
-"TempleBoatGiantR32" = 0
-"Boys" = 1
-"Motherboard2" = 1
-"MiniGarden2" = 1
-"HandTools" = 1

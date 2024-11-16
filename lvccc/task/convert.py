@@ -1,5 +1,4 @@
 import dataclasses as dcs
-import enum
 import functools
 import shutil
 from pathlib import Path
@@ -12,31 +11,14 @@ from .copy import ImgCopyTask, YuvCopyTask
 from .infomap import query
 
 
-class Pipeline(enum.IntEnum):
-    NOTSET = -1
-    RLC = 0
-    TLCT = 1
-
-
-PIPELINE_TO_CFG: dict[Pipeline, ConvertCfg] = {
-    Pipeline.RLC: ConvertCfg,
-    Pipeline.TLCT: ConvertCfg,
-}
-
-
 @dcs.dataclass
 class ConvertTask(NonRootTask["ConvertTask"]):
     task: ClassVar[str] = "convert"
 
     views: int = 0
-    pipeline: Pipeline = Pipeline.NOTSET
 
     def _post_with_parent(self) -> None:
         super()._post_with_parent()
-        if self.pipeline == Pipeline.NOTSET:
-            config = get_config()
-            pipeline = Pipeline(config.pipeline[self.seq_name])
-            self.pipeline = pipeline
         if self.views == 0:
             config = get_config()
             self.views = config.views
@@ -61,12 +43,9 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        TypeCfg = PIPELINE_TO_CFG[self.pipeline]
         cfg_name = "param.cfg"
         cvtcfg_srcpath = cfg_srcdir / cfg_name
-        cvtcfg = TypeCfg.from_file(cvtcfg_srcpath)
-
-        cvtcfg.pipeline = self.pipeline
+        cvtcfg = ConvertCfg.from_file(cvtcfg_srcpath)
 
         calib_cfg_name = "calib.xml"
         cfg_dstpath = cfg_dstdir / calib_cfg_name

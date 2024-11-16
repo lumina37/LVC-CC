@@ -5,10 +5,10 @@ from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
 from lvccc.task import (
     CodecTask,
+    ConvertTask,
     Img2yuvTask,
     PostprocTask,
     PreprocTask,
-    RenderTask,
     YuvCopyTask,
     query,
 )
@@ -28,18 +28,18 @@ for seq_name in config.cases.seqs:
     for vtm_type in config.cases.vtm_types:
         for qp in config.QP.anchor.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-            trender = RenderTask().with_parent(tcodec)
+            tconvert = ConvertTask().with_parent(tcodec)
 
-            if query(trender) is None:
+            if query(tconvert) is None:
                 continue
-            log.info(f"Handling {trender}")
+            log.info(f"Handling {tconvert}")
 
             log_path = get_any_file(query(tcodec), '*.log')
             with log_path.open(encoding='utf-8') as logf:
                 enclog = read_enclog(logf)
 
-            llpsnr = calc_lenslet_psnr(trender)
-            mvpsnr = calc_mv_psnr(trender)
+            llpsnr = calc_lenslet_psnr(tconvert)
+            mvpsnr = calc_mv_psnr(tconvert)
 
             metrics = {
                 'bitrate': enclog.bitrate,
@@ -55,7 +55,7 @@ for seq_name in config.cases.seqs:
             mkdir(case_dir)
             with (case_dir / "psnr.json").open('w', encoding='utf-8') as f:
                 json.dump(metrics, f, indent=4)
-            trender.dump_taskinfo(case_dir / "task.json")
+            tconvert.dump_taskinfo(case_dir / "task.json")
 
     # W MCA
     tpreproc = PreprocTask().with_parent(tcopy)
@@ -64,17 +64,17 @@ for seq_name in config.cases.seqs:
         for qp in config.QP.wMCA.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
             tpostproc = PostprocTask().with_parent(tcodec)
-            trender = RenderTask().with_parent(tpostproc)
+            tconvert = ConvertTask().with_parent(tpostproc)
 
-            if query(trender) is None:
+            if query(tconvert) is None:
                 continue
-            log.info(f"Handling {trender}")
+            log.info(f"Handling {tconvert}")
 
             log_path = get_any_file(query(tcodec), '*.log')
             enclog = read_enclog(log_path)
 
-            llpsnr = calc_lenslet_psnr(trender)
-            mvpsnr = calc_mv_psnr(trender)
+            llpsnr = calc_lenslet_psnr(tconvert)
+            mvpsnr = calc_mv_psnr(tconvert)
 
             metrics = {
                 'bitrate': enclog.bitrate,
@@ -90,4 +90,4 @@ for seq_name in config.cases.seqs:
             mkdir(case_dir)
             with (case_dir / "psnr.json").open('w', encoding='utf-8') as f:
                 json.dump(metrics, f, indent=4)
-            trender.dump_taskinfo(case_dir / "task.json")
+            tconvert.dump_taskinfo(case_dir / "task.json")

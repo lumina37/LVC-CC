@@ -1,4 +1,4 @@
-from lvccc.task import CodecTask, Img2yuvTask, ImgCopyTask, PostprocTask, PreprocTask, RenderTask, Yuv2imgTask
+from lvccc.task import CodecTask, ConvertTask, Img2yuvTask, ImgCopyTask, PostprocTask, PreprocTask, Yuv2imgTask
 
 
 def test_tasks():
@@ -8,10 +8,10 @@ def test_tasks():
     tcodec = CodecTask(qp=46).with_parent(ti2y)
     ty2i = Yuv2imgTask().with_parent(tcodec)
     tpost = PostprocTask().with_parent(ty2i)
-    trender = RenderTask().with_parent(tpost)
+    tconvert = ConvertTask().with_parent(tpost)
 
-    chain = trender.chain_with_self
-    trender_rec = chain[-1]
-    assert trender_rec.chain[0].frames == tcopy.frames
-    assert trender_rec.chain[0].seq_name == tcopy.seq_name
-    assert trender_rec.chain[3].qp == tcodec.qp
+    chain = tconvert.chain_with_self
+    tconvert_rec = chain[-1]
+    assert tconvert_rec.chain[0].frames == tcopy.frames
+    assert tconvert_rec.chain[0].seq_name == tcopy.seq_name
+    assert tconvert_rec.chain[3].qp == tcodec.qp

@@ -7,7 +7,7 @@ from .base import AutoConvImpl
 
 
 @dcs.dataclass
-class RenderCfg(AutoConvImpl):
+class ConvertCfg(AutoConvImpl):
     pipeline: int = 1
     views: int = 5
     calibFile: str = ""
@@ -34,20 +34,20 @@ class RenderCfg(AutoConvImpl):
         f.flush()
 
     @staticmethod
-    def load(f: TextIO) -> "RenderCfg":
+    def load(f: TextIO) -> "ConvertCfg":
         def _items():
             for row in f:
                 key, value = row.replace('\t', ' ').split(' ', maxsplit=1)
                 value = value.lstrip().rstrip('\n')
                 yield key, value
 
-        return RenderCfg(**dict(_items()))
+        return ConvertCfg(**dict(_items()))
 
     def to_file(self, path: Path) -> None:
         with path.open('w', encoding='utf-8') as f:
             self.dump(f)
 
     @staticmethod
-    def from_file(path: Path) -> "RenderCfg":
+    def from_file(path: Path) -> "ConvertCfg":
         with path.open(encoding='utf-8') as f:
-            return RenderCfg.load(f)
+            return ConvertCfg.load(f)

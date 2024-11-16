@@ -2,7 +2,7 @@ import os
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CodecTask, RenderTask, YuvCopyTask
+from lvccc.task import CodecTask, ConvertTask, YuvCopyTask
 
 config = update_config('config.toml')
 
@@ -12,13 +12,13 @@ for seq_name in config.cases.seqs:
     tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    trender = RenderTask().with_parent(tcopy)
+    tconvert = ConvertTask().with_parent(tcopy)
 
     if qps := config.QP.anchor.get(seq_name, []):
         for vtm_type in config.cases.vtm_types:
             for qp in qps:
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-                trender = RenderTask().with_parent(tcodec)
+                tconvert = ConvertTask().with_parent(tcodec)
 
 
 if __name__ == "__main__":

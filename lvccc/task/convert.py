@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 from typing import ClassVar
 
-from ..config import RenderCfg, get_config
+from ..config import ConvertCfg, get_config
 from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .copy import ImgCopyTask, YuvCopyTask
@@ -18,15 +18,15 @@ class Pipeline(enum.IntEnum):
     TLCT = 1
 
 
-PIPELINE_TO_CFG: dict[Pipeline, RenderCfg] = {
-    Pipeline.RLC: RenderCfg,
-    Pipeline.TLCT: RenderCfg,
+PIPELINE_TO_CFG: dict[Pipeline, ConvertCfg] = {
+    Pipeline.RLC: ConvertCfg,
+    Pipeline.TLCT: ConvertCfg,
 }
 
 
 @dcs.dataclass
-class RenderTask(NonRootTask["RenderTask"]):
-    task: ClassVar[str] = "render"
+class ConvertTask(NonRootTask["ConvertTask"]):
+    task: ClassVar[str] = "convert"
 
     views: int = 0
     pipeline: Pipeline = Pipeline.NOTSET
@@ -63,33 +63,33 @@ class RenderTask(NonRootTask["RenderTask"]):
 
         TypeCfg = PIPELINE_TO_CFG[self.pipeline]
         cfg_name = "param.cfg"
-        rlccfg_srcpath = cfg_srcdir / cfg_name
-        rlccfg = TypeCfg.from_file(rlccfg_srcpath)
+        cvtcfg_srcpath = cfg_srcdir / cfg_name
+        cvtcfg = TypeCfg.from_file(cvtcfg_srcpath)
 
-        rlccfg.pipeline = self.pipeline
+        cvtcfg.pipeline = self.pipeline
 
         calib_cfg_name = "calib.xml"
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
-        rlccfg.calibFile = str(cfg_dstpath)
+        cvtcfg.calibFile = str(cfg_dstpath)
 
         yuv_srcpath = get_any_file(self.srcdir, '*.yuv')
-        rlccfg.inFile = str(yuv_srcpath)
+        cvtcfg.inFile = str(yuv_srcpath)
 
         yuv_dstdir = self.dstdir / "yuv"
         mkdir(yuv_dstdir)
-        rlccfg.outDir = str(yuv_dstdir)
+        cvtcfg.outDir = str(yuv_dstdir)
 
-        rlccfg.views = self.views
-        rlccfg.frameBegin = 0
-        rlccfg.frameEnd = self.frames
+        cvtcfg.views = self.views
+        cvtcfg.frameBegin = 0
+        cvtcfg.frameEnd = self.frames
 
-        rlccfg_dstpath = cfg_dstdir / cfg_name
-        rlccfg.to_file(rlccfg_dstpath)
+        cvtcfg_dstpath = cfg_dstdir / cfg_name
+        cvtcfg.to_file(cvtcfg_dstpath)
 
         cmds = [
-            config.app.rlc,
-            rlccfg_dstpath,
+            config.app.convertor,
+            cvtcfg_dstpath,
         ]
 
         run_cmds(cmds)

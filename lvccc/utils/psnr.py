@@ -5,7 +5,7 @@ import numpy as np
 
 from ..config import get_config
 from ..helper import get_any_file, run_cmds, size_from_filename
-from ..task import CodecTask, RenderTask
+from ..task import CodecTask, ConvertTask
 from ..task.infomap import query
 from .backtrack import get_ancestor
 from .read_log import read_psnrlog
@@ -44,11 +44,11 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
     return psnrarr
 
 
-def calc_mv_psnr(task: RenderTask) -> np.ndarray:
+def calc_mv_psnr(task: ConvertTask) -> np.ndarray:
     copy_task = task.chain[0]
-    render_task = RenderTask(views=task.views).with_parent(copy_task)
+    convert_task = ConvertTask(views=task.views).with_parent(copy_task)
 
-    base_dir = query(render_task) / "yuv"
+    base_dir = query(convert_task) / "yuv"
     self_dir = query(task) / "yuv"
 
     width, height = size_from_filename(get_any_file(base_dir, '*.yuv').name)
@@ -67,7 +67,7 @@ def calc_mv_psnr(task: RenderTask) -> np.ndarray:
     return accpsnr
 
 
-def calc_lenslet_psnr(task: RenderTask) -> np.ndarray:
+def calc_lenslet_psnr(task: ConvertTask) -> np.ndarray:
     copy_task = task.chain[0]
     codec_task = get_ancestor(task, CodecTask)
 

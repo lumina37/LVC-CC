@@ -10,8 +10,8 @@ from PIL import Image
 
 from ..helper import mkdir, size_from_filename
 from .base import NonRootTask, TVarTask
+from .convert import ConvertTask
 from .infomap import query
-from .render import RenderTask
 
 
 def is_rotated(seq_name: str) -> bool:
@@ -33,7 +33,7 @@ def get_views(task: TVarTask) -> int:
     views = 5
 
     for t in task.chain:
-        if isinstance(t, RenderTask):
+        if isinstance(t, ConvertTask):
             views = t.views
             break
 

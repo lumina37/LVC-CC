@@ -4,11 +4,11 @@ from lvccc.config import update_config
 from lvccc.executor import Executor
 from lvccc.task import (
     CodecTask,
+    ConvertTask,
     Img2yuvTask,
     ImgCopyTask,
     PostprocTask,
     PreprocTask,
-    RenderTask,
 )
 
 config = update_config('config.toml')
@@ -19,7 +19,7 @@ for seq_name in config.cases.seqs:
     tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    trender = RenderTask().with_parent(tcopy)
+    tconvert = ConvertTask().with_parent(tcopy)
 
     if qps := config.QP.wMCA.get(seq_name, []):
         tpreproc = PreprocTask().with_parent(tcopy)
@@ -28,7 +28,7 @@ for seq_name in config.cases.seqs:
             for qp in qps:
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
                 tpostproc = PostprocTask().with_parent(tcodec)
-                trender = RenderTask().with_parent(tpostproc)
+                tconvert = ConvertTask().with_parent(tpostproc)
 
 
 if __name__ == "__main__":

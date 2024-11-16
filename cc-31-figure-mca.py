@@ -7,9 +7,9 @@ from lvccc.config import update_config
 from lvccc.helper import mkdir
 from lvccc.task import (
     CodecTask,
+    ConvertTask,
     PostprocTask,
     PreprocTask,
-    RenderTask,
     YuvCopyTask,
     gen_infomap,
 )
@@ -35,7 +35,7 @@ for seq_name in config.cases.seqs:
         for qp in config.QP.wMCA.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
-            trender = RenderTask().with_parent(tpostproc)
+            tconvert = ConvertTask().with_parent(tpostproc)
 
             json_path = src_dir / tcodec.full_tag / "psnr.json"
             if not json_path.exists():

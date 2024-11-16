@@ -96,7 +96,7 @@ output = "/path/to/output"  # 输出位置，随便设
 [app]
 ffmpeg = "ffmpeg"  # 指向ffmpeg的可执行文件ffmpeg
 encoder = "/path/to/EncoderAppStatic"  # 指向VTM-11.0的编码器EncoderApp
-rlc = "/path/to/RLC40"  # 指向RLC4.0的可执行文件RLC40
+convertor = "/path/to/tlct"  # 指向多视角转换工具的可执行文件
 
 [QP.anchor]
 "Boys" = [48, 52]  # 序列名以及对应的需要跑的QP
@@ -118,7 +118,7 @@ yuv的文件名可随意设置
 **执行前请确保output文件夹有几个TB的空闲空间**
 
 ```shell
-python cc-00-render-anchor.py
+python cc-00-convert-anchor.py
 ```
 
 ### 计算PSNR指标

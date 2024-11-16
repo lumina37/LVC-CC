@@ -25,7 +25,7 @@ class _App(UpdateImpl):
     encoder: str = ""
     preproc: str = ""
     postproc: str = ""
-    rlc: str = ""
+    convertor: str = ""
 
 
 @dcs.dataclass

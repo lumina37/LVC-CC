@@ -106,12 +106,12 @@ class RootTask(Generic[TSelfTask]):
         try:
             self._inner_run()
         except Exception:
-            log.error("Task `%s` failed! Reason: %s", self.dstdir.name, traceback.format_exc())
+            log.error(f"Task `{self.dstdir.name}` failed! Reason: {traceback.format_exc()}")
             raise
         else:
             self.dump_taskinfo(self.dstdir / "task.json")
             append(self, self.dstdir.absolute())
-            log.info("Task `%s` completed!", self.dstdir.name)
+            log.info(f"Task `{self.dstdir.name}` completed!")
 
 
 class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):

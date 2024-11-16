@@ -11,13 +11,13 @@ class Executor:
     root_tasks: list[TRetTask]
     process_num: int = 1
 
-    infomap: TypeInfomap = dcs.field(default_factory=get_infomap)
-    task_queue: queue.Queue = dcs.field(default_factory=queue.Queue)
-    active_count: int = 0
-    active_count_lock: threading.Lock = dcs.field(default_factory=threading.Lock)
-    pending_count: int = 0
-    pending_count_lock: threading.Lock = dcs.field(default_factory=threading.Lock)
-    waitfor_task_cond: threading.Condition = dcs.field(default_factory=threading.Condition)
+    infomap: TypeInfomap = dcs.field(init=False, default_factory=get_infomap)
+    task_queue: queue.Queue = dcs.field(init=False, default_factory=queue.Queue)
+    active_count: int = dcs.field(init=False, default=0)
+    active_count_lock: threading.Lock = dcs.field(init=False, default_factory=threading.Lock)
+    pending_count: int = dcs.field(init=False, default=0)
+    pending_count_lock: threading.Lock = dcs.field(init=False, default_factory=threading.Lock)
+    waitfor_task_cond: threading.Condition = dcs.field(init=False, default_factory=threading.Condition)
 
     def _exit_ready(self) -> bool:
         """

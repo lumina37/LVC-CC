@@ -1,4 +1,4 @@
-from lvccc.task import CodecTask, ConvertTask, Img2yuvTask, ImgCopyTask, PostprocTask, PreprocTask, Yuv2imgTask
+from lvccc.task import Chain, CodecTask, ConvertTask, Img2yuvTask, ImgCopyTask, PostprocTask, PreprocTask, Yuv2imgTask
 
 
 def test_tasks():
@@ -10,7 +10,7 @@ def test_tasks():
     tpost = PostprocTask().with_parent(ty2i)
     tconvert = ConvertTask().with_parent(tpost)
 
-    chain = tconvert.chain_with_self
+    chain = Chain(tconvert.serialize())
     tconvert_rec = chain[-1]
     assert tconvert_rec.chain[0].frames == tcopy.frames
     assert tconvert_rec.chain[0].seq_name == tcopy.seq_name

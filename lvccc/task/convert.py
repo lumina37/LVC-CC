@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from typing import ClassVar
 
-from ..config import ConvertCfg, get_config
+from ..config import get_config
 from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .copy import ImgCopyTask, YuvCopyTask
@@ -43,32 +43,29 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        cfg_name = "param.cfg"
-        cvtcfg_srcpath = cfg_srcdir / cfg_name
-        cvtcfg = ConvertCfg.from_file(cvtcfg_srcpath)
+        calib_cfg_name = "calib.toml"
+        calib_cfg_dstpath = cfg_dstdir / calib_cfg_name
+        shutil.copyfile(cfg_srcdir / calib_cfg_name, calib_cfg_dstpath)
 
-        calib_cfg_name = "calib.xml"
-        cfg_dstpath = cfg_dstdir / calib_cfg_name
-        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
-        cvtcfg.calibFile = str(cfg_dstpath)
+        with (cfg_srcdir / "cmd.sh").open(encoding="utf-8") as f:
+            extra_args = f.read().rstrip('\n').split(' ')
 
         yuv_srcpath = get_any_file(self.srcdir, '*.yuv')
-        cvtcfg.inFile = str(yuv_srcpath)
-
         yuv_dstdir = self.dstdir / "yuv"
         mkdir(yuv_dstdir)
-        cvtcfg.outDir = str(yuv_dstdir)
-
-        cvtcfg.views = self.views
-        cvtcfg.frameBegin = 0
-        cvtcfg.frameEnd = self.frames
-
-        cvtcfg_dstpath = cfg_dstdir / cfg_name
-        cvtcfg.to_file(cvtcfg_dstpath)
 
         cmds = [
             config.app.convertor,
-            cvtcfg_dstpath,
+            calib_cfg_dstpath,
+            "-i",
+            yuv_srcpath,
+            "-o",
+            yuv_dstdir,
+            "--views",
+            self.views,
+            "--end",
+            self.frames,
+            *extra_args,
         ]
 
         run_cmds(cmds)

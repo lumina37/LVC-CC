@@ -1,0 +1,8 @@
+height = 3064
+width = 4036
+diameter = 70
+transpose = true
+ltop = [36.5, 35.0]     # [x, y]
+rtop = [3940.8, 35.0]
+lbot = [35.5, 2994.8]
+rbot = [3940.2, 2990.5]

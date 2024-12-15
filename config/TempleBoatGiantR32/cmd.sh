@@ -1,1 +1,1 @@
---multiFocus --upsample 2 --psizeInflate 2.15 --maxPsize 0.38 --patternSize 0.3
+--upsample 2 --psizeInflate 2.15 --maxPsize 0.38 --patternSize 0.3

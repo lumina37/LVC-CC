@@ -1,11 +1,10 @@
 import dataclasses as dcs
 import functools
-import math
-import re
 from collections.abc import Iterator
 from pathlib import Path
 from typing import ClassVar
 
+import tomllib
 from PIL import Image
 
 from ..helper import mkdir, size_from_filename
@@ -18,13 +17,9 @@ def is_rotated(seq_name: str) -> bool:
     rotated = False
 
     cfg_srcdir = Path("config") / seq_name
-    calib_cfg_name = "calib.xml"
-    calib_src_path = cfg_srcdir / calib_cfg_name
-    with calib_src_path.open(encoding='utf-8') as calibf:
-        calibf_text = calibf.read()
-        rotation = float(re.search(r"<rotation.+>([\d.]+)<", calibf_text).group(1))
-        if rotation > math.pi / 4.0:
-            rotated = True
+    with (cfg_srcdir / "calib.toml").open('rb') as f:
+        table = tomllib.load(f)
+        rotated = table["transpose"]
 
     return rotated
 
@@ -123,7 +118,7 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
                             dstf.write(padded_vcomp)
 
                             frame_idx += 1
-                            if (frame_idx + 1) == self.frames:
+                            if frame_idx == self.frames:
                                 eof = True
                                 break
 

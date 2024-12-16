@@ -43,7 +43,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        calib_cfg_name = "calib.toml"
+        calib_cfg_name = "calib.cfg"
         calib_cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, calib_cfg_dstpath)
 

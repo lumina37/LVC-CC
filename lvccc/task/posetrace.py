@@ -4,24 +4,24 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import ClassVar
 
-import tomllib
 from PIL import Image
 
+from ..config import CalibCfg
 from ..helper import mkdir, size_from_filename
 from .base import NonRootTask, TVarTask
 from .convert import ConvertTask
 from .infomap import query
 
 
-def is_rotated(seq_name: str) -> bool:
-    rotated = False
+def is_transpose(seq_name: str) -> bool:
+    transpose = False
 
     cfg_srcdir = Path("config") / seq_name
-    with (cfg_srcdir / "calib.toml").open('rb') as f:
-        table = tomllib.load(f)
-        rotated = table["transpose"]
+    with (cfg_srcdir / "calib.cfg").open(encoding='utf-8') as f:
+        calib_cfg = CalibCfg.load(f)
+        transpose = calib_cfg.transpose
 
-    return rotated
+    return transpose
 
 
 def get_views(task: TVarTask) -> int:
@@ -82,7 +82,7 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
 
     def _inner_run(self) -> None:
         views = get_views(self)
-        is_rot = is_rotated(self.seq_name)
+        is_rot = is_transpose(self.seq_name)
 
         srcpaths = sorted((self.srcdir / 'yuv').glob('*.yuv'))
         width, height = size_from_filename(srcpaths[0].name)

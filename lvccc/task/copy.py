@@ -4,9 +4,7 @@ import shutil
 from pathlib import Path
 from typing import ClassVar
 
-import tomllib
-
-from ..config import get_config
+from ..config import CalibCfg, get_config
 from ..helper import detect_pattern, get_any_file, get_first_file, mkdir, run_cmds
 from .base import RootTask
 
@@ -90,12 +88,11 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
         mkdir(self.dstdir)
 
         cfg_srcdir = Path("config") / self.seq_name
-        mcacfg_srcpath = cfg_srcdir / "calib.toml"
-        with mcacfg_srcpath.open('rb') as f:
-            mcacfg = tomllib.load(f)
+        with (cfg_srcdir / "calib.cfg").open(encoding='utf-8') as f:
+            calib_cfg = CalibCfg.load(f)
 
-        width = mcacfg['width']
-        height = mcacfg['height']
+        width = calib_cfg.width
+        height = calib_cfg.height
         yuvsize = srcpath.stat().st_size
         actual_frames = int(yuvsize / (width * height / 2 * 3))
         dst_fname = f"{self.tag}-{width}x{height}.yuv"

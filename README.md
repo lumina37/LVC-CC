@@ -36,7 +36,7 @@ ADD ffmpeg-release-amd64-static.tar.xz ./
 # argparse
 ADD argparse-3.1.tar.xz ./
 
-# RLC4.0
+# TLCT
 RUN git clone --depth 1 https://github.com/lumina37/TLCT.git && \
     cd TLCT && \
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DTLCT_ENABLE_LTO=ON -DTLCT_HEADER_ONLY=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 && \

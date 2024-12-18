@@ -13,15 +13,15 @@ from .convert import ConvertTask
 from .infomap import query
 
 
-def is_transpose(seq_name: str) -> bool:
-    transpose = False
+def get_direction(seq_name: str) -> bool:
+    direction = False
 
     cfg_srcdir = Path("config") / seq_name
     with (cfg_srcdir / "calib.cfg").open(encoding='utf-8') as f:
         calib_cfg = CalibCfg.load(f)
-        transpose = calib_cfg.transpose
+        direction = calib_cfg.MLADirection
 
-    return transpose
+    return direction
 
 
 def get_views(task: TVarTask) -> int:
@@ -82,7 +82,7 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
 
     def _inner_run(self) -> None:
         views = get_views(self)
-        is_rot = is_transpose(self.seq_name)
+        is_rot = get_direction(self.seq_name)
 
         srcpaths = sorted((self.srcdir / 'yuv').glob('*.yuv'))
         width, height = size_from_filename(srcpaths[0].name)

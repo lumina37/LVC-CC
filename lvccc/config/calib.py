@@ -7,10 +7,9 @@ from .base import AutoConvImpl
 
 @dcs.dataclass
 class CalibCfg(AutoConvImpl):
-    pipeline: int = 0
-    height: int = 2048
-    width: int = 2048
-    transpose: bool = False
+    LensletWidth: int = 2048
+    LensletHeight: int = 2048
+    MLADirection: bool = False
 
     def dump(self, f: TextIO) -> None:
         maxlen = 0

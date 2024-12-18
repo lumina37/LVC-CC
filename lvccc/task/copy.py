@@ -91,8 +91,8 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
         with (cfg_srcdir / "calib.cfg").open(encoding='utf-8') as f:
             calib_cfg = CalibCfg.load(f)
 
-        width = calib_cfg.width
-        height = calib_cfg.height
+        width = calib_cfg.LensletWidth
+        height = calib_cfg.LensletHeight
         yuvsize = srcpath.stat().st_size
         actual_frames = int(yuvsize / (width * height / 2 * 3))
         dst_fname = f"{self.tag}-{width}x{height}.yuv"

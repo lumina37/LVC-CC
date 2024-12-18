@@ -11,21 +11,22 @@ FROM silkeh/clang:19 AS builder
 
 RUN sed -i 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/debian.sources
 RUN apt update && \
-    apt install -y --no-install-recommends cmake unzip ca-certificates git && \
-    apt clean
+    apt install -y --no-install-recommends ca-certificates git && \
+    apt clean && \
+    rm -r /etc/apt/sources.list.d
 
 # VTM
 ADD VVCSoftware_VTM-VTM-11.0.tar.bz2 ./
 RUN cd VVCSoftware_VTM-VTM-11.0 && \
     find . -type f -exec sed -i 's/-Werror//g' {} + && \
-    cmake -S . -B build && \
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build --config Release --parallel $($(nproc)-1) --target EncoderApp && \
     cmake --install build
 
 # OpenCV
-ADD opencv-4.10.0.tar.gz ./
+ADD opencv-4.10.0.tar.xz ./
 RUN cd opencv-4.10.0 && \
-    cmake -S . -B build -DBUILD_LIST="imgcodecs,imgproc" -DBUILD_SHARED_LIBS=OFF -DCV_TRACE=OFF -DCPU_BASELINE=AVX2 -DCPU_DISPATCH=AVX2 -DOPENCV_ENABLE_ALLOCATOR_STATS=OFF -DWITH_ADE=OFF -DWITH_DSHOW=OFF -DWITH_FFMPEG=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IPP=OFF -DWITH_ITT=OFF -DWITH_JASPER=OFF -DWITH_JPEG=OFF -DWITH_LAPACK=OFF -DWITH_OPENCL=OFF -DWITH_OPENEXR=OFF -DWITH_OPENJPEG=OFF -DWITH_PROTOBUF=OFF -DWITH_TIFF=OFF -DWITH_WEBP=OFF && \
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_LIST="imgproc" -DBUILD_SHARED_LIBS=OFF -DCV_TRACE=OFF -DCPU_BASELINE=AVX2 -DCPU_DISPATCH=AVX2 -DOPENCV_ENABLE_ALLOCATOR_STATS=OFF -DWITH_ADE=OFF -DWITH_DSHOW=OFF -DWITH_FFMPEG=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IPP=OFF -DWITH_ITT=OFF -DWITH_JASPER=OFF -DWITH_JPEG=OFF -DWITH_LAPACK=OFF -DWITH_OPENCL=OFF -DWITH_OPENEXR=OFF -DWITH_OPENJPEG=OFF -DWITH_PNG=OFF -DWITH_PROTOBUF=OFF -DWITH_TIFF=OFF -DWITH_WEBP=OFF && \
     make -C build -j$($(nproc)-1) && \
     make -C build install
 
@@ -33,22 +34,13 @@ RUN cd opencv-4.10.0 && \
 ADD ffmpeg-release-amd64-static.tar.xz ./
 
 # argparse
-ADD argparse-3.1.tar.gz ./
-
-# pugixml
-ADD pugixml-1.14.tar.gz ./
+ADD argparse-3.1.tar.xz ./
 
 # RLC4.0
-RUN git clone --depth 20 https://github.com/lumina37/TLCT.git && \
+RUN git clone --depth 1 https://github.com/lumina37/TLCT.git && \
     cd TLCT && \
-    cmake -S . -B build -DTLCT_ENABLE_LTO=ON -DTLCT_HEADER_ONLY=ON -DPUGIXML_HEADER_ONLY=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 && \
-    cmake --build build --config Release --parallel $($(nproc)-1) --target RLC40
-
-# MCA
-RUN git clone --depth 20 https://github.com/lumina37/MCA.git && \
-    cd MCA && \
-    cmake -S . -B build -DMCA_ENABLE_LTO=ON -DMCA_HEADER_ONLY=ON -DTLCT_HEADER_ONLY=ON -DPUGIXML_HEADER_ONLY=ON -DMCA_ARGPARSE_PATH=/argparse-3.1 -DTLCT_PUGIXML_PATH=/pugixml-1.14 -DMCA_TLCT_PATH=/TLCT && \
-    cmake --build build --config Release --parallel $($(nproc)-1) --target mca-preproc mca-postproc
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DTLCT_ENABLE_LTO=ON -DTLCT_HEADER_ONLY=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 && \
+    cmake --build build --config Release --parallel $($(nproc)-1) --target tlct-bin
 
 # LVC-CC
 RUN mkdir LVC-CC-Wrap && \
@@ -61,9 +53,7 @@ FROM python:3.13-alpine AS prod
 
 COPY --from=builder /ffmpeg-7.0.2-amd64-static/ffmpeg /usr/bin
 COPY --from=builder VVCSoftware_VTM-VTM-11.0/bin/EncoderAppStatic /usr/bin
-COPY --from=builder TLCT/build/src/bin/RLC40 /usr/bin
-COPY --from=builder MCA/build/src/bin/mca-preproc /usr/bin
-COPY --from=builder MCA/build/src/bin/mca-postproc /usr/bin
+COPY --from=builder TLCT/build/src/bin/tlct /usr/bin
 COPY --from=builder LVC-CC-Wrap ./
 
 RUN cd LVC-CC && \

@@ -12,7 +12,6 @@ input = ""
 output = ""
 
 [app]
-ffmpeg = "ffmpeg"
 encoder = "EncoderApp"
 preproc = "mca-preproc"
 postproc = "mca-postproc"

@@ -38,27 +38,3 @@ class PSNR:
     y: float = 0.0
     u: float = 0.0
     v: float = 0.0
-
-
-def read_psnrlog(logf: TextIOBase) -> PSNR:
-    def _get_psnr(s: str) -> float:
-        _, psnr = s.split(':')
-        return float(psnr)
-
-    count = 0
-    psnr = PSNR()
-    for row in logf:
-        sobj = re.search(r"y:[\d.]+ u:[\d.]+ v:[\d.]+", row)
-        if not sobj:
-            continue
-        ypsnr_str, upsnr_str, vpsnr_str = sobj.group().rsplit(' ', maxsplit=2)
-        psnr.y += _get_psnr(ypsnr_str)
-        psnr.u += _get_psnr(upsnr_str)
-        psnr.v += _get_psnr(vpsnr_str)
-        count += 1
-
-    psnr.y /= count
-    psnr.u /= count
-    psnr.v /= count
-
-    return psnr

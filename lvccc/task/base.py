@@ -2,11 +2,10 @@ import abc
 import dataclasses as dcs
 import functools
 import traceback
+import zlib
 from collections.abc import Callable
 from pathlib import Path
 from typing import ClassVar, Generic, TypeVar
-
-import xxhash
 
 from ..config import get_config
 from ..helper import to_json
@@ -68,7 +67,7 @@ class RootTask(Generic[TSelfTask]):
     @functools.cached_property
     def hash(self) -> int:
         hashbytes = self.to_json().encode('utf-8')
-        hashint = xxhash.xxh3_64_intdigest(hashbytes)
+        hashint = zlib.adler32(hashbytes)
         return hashint
 
     @property

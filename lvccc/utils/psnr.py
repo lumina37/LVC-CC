@@ -1,47 +1,40 @@
-import tempfile
+import math
 from pathlib import Path
 
 import numpy as np
+import yuvio
 
-from ..config import get_config
-from ..helper import get_any_file, run_cmds, size_from_filename
+from ..helper import get_any_file, size_from_filename
 from ..task import CodecTask, ConvertTask
 from ..task.infomap import query
 from .backtrack import get_ancestor
-from .read_log import read_psnrlog
+
+
+def calc_array_psnr(lhs: np.ndarray, rhs: np.ndarray) -> float:
+    mse = np.mean((lhs.astype(np.int16) - rhs.astype(np.int16)) ** 2)
+    if mse == 0:
+        return np.inf
+    return 20 * math.log10(255.0 / math.sqrt(mse))
 
 
 def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
-    with tempfile.TemporaryFile('w+') as tf:
-        config = get_config()
-        cmds = [
-            config.app.ffmpeg,
-            "-hide_banner",
-            "-s",
-            f"{width}x{height}",
-            "-pix_fmt",
-            "yuv420p",
-            "-i",
-            lhs,
-            "-s",
-            f"{width}x{height}",
-            "-pix_fmt",
-            "yuv420p",
-            "-i",
-            rhs,
-            "-lavfi",
-            "psnr",
-            "-f",
-            "null",
-            "-",
-        ]
-        run_cmds(cmds, output=tf)
+    lhs_reader = yuvio.get_reader(lhs, width, height, "yuv420p")
+    rhs_reader = yuvio.get_reader(rhs, width, height, "yuv420p")
+    if len(lhs_reader) != len(rhs_reader):
+        raise RuntimeError(f"Frame count not equal! lhs={lhs} rhs={rhs}")
 
-        tf.seek(0)
-        psnr = read_psnrlog(tf)
+    psnr_acc = np.zeros(3)
+    count = 0
 
-    psnrarr = np.asarray([psnr.y, psnr.u, psnr.v])
-    return psnrarr
+    for lhs_frame, rhs_frame in zip(lhs_reader, rhs_reader, strict=True):
+        psnr_acc[0] += calc_array_psnr(lhs_frame.y, rhs_frame.y)
+        psnr_acc[1] += calc_array_psnr(lhs_frame.u, rhs_frame.u)
+        psnr_acc[2] += calc_array_psnr(lhs_frame.v, rhs_frame.v)
+        count += 1
+
+    psnr = psnr_acc / count
+
+    return psnr
 
 
 def calc_mv_psnr(task: ConvertTask) -> np.ndarray:

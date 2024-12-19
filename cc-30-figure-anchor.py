@@ -5,12 +5,7 @@ from matplotlib.axes import Axes
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import (
-    CodecTask,
-    ConvertTask,
-    YuvCopyTask,
-    gen_infomap,
-)
+from lvccc.task import CodecTask, ConvertTask, CopyTask, gen_infomap
 
 config = update_config('config.toml')
 
@@ -23,7 +18,7 @@ infomap = gen_infomap(src_dir)
 
 
 for seq_name in config.cases.seqs:
-    tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
+    tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
     for vtm_type in config.cases.vtm_types:
         bitrates = []

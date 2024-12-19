@@ -21,7 +21,6 @@ class _Path(UpdateImpl):
 
 @dcs.dataclass
 class _App(UpdateImpl):
-    ffmpeg: str = ""
     encoder: str = ""
     preproc: str = ""
     postproc: str = ""

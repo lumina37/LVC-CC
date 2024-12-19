@@ -3,14 +3,7 @@ import json
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import (
-    CodecTask,
-    ConvertTask,
-    ImgCopyTask,
-    PostprocTask,
-    PreprocTask,
-    gen_infomap,
-)
+from lvccc.task import CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTask, gen_infomap
 
 config = update_config('config.toml')
 
@@ -38,7 +31,7 @@ with (dst_dir / "mca.csv").open("w", encoding='utf-8', newline='') as csv_file:
     csv_writer.writerow(headers)
 
     for seq_name in config.cases.seqs:
-        tcopy = ImgCopyTask(seq_name=seq_name, frames=config.frames)
+        tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
         tpreproc = PreprocTask().with_parent(tcopy)
 
         for vtm_type in config.cases.vtm_types:

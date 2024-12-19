@@ -3,12 +3,7 @@ import json
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import (
-    CodecTask,
-    ConvertTask,
-    YuvCopyTask,
-    gen_infomap,
-)
+from lvccc.task import CodecTask, ConvertTask, CopyTask, gen_infomap
 
 config = update_config('config.toml')
 
@@ -36,7 +31,7 @@ with (dst_dir / "anchor.csv").open('w', encoding='utf-8', newline='') as csv_fil
     csv_writer.writerow(headers)
 
     for seq_name in config.cases.seqs:
-        tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
+        tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
         for vtm_type in config.cases.vtm_types:
             for qp in config.QP.anchor.get(seq_name, []):

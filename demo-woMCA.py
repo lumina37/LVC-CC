@@ -1,10 +1,10 @@
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CodecTask, ConvertTask, YuvCopyTask
+from lvccc.task import CodecTask, ConvertTask, CopyTask
 
 update_config('config.toml')
 
-tcopy = YuvCopyTask(seq_name="NagoyaFujita")
+tcopy = CopyTask(seq_name="NagoyaFujita")
 tcodec = CodecTask(qp=46).with_parent(tcopy)
 tconvert = ConvertTask().with_parent(tcodec)
 

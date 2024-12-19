@@ -7,7 +7,7 @@ from typing import ClassVar
 from ..config import get_config
 from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
 from .base import NonRootTask
-from .copy import ImgCopyTask, YuvCopyTask
+from .copy import CopyTask
 from .infomap import query
 
 
@@ -33,9 +33,7 @@ class CodecTask(NonRootTask["CodecTask"]):
     @functools.cached_property
     def self_tag(self) -> str:
         tag = f"{self.vtm_type}-QP{self.qp}"
-        if len(self.chain) == 1 and isinstance(self.parent, YuvCopyTask):
-            return "anchor-" + tag
-        if len(self.chain) >= 2 and isinstance(self.chain[-2], ImgCopyTask):
+        if isinstance(self.parent, CopyTask):
             return "anchor-" + tag
         return tag
 

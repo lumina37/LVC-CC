@@ -3,15 +3,7 @@ import json
 from lvccc.config import update_config
 from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
-from lvccc.task import (
-    CodecTask,
-    ConvertTask,
-    Img2yuvTask,
-    PostprocTask,
-    PreprocTask,
-    YuvCopyTask,
-    query,
-)
+from lvccc.task import CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTask, query
 from lvccc.utils import calc_lenslet_psnr, calc_mv_psnr, read_enclog
 
 config = update_config('config.toml')
@@ -22,7 +14,7 @@ summary_dir = config.path.output / 'summary/tasks'
 
 
 for seq_name in config.cases.seqs:
-    tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
+    tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
     # Anchor
     for vtm_type in config.cases.vtm_types:
@@ -59,10 +51,9 @@ for seq_name in config.cases.seqs:
 
     # W MCA
     tpreproc = PreprocTask().with_parent(tcopy)
-    timg2yuv = Img2yuvTask().with_parent(tpreproc)
     for vtm_type in config.cases.vtm_types:
         for qp in config.QP.wMCA.get(seq_name, []):
-            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(timg2yuv)
+            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
             tconvert = ConvertTask().with_parent(tpostproc)
 

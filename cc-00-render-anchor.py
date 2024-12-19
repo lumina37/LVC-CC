@@ -2,14 +2,14 @@ import os
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CodecTask, ConvertTask, YuvCopyTask
+from lvccc.task import CodecTask, ConvertTask, CopyTask
 
 config = update_config('config.toml')
 
 roots = []
 
 for seq_name in config.cases.seqs:
-    tcopy = YuvCopyTask(seq_name=seq_name, frames=config.frames)
+    tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
     tconvert = ConvertTask().with_parent(tcopy)

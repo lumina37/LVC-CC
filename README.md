@@ -30,9 +30,6 @@ RUN cd opencv-4.10.0 && \
     make -C build -j$($(nproc)-1) && \
     make -C build install
 
-# FFMpeg
-ADD ffmpeg-release-amd64-static.tar.xz ./
-
 # argparse
 ADD argparse-3.1.tar.xz ./
 
@@ -51,7 +48,6 @@ RUN mkdir LVC-CC-Wrap && \
 
 FROM python:3.13-alpine AS prod
 
-COPY --from=builder /ffmpeg-7.0.2-amd64-static/ffmpeg /usr/bin
 COPY --from=builder VVCSoftware_VTM-VTM-11.0/bin/EncoderAppStatic /usr/bin
 COPY --from=builder TLCT/build/src/bin/tlct /usr/bin
 COPY --from=builder LVC-CC-Wrap ./
@@ -84,7 +80,6 @@ input = "/path/to/input"  # 修改该路径字段以指向input文件夹。input
 output = "/path/to/output"  # 输出位置，随便设
 
 [app]
-ffmpeg = "ffmpeg"  # 指向ffmpeg的可执行文件ffmpeg
 encoder = "/path/to/EncoderAppStatic"  # 指向VTM-11.0的编码器EncoderApp
 convertor = "/path/to/tlct"  # 指向多视角转换工具的可执行文件
 

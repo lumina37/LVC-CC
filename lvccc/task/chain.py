@@ -24,7 +24,7 @@ class Chain:
         if isinstance(idx, int):
             TaskType = get_task_type(self.objs[idx]['task'])
             endidx = len(self.objs) if idx == -1 else idx + 1
-            task: ProtoTask = TaskType.deserialize(self.objs[:endidx])
+            task: ProtoTask = TaskType.from_dicts(self.objs[:endidx])
             return task
         else:
             return Chain(self.objs[idx])

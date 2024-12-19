@@ -37,14 +37,14 @@ class RootTask(Generic[TSelfTask]):
             fields[field.name] = val
         return fields
 
-    def serialize(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> list[dict]:
+    def to_dicts(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> list[dict]:
         fields = self.fields(exclude_if)
         objs = self.chain.objs.copy()
         objs.append(fields)
         return objs
 
     @classmethod
-    def deserialize(cls, objs: list[dict]) -> TSelfTask:
+    def from_dicts(cls, objs: list[dict]) -> TSelfTask:
         fields = objs[-1]
 
         kwargs = {}
@@ -61,7 +61,7 @@ class RootTask(Generic[TSelfTask]):
         return self
 
     def to_json(self, pretty: bool = False) -> str:
-        json = to_json(self.serialize(), pretty=pretty)
+        json = to_json(self.to_dicts(), pretty=pretty)
         return json
 
     @functools.cached_property
@@ -143,9 +143,4 @@ class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
         # Appending reverse hooks to `parent`
         parent.children.append(self)
 
-        self._post_with_parent()
-
         return self
-
-    @abc.abstractmethod
-    def _post_with_parent(self) -> None: ...

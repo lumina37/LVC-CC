@@ -36,7 +36,7 @@ with (dst_dir / "anchor.csv").open('w', encoding='utf-8', newline='') as csv_fil
         for vtm_type in config.cases.vtm_types:
             for qp in config.QP.anchor.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-                tconvert = ConvertTask().with_parent(tcodec)
+                tconvert = ConvertTask(views=config.views).with_parent(tcodec)
 
                 json_path = src_dir / tcodec.tag / "psnr.json"
                 if not json_path.exists():

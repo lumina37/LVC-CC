@@ -20,7 +20,7 @@ for seq_name in config.cases.seqs:
     for vtm_type in config.cases.vtm_types:
         for qp in config.QP.anchor.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-            tconvert = ConvertTask().with_parent(tcodec)
+            tconvert = ConvertTask(views=config.views).with_parent(tcodec)
 
             if query(tconvert) is None:
                 continue
@@ -55,7 +55,7 @@ for seq_name in config.cases.seqs:
         for qp in config.QP.wMCA.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
-            tconvert = ConvertTask().with_parent(tpostproc)
+            tconvert = ConvertTask(views=config.views).with_parent(tpostproc)
 
             if query(tconvert) is None:
                 continue

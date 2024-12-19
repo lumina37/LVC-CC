@@ -5,7 +5,7 @@ from lvccc.task import ConvertTask, CopyTask
 update_config('config.toml')
 
 tcopy = CopyTask(seq_name="NagoyaFujita")
-tconvert = ConvertTask().with_parent(tcopy)
+tconvert = ConvertTask(views=3).with_parent(tcopy)
 
 if __name__ == "__main__":
     executor = Executor([tcopy])

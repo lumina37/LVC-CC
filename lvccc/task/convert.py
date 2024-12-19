@@ -15,13 +15,7 @@ from .infomap import query
 class ConvertTask(NonRootTask["ConvertTask"]):
     task: ClassVar[str] = "convert"
 
-    views: int = 0
-
-    def _post_with_parent(self) -> None:
-        super()._post_with_parent()
-        if self.views == 0:
-            config = get_config()
-            self.views = config.views
+    views: int = 1
 
     @functools.cached_property
     def self_tag(self) -> str:

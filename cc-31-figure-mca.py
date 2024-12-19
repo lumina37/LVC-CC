@@ -28,7 +28,7 @@ for seq_name in config.cases.seqs:
         for qp in config.QP.wMCA.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
-            tconvert = ConvertTask().with_parent(tpostproc)
+            tconvert = ConvertTask(views=config.views).with_parent(tpostproc)
 
             json_path = src_dir / tcodec.tag / "psnr.json"
             if not json_path.exists():

@@ -12,7 +12,7 @@ for seq_name in config.cases.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    tconvert = ConvertTask().with_parent(tcopy)
+    tconvert = ConvertTask(views=config.views).with_parent(tcopy)
 
     if qps := config.QP.wMCA.get(seq_name, []):
         tpreproc = PreprocTask().with_parent(tcopy)
@@ -20,7 +20,7 @@ for seq_name in config.cases.seqs:
             for qp in qps:
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
                 tpostproc = PostprocTask().with_parent(tcodec)
-                tconvert = ConvertTask().with_parent(tpostproc)
+                tconvert = ConvertTask(views=config.views).with_parent(tpostproc)
 
 
 if __name__ == "__main__":

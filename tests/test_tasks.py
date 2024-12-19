@@ -8,7 +8,7 @@ def test_tasks():
     tpost = PostprocTask().with_parent(tcodec)
     tconvert = ConvertTask().with_parent(tpost)
 
-    chain = Chain(tconvert.serialize())
+    chain = Chain(tconvert.to_dicts())
     tconvert_rec = chain[-1]
     assert tconvert_rec.chain[0].frames == tcopy.frames
     assert tconvert_rec.chain[0].seq_name == tcopy.seq_name

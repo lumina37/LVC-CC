@@ -93,8 +93,15 @@ class YuvCopyTask(RootTask["YuvCopyTask"]):
 
         width = calib_cfg.LensletWidth
         height = calib_cfg.LensletHeight
+        if width % 2:
+            raise ValueError(f"width={width} cannot be divided by 2")
+        if height % 2:
+            raise ValueError(f"height={height} cannot be divided by 2")
         yuvsize = srcpath.stat().st_size
-        actual_frames = int(yuvsize / (width * height / 2 * 3))
+        framesize = width * height // 2 * 3
+        if yuvsize % framesize:
+            raise ValueError(f"yuvsize={yuvsize} cannot be divided by framesize={framesize}")
+        actual_frames = yuvsize // framesize
         dst_fname = f"{self.tag}-{width}x{height}.yuv"
         dstpath = self.dstdir / dst_fname
 

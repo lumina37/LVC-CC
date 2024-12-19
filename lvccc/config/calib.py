@@ -12,13 +12,7 @@ class CalibCfg(AutoConvImpl):
     MLADirection: bool = False
 
     def dump(self, f: TextIO) -> None:
-        maxlen = 0
-        for field in dcs.fields(self):
-            if (flen := len(field.name)) > maxlen:
-                maxlen = flen
-
-        fstr = f"{{k:<{maxlen}}}: {{v}}\n"
-        f.writelines(fstr.format(k=k, v=v) for k, v in dcs.asdict(self).items())
+        f.writelines(f"{k} : {v}" for k, v in dcs.asdict(self).items())
         f.flush()
 
     @staticmethod

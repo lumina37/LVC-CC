@@ -1,17 +1,9 @@
+.*/
+*build*/
 __pycache__/
-*.py[co]
+*.py[cd]
 
-build/
-*.egg-info/
-
-__pypackages__/
-
-.venv
 .python-version
-*.lock
-
-.idea/
-.vscode/
 
 /figs
 *.png

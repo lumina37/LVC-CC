@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import ClassVar, Generic, TypeVar
 
 from ..config import get_config
-from ..helper import to_json
+from ..helper import mkdir, to_json
 from ..logging import get_logger
 from .abc import TRetTask, TSelfTask, TVarTask
 from .chain import Chain
@@ -103,6 +103,7 @@ class RootTask(Generic[TSelfTask]):
         log = get_logger()
 
         try:
+            mkdir(self.dstdir)
             self._inner_run()
         except Exception:
             log.error(f"Task `{self.dstdir.name}` failed! Reason: {traceback.format_exc()}")

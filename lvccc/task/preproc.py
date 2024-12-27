@@ -5,8 +5,8 @@ import shutil
 from pathlib import Path
 from typing import ClassVar
 
-from ..config import MCACfg, get_config
-from ..helper import mkdir, run_cmds
+from ..config import get_config
+from ..helper import get_any_file, run_cmds
 from .base import NonRootTask
 from .infomap import query
 
@@ -23,38 +23,35 @@ class PreprocTask(NonRootTask["PreprocTask"]):
 
     @functools.cached_property
     def srcdir(self) -> Path:
-        srcdir = query(self.parent) / "img"
+        srcdir = query(self.parent)
         return srcdir
 
     def _inner_run(self) -> None:
         config = get_config()
 
         cfg_srcdir = Path("config") / self.seq_name
-        cfg_dstdir = self.dstdir / "cfg"
-        mkdir(cfg_dstdir)
+        yuv_srcpath = get_any_file(self.srcdir, '*.yuv')
 
-        img_dstdir = self.dstdir / "img"
-        mkdir(img_dstdir)
-
-        mcacfg_srcpath = cfg_srcdir / "mca.cfg"
-        mcacfg = MCACfg.from_file(mcacfg_srcpath)
-
-        calib_cfg_name = "calib.xml"
-        cfg_dstpath = cfg_dstdir / calib_cfg_name
-        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
-        mcacfg.calibFile = str(cfg_dstpath)
-        mcacfg.inFile = self.srcdir / config.default_pattern
-        mcacfg.outDir = img_dstdir / config.default_pattern
-        mcacfg.frameBegin = 1
-        mcacfg.frameEnd = self.frames
-        mcacfg.crop_ratio = self.crop_ratio
-
-        mcacfg_dstpath = cfg_dstdir / "mca.cfg"
-        mcacfg.to_file(mcacfg_dstpath)
+        calib_cfg_name = "calib.cfg"
+        calib_cfg_dstpath = self.dstdir / calib_cfg_name
+        shutil.copyfile(cfg_srcdir / calib_cfg_name, calib_cfg_dstpath)
 
         cmds = [
-            config.app.preproc,
-            mcacfg_dstpath,
+            config.app.proccessor,
+            calib_cfg_dstpath,
+            "-i",
+            yuv_srcpath,
+            "-o",
+            self.dstdir,
+            "--end",
+            self.frames,
+            "--cropRatio",
+            self.crop_ratio,
         ]
 
         run_cmds(cmds)
+
+        yuv_dstpath = get_any_file(self.dstdir, '*.yuv')
+        _, size = yuv_dstpath.name.rsplit('-', 1)
+        new_fname = f"{self.tag}-{size}"
+        yuv_dstpath.rename(yuv_dstpath.with_name(new_fname))

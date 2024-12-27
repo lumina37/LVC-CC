@@ -39,6 +39,12 @@ RUN git clone --depth 1 https://github.com/lumina37/TLCT.git && \
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DTLCT_ENABLE_LTO=ON -DTLCT_HEADER_ONLY=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 && \
     cmake --build build --config Release --parallel $($(nproc)-1) --target tlct-bin
 
+# MCA
+RUN git clone --depth 1 https://github.com/lumina37/MCA.git && \
+    cd MCA && \
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMCA_ENABLE_LTO=ON -DTLCT_HEADER_ONLY=ON -DMCA_TLCT_PATH=/TLCT -DMCA_ARGPARSE_PATH=/argparse-3.1 && \
+    cmake --build build --config Release --parallel $($(nproc)-1) --target mca-bin
+
 # LVC-CC
 RUN mkdir LVC-CC-Wrap && \
     cd LVC-CC-Wrap && \
@@ -50,6 +56,7 @@ FROM python:3.13-alpine AS prod
 
 COPY --from=builder VVCSoftware_VTM-VTM-11.0/bin/EncoderAppStatic /usr/bin
 COPY --from=builder TLCT/build/src/bin/tlct /usr/bin
+COPY --from=builder MCA/build/src/bin/mca /usr/bin
 COPY --from=builder LVC-CC-Wrap ./
 
 RUN cd LVC-CC && \
@@ -81,6 +88,7 @@ output = "/path/to/output"  # 输出位置，随便设
 
 [app]
 encoder = "/path/to/EncoderAppStatic"  # 指向VTM-11.0的编码器EncoderApp
+processor = "/path/to/mca"  # 指向预处理和逆处理工具的可执行文件
 convertor = "/path/to/tlct"  # 指向多视角转换工具的可执行文件
 
 [QP.anchor]

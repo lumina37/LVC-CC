@@ -22,8 +22,7 @@ class _Path(UpdateImpl):
 @dcs.dataclass
 class _App(UpdateImpl):
     encoder: str = ""
-    preproc: str = ""
-    postproc: str = ""
+    proccessor: str = ""
     convertor: str = ""
 
 

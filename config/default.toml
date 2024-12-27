@@ -13,8 +13,7 @@ output = ""
 
 [app]
 encoder = "EncoderApp"
-preproc = "mca-preproc"
-postproc = "mca-postproc"
+proccessor = "mca"
 convertor = "tlct"
 
 [QP.anchor]

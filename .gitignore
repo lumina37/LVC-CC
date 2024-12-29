@@ -4,6 +4,7 @@ __pycache__/
 *.py[cd]
 
 .python-version
+*.lock
 
 /figs
 *.png

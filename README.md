@@ -52,7 +52,7 @@ RUN mkdir LVC-CC-Wrap && \
     cd LVC-CC
 
 
-FROM python:3.13-alpine AS prod
+FROM python:3.13-slim AS prod
 
 COPY --from=builder VVCSoftware_VTM-VTM-11.0/bin/EncoderAppStatic /usr/bin
 COPY --from=builder TLCT/build/src/bin/tlct /usr/bin
@@ -80,7 +80,7 @@ views = 5    # 跑5x5的视角
 
 [cases]
 vtm_types = ["AI", "RA"]  # 填VTM编码模式，填什么跑什么
-seqs = ["Boys", "ExampleSeq"]  # 填序列名称，填什么跑什么
+seqs = ["Boys", "OiOiOi"]  # 填序列名称，填什么跑什么
 
 [path]
 input = "/path/to/input"  # 修改该路径字段以指向input文件夹。input文件夹下应有下载解压后的yuv文件
@@ -93,18 +93,18 @@ convertor = "/path/to/tlct"  # 指向多视角转换工具的可执行文件
 
 [QP.anchor]
 "Boys" = [48, 52]  # 序列名以及对应的需要跑的QP
-"ExampleSeq" = [42, 44]  # 填什么跑什么，目前需要升序排序
+"OiOiOi" = [42, 44]  # 填什么跑什么，目前需要升序排序
 ```
 
 ### 配置input文件夹
 
 在任意位置创建一个input文件夹，并将yuv转移进input文件夹
 
-移入yuv后，input文件夹的目录结构应符合`${input}/${sequence_name}/xxx.yuv`的形式
+移入yuv后，input文件夹的目录结构应符合`${path.input}/${sequence_name}/as_you_like.yuv`的形式
 
-例如：`/path/to/input/Boys/Boys_4080x3068_30fps_8bit.yuv`
+例如：`/path/to/input/Boys/Boys_4080x3068_30fps_8bit.yuv`或`/path/to/input/NagoyaFujita/src.yuv`
 
-yuv的文件名可随意设置
+yuv的文件名**可随意设置**！
 
 ### 启动大全套渲染（含编解码与多视角转换）
 
@@ -142,8 +142,13 @@ RD-Curve会输出到`${output}/summary/figure`下
 
 LVC-CC是一套以任务（`Task`）为单元的crosscheck框架，通过多个`Task`的串联来组织编码测试。
 
-每个`Task`都有一个目标文件夹。这个目标文件夹位于`${output}/tasks`文件夹下。目标文件夹的名称包含了该任务链路上所有前置任务的重点信息。
+每个`Task`都有一个目标文件夹。这个目标文件夹位于`${path.output}/tasks`文件夹下。目标文件夹的名称包含了该任务链路上所有前置任务的重点信息。
 
-以任务文件夹名`compose-Boys-f1-anchor-RA-QP52-8f7e`为例，`compose`是当前任务的类型，`Boys`为测试序列名，`f1`表明帧数量为1，`anchor`表明该任务链路仅包含VTM而不包含额外的编码工具（如MCA等），`RA`表明VVC编码使用random_access相关预设，`QP48`表明编码QP为48，`8f7e`为避免名称重复的hash。
+一些输出任务文件夹的命名样例：
 
-各个yuv也使用了和目标文件夹相同的命名规则。
+- `copy-Boys-f1-58ea` - copy: 复制序列片段的任务 / Boys: 序列名 / f1: 帧数量为1 / 58ea: 自动生成的用于避免名称重复的hash
+- `codec-Boys-f1-anchor-RA-QP52-9014` - codec: VVC编解码任务 / anchor: 该任务链路仅包含VVC编解码而不包含额外的预处理及逆处理工具（如MCA等） / RA: VVC编码使用Random Access预设 / QP52: 编码QP为52
+- `convert-Boys-f1-anchor-RA-QP52-c637` - convert: 多视角转换任务
+- `convert-Boys-f1-base-2444` - base: 任务链路不含VVC编解码，作为基准参与Multi-view PSNR计算
+
+各yuv也使用了和目标文件夹相同的命名规则。

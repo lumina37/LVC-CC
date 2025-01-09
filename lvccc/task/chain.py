@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import dataclasses as dcs
-from typing import SupportsIndex, overload
+from typing import TYPE_CHECKING, SupportsIndex, overload
 
-from .abc import ProtoTask
 from .factory import get_task_type
+
+if TYPE_CHECKING:
+    from .abc import ProtoTask
 
 
 @dcs.dataclass

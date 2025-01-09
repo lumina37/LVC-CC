@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-import dataclasses as dcs
 import functools
 from collections.abc import Callable, Sequence
-from pathlib import Path
-from typing import Protocol, TypeVar
+from typing import TYPE_CHECKING, Protocol, TypeVar
+
+if TYPE_CHECKING:
+    import dataclasses as dcs
+    from pathlib import Path
 
 
 class ProtoChain(Sequence):

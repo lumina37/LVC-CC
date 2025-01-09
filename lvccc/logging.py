@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 logging.addLevelName(logging.FATAL, "FATAL")
-logging.addLevelName(logging.WARN, "WARN")
+logging.addLevelName(logging.WARNING, "WARN")
 
 logging.raiseExceptions = False
 

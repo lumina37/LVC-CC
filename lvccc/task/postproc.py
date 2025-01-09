@@ -26,7 +26,7 @@ class PostprocTask(NonRootTask["PostprocTask"]):
         config = get_config()
 
         cfg_srcdir = Path("config") / self.seq_name
-        yuv_srcpath = get_any_file(self.srcdir, '*.yuv')
+        yuv_srcpath = get_any_file(self.srcdir, "*.yuv")
 
         calib_cfg_name = "calib.cfg"
         calib_cfg_dstpath = self.dstdir / calib_cfg_name
@@ -48,7 +48,7 @@ class PostprocTask(NonRootTask["PostprocTask"]):
 
         run_cmds(cmds)
 
-        yuv_dstpath = get_any_file(self.dstdir, '*.yuv')
-        _, size = yuv_dstpath.name.rsplit('-', 1)
+        yuv_dstpath = get_any_file(self.dstdir, "*.yuv")
+        _, size = yuv_dstpath.name.rsplit("-", 1)
         new_fname = f"{self.tag}-{size}"
         yuv_dstpath.rename(yuv_dstpath.with_name(new_fname))

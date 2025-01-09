@@ -17,7 +17,7 @@ def gen_infomap(tasks_dir: Path) -> TypeInfomap:
             taskinfo_path = task_dir / "task.json"
             if not taskinfo_path.exists():
                 continue
-            with taskinfo_path.open(encoding='utf-8') as f:
+            with taskinfo_path.open(encoding="utf-8") as f:
                 objs = json.load(f)
                 chain = Chain(objs)
                 task = chain[-1]

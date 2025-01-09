@@ -28,11 +28,11 @@ class CopyTask(RootTask["CopyTask"]):
 
         input_dir = config.path.input
         srcdir = input_dir / self.seq_name
-        srcpath = get_any_file(srcdir, '*.yuv')
+        srcpath = get_any_file(srcdir, "*.yuv")
         mkdir(self.dstdir)
 
         cfg_srcdir = Path("config") / self.seq_name
-        with (cfg_srcdir / "calib.cfg").open(encoding='utf-8') as f:
+        with (cfg_srcdir / "calib.cfg").open(encoding="utf-8") as f:
             calib_cfg = CalibCfg.load(f)
 
         width = calib_cfg.LensletWidth

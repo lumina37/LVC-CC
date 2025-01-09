@@ -44,13 +44,13 @@ class CodecTask(NonRootTask["CodecTask"]):
         vtm_type_cfg_path = Path("config") / f"vtm_{self.vtm_type}.cfg"
         vtm_type_cfg_path = vtm_type_cfg_path.absolute()
 
-        srcpath = get_any_file(self.srcdir, '*.yuv')
+        srcpath = get_any_file(self.srcdir, "*.yuv")
         width, height = size_from_filename(srcpath.name)
 
         dstpath_pattern = self.dstdir / self.tag
-        log_path = dstpath_pattern.with_suffix('.log')
+        log_path = dstpath_pattern.with_suffix(".log")
 
-        with log_path.open('w', encoding='utf-8') as logf:
+        with log_path.open("w", encoding="utf-8") as logf:
             cmds = [
                 config.app.encoder,
                 "-c",

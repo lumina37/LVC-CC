@@ -17,7 +17,7 @@ def get_direction(seq_name: str) -> bool:
     direction = False
 
     cfg_srcdir = Path("config") / seq_name
-    with (cfg_srcdir / "calib.cfg").open(encoding='utf-8') as f:
+    with (cfg_srcdir / "calib.cfg").open(encoding="utf-8") as f:
         calib_cfg = CalibCfg.load(f)
         direction = calib_cfg.MLADirection
 
@@ -50,7 +50,7 @@ def view_indices(views: int, is_rot: bool) -> Iterator[int]:
 
 
 def padding_comp(comp: bytes, in_size: tuple[int, int], out_size: tuple[int, int]) -> bytes:
-    comp_img = Image.frombuffer('L', in_size, comp)
+    comp_img = Image.frombuffer("L", in_size, comp)
 
     width_resize = out_size[0] / in_size[0]
     height_resize = out_size[1] / in_size[1]
@@ -60,7 +60,7 @@ def padding_comp(comp: bytes, in_size: tuple[int, int], out_size: tuple[int, int
         target_height = round(in_size[1] * resize_factor)
         comp_img = comp_img.resize((target_width, target_height), Image.Resampling.BOX)
 
-    canvas = Image.new('L', out_size, 127)
+    canvas = Image.new("L", out_size, 127)
     paste_left = (out_size[0] - comp_img.width) // 2
     paste_top = (out_size[1] - comp_img.height) // 2
     canvas.paste(comp_img, (paste_left, paste_top))
@@ -84,7 +84,7 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
         views = get_views(self)
         is_rot = get_direction(self.seq_name)
 
-        srcpaths = sorted((self.srcdir / 'yuv').glob('*.yuv'))
+        srcpaths = sorted((self.srcdir / "yuv").glob("*.yuv"))
         width, height = size_from_filename(srcpaths[0].name)
         ysize = width * height
         uv_width = width // 2
@@ -98,12 +98,12 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
         dst_fname = f"{self.tag}-{OUTSIZE[0]}x{OUTSIZE[1]}.yuv"
         dstpath = self.dstdir / dst_fname
 
-        with dstpath.open('wb') as dstf:
+        with dstpath.open("wb") as dstf:
             frame_idx = 0
             eof = False
             while 1:
                 for view_idx in view_indices(views, is_rot):
-                    with srcpaths[view_idx].open('rb') as srcf:
+                    with srcpaths[view_idx].open("rb") as srcf:
                         srcf.seek(frame_idx * frame_size)
                         for _ in range(self.frame_per_view):
                             ycomp = srcf.read(ysize)

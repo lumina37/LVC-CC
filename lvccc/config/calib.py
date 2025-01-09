@@ -21,9 +21,9 @@ class CalibCfg(AutoConvImpl):
 
         def _items():
             for row in f:
-                key, value = row.replace('\t', ' ').split(':', maxsplit=1)
+                key, value = row.replace("\t", " ").split(":", maxsplit=1)
                 key = key.rstrip()
-                value = value.lstrip().rstrip('\n')
+                value = value.lstrip().rstrip("\n")
                 if key not in fields:
                     continue
                 yield key, value
@@ -31,10 +31,10 @@ class CalibCfg(AutoConvImpl):
         return CalibCfg(**dict(_items()))
 
     def to_file(self, path: Path) -> None:
-        with path.open('w', encoding='utf-8') as f:
+        with path.open("w", encoding="utf-8") as f:
             self.dump(f)
 
     @staticmethod
     def from_file(path: Path) -> "CalibCfg":
-        with path.open(encoding='utf-8') as f:
+        with path.open(encoding="utf-8") as f:
             return CalibCfg.load(f)

@@ -8,12 +8,12 @@ logging.addLevelName(logging.WARN, "WARN")
 
 logging.raiseExceptions = False
 
-_FORMATTER = logging.Formatter("<{asctime}> [{levelname}] [{funcName}] {message}", "%Y-%m-%d %H:%M:%S", style='{')
+_FORMATTER = logging.Formatter("<{asctime}> [{levelname}] [{funcName}] {message}", "%Y-%m-%d %H:%M:%S", style="{")
 
 
 class MCALogger(logging.Logger):
-    def __init__(self, name: str = '', stream_log_level: int = logging.DEBUG) -> None:
-        if name == '':
+    def __init__(self, name: str = "", stream_log_level: int = logging.DEBUG) -> None:
+        if name == "":
             name = Path(sys.argv[0]).stem
         super().__init__(name)
 
@@ -52,7 +52,7 @@ def set_formatter(formatter: logging.Formatter) -> None:
 _FILELOG_ENABLED = False
 
 
-def enable_filelog(log_level: int = logging.INFO, log_dir: Path = Path('log'), backup_count: int = 5) -> None:
+def enable_filelog(log_level: int = logging.INFO, log_dir: Path = Path("log"), backup_count: int = 5) -> None:
     global _FILELOG_ENABLED
 
     if _FILELOG_ENABLED:
@@ -62,7 +62,7 @@ def enable_filelog(log_level: int = logging.INFO, log_dir: Path = Path('log'), b
     log_dir.mkdir(0o755, parents=True, exist_ok=True)
 
     file_hd = logging.handlers.TimedRotatingFileHandler(
-        log_dir / f"{LOGGER.name}.log", when='MIDNIGHT', backupCount=backup_count, encoding='utf-8'
+        log_dir / f"{LOGGER.name}.log", when="MIDNIGHT", backupCount=backup_count, encoding="utf-8"
     )
     file_hd.setLevel(log_level)
     file_hd.setFormatter(_FORMATTER)

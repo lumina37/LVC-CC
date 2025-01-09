@@ -49,7 +49,7 @@ def load(f: BinaryIO) -> Config:
 
 def from_file(path: Path) -> Config:
     path = Path(path)
-    with path.open('rb') as f:
+    with path.open("rb") as f:
         return load(f)
 
 
@@ -63,4 +63,4 @@ def get_config() -> Config:
     return _CFG
 
 
-_CFG = from_file(Path('config') / 'default.toml')
+_CFG = from_file(Path("config") / "default.toml")

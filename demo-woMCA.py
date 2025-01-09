@@ -2,7 +2,7 @@ from lvccc.config import update_config
 from lvccc.executor import Executor
 from lvccc.task import CodecTask, ConvertTask, CopyTask
 
-update_config('config.toml')
+update_config("config.toml")
 
 tcopy = CopyTask(seq_name="NagoyaFujita")
 tcodec = CodecTask(qp=46).with_parent(tcopy)

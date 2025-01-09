@@ -27,7 +27,7 @@ class UpdateImpl(AutoConvImpl):
             rhs_value = getattr(rhs, field.name)
             if not rhs_value:
                 continue
-            if hasattr(rhs_value, 'update'):
+            if hasattr(rhs_value, "update"):
                 lhs_value = getattr(self, field.name)
                 lhs_value.update(rhs_value)
             else:

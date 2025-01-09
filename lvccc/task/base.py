@@ -66,7 +66,7 @@ class RootTask(Generic[TSelfTask]):
 
     @functools.cached_property
     def hash(self) -> int:
-        hashbytes = self.to_json().encode('utf-8')
+        hashbytes = self.to_json().encode("utf-8")
         hashint = zlib.adler32(hashbytes)
         return hashint
 
@@ -89,7 +89,7 @@ class RootTask(Generic[TSelfTask]):
         return config.path.output / "tasks" / real_dirname
 
     def dump_taskinfo(self, target: Path) -> None:
-        with target.open('w', encoding='utf-8') as f:
+        with target.open("w", encoding="utf-8") as f:
             taskinfo = self.to_json(pretty=True)
             f.write(taskinfo)
 
@@ -122,7 +122,7 @@ class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
     @functools.cached_property
     def tag(self) -> str:
         parent_part = self.parent.tag
-        prefix = '-' if self.self_tag else ''
+        prefix = "-" if self.self_tag else ""
         self_part = prefix + self.self_tag
         tag = parent_part + self_part
         return tag

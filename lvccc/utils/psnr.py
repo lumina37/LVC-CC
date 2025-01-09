@@ -44,7 +44,7 @@ def calc_mv_psnr(task: ConvertTask) -> np.ndarray:
     base_dir = query(convert_task) / "yuv"
     self_dir = query(task) / "yuv"
 
-    width, height = size_from_filename(get_any_file(base_dir, '*.yuv').name)
+    width, height = size_from_filename(get_any_file(base_dir, "*.yuv").name)
 
     channels = 3
     accpsnr = np.zeros(channels)
@@ -64,8 +64,8 @@ def calc_lenslet_psnr(task: ConvertTask) -> np.ndarray:
     copy_task = task.chain[0]
     codec_task = get_ancestor(task, CodecTask)
 
-    lhs = get_any_file(query(copy_task), '*.yuv')
-    rhs = get_any_file(query(codec_task), '*.yuv')
+    lhs = get_any_file(query(copy_task), "*.yuv")
+    rhs = get_any_file(query(codec_task), "*.yuv")
 
     width, height = size_from_filename(lhs.name)
 

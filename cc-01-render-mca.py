@@ -4,7 +4,7 @@ from lvccc.config import update_config
 from lvccc.executor import Executor
 from lvccc.task import CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTask
 
-config = update_config('config.toml')
+config = update_config("config.toml")
 
 roots = []
 

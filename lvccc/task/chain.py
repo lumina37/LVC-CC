@@ -22,7 +22,7 @@ class Chain:
 
     def __getitem__(self, idx):
         if isinstance(idx, int):
-            TaskType = get_task_type(self.objs[idx]['task'])
+            TaskType = get_task_type(self.objs[idx]["task"])
             endidx = len(self.objs) if idx == -1 else idx + 1
             task: ProtoTask = TaskType.from_dicts(self.objs[:endidx])
             return task

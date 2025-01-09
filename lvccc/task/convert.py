@@ -37,10 +37,10 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         calib_cfg_dstpath = self.dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, calib_cfg_dstpath)
 
-        with (cfg_srcdir / "cmd.sh").open(encoding='utf-8') as f:
-            extra_args = f.read().rstrip('\n').split(' ')
+        with (cfg_srcdir / "cmd.sh").open(encoding="utf-8") as f:
+            extra_args = f.read().rstrip("\n").split(" ")
 
-        yuv_srcpath = get_any_file(self.srcdir, '*.yuv')
+        yuv_srcpath = get_any_file(self.srcdir, "*.yuv")
         yuv_dstdir = self.dstdir / "yuv"
         mkdir(yuv_dstdir)
 

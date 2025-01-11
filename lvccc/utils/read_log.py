@@ -31,10 +31,3 @@ def read_enclog(logf: TextIOBase) -> EncLog:
 
     log = EncLog(bitrate, timecost)
     return log
-
-
-@dcs.dataclass
-class PSNR:
-    y: float = 0.0
-    u: float = 0.0
-    v: float = 0.0

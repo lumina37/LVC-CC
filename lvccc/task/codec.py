@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from ..config import get_config
-from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
+from ..helper import get_any_file, run_cmds, size_from_filename
 from .base import NonRootTask
 from .copy import CopyTask
 from .infomap import query
@@ -38,8 +38,8 @@ class CodecTask(NonRootTask["CodecTask"]):
         return tag
 
     def _inner_run(self) -> None:
+        # Prepare
         config = get_config()
-        mkdir(self.dstdir)
 
         vtm_type_cfg_path = Path("config") / f"vtm_{self.vtm_type}.cfg"
         vtm_type_cfg_path = vtm_type_cfg_path.absolute()
@@ -50,6 +50,7 @@ class CodecTask(NonRootTask["CodecTask"]):
         dstpath_pattern = self.dstdir / self.tag
         log_path = dstpath_pattern.with_suffix(".log")
 
+        # Run
         with log_path.open("w", encoding="utf-8") as logf:
             cmds = [
                 config.app.encoder,

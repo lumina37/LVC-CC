@@ -27,15 +27,16 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         return srcdir
 
     def _inner_run(self) -> None:
+        # Prepare
         config = get_config()
 
         cfg_srcdir = Path("config") / self.seq_name
         yuv_srcpath = get_any_file(self.srcdir, "*.yuv")
 
-        calib_cfg_name = "calib.cfg"
-        calib_cfg_dstpath = self.dstdir / calib_cfg_name
-        shutil.copyfile(cfg_srcdir / calib_cfg_name, calib_cfg_dstpath)
+        calib_cfg_dstpath = self.dstdir / "calib.cfg"
+        shutil.copyfile(cfg_srcdir / "calib.cfg", calib_cfg_dstpath)
 
+        # Run
         cmds = [
             config.app.proccessor,
             calib_cfg_dstpath,

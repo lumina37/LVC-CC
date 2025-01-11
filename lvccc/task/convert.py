@@ -29,13 +29,12 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         return srcdir
 
     def _inner_run(self) -> None:
+        # Prepare
         config = get_config()
 
         cfg_srcdir = Path("config") / self.seq_name
-
-        calib_cfg_name = "calib.cfg"
-        calib_cfg_dstpath = self.dstdir / calib_cfg_name
-        shutil.copyfile(cfg_srcdir / calib_cfg_name, calib_cfg_dstpath)
+        calib_cfg_dstpath = self.dstdir / "calib.cfg"
+        shutil.copyfile(cfg_srcdir / "calib.cfg", calib_cfg_dstpath)
 
         with (cfg_srcdir / "cmd.sh").open(encoding="utf-8") as f:
             extra_args = f.read().rstrip("\n").split(" ")
@@ -44,6 +43,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         yuv_dstdir = self.dstdir / "yuv"
         mkdir(yuv_dstdir)
 
+        # Run
         cmds = [
             config.app.convertor,
             calib_cfg_dstpath,

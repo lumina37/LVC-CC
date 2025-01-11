@@ -4,10 +4,12 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import ClassVar
 
+import numpy as np
+import yuvio
 from PIL import Image
 
 from ..config import CalibCfg
-from ..helper import mkdir, size_from_filename
+from ..helper import size_from_filename
 from .base import NonRootTask, TVarTask
 from .convert import ConvertTask
 from .infomap import query
@@ -41,32 +43,48 @@ def view_indices(views: int, is_rot: bool) -> Iterator[int]:
     else:
         row_step, col_step = views, 1
 
-    rowidx = 0
+    forward = True
+    row_idx = 0
     for row in range(views):
-        colidx = rowidx + row * row_step
+        row_idx = row * row_step
+        if not forward:
+            row_idx += (views - 1) * col_step
         for col in range(views):
-            idx = colidx + col * col_step
+            idx = row_idx + col * (col_step if forward else -col_step)
             yield idx
+        forward = not forward
 
 
-def padding_comp(comp: bytes, in_size: tuple[int, int], out_size: tuple[int, int]) -> bytes:
-    comp_img = Image.frombuffer("L", in_size, comp)
-
-    width_resize = out_size[0] / in_size[0]
-    height_resize = out_size[1] / in_size[1]
+def padding_img(img: Image.Image, out_size: tuple[int, int]) -> Image:
+    width_resize = out_size[0] / img.width
+    height_resize = out_size[1] / img.height
     resize_factor = min(width_resize, height_resize)
     if resize_factor < 1.0:
-        target_width = round(in_size[0] * resize_factor)
-        target_height = round(in_size[1] * resize_factor)
-        comp_img = comp_img.resize((target_width, target_height), Image.Resampling.BOX)
+        target_width = round(img.width * resize_factor)
+        target_height = round(img.height * resize_factor)
+        img = img.resize((target_width, target_height), Image.Resampling.BOX)
 
-    canvas = Image.new("L", out_size, 127)
-    paste_left = (out_size[0] - comp_img.width) // 2
-    paste_top = (out_size[1] - comp_img.height) // 2
-    canvas.paste(comp_img, (paste_left, paste_top))
+    canvas = Image.new("L", out_size, 0)  # TODO: should be 127
+    paste_left = (out_size[0] - img.width) // 2
+    paste_top = (out_size[1] - img.height) // 2
+    canvas.paste(img, (paste_left, paste_top))
 
-    canvas_bytes = canvas.tobytes()
-    return canvas_bytes
+    return canvas
+
+
+def padding(src: yuvio.core.YUVFrame, out_size: tuple[int, int]) -> bytes:
+    uv_out_size = (out_size[0] // 2, out_size[1] // 2)
+
+    ysrc = Image.fromarray(src.y)
+    ydst = padding_img(ysrc, out_size)
+    usrc = Image.fromarray(src.u)
+    udst = padding_img(usrc, uv_out_size)
+    vsrc = Image.fromarray(src.v)
+    vdst = padding_img(vsrc, uv_out_size)
+
+    dst_frame = yuvio.frame((np.asarray(ydst), np.asarray(udst), np.asarray(vdst)), "yuv420p")
+
+    return dst_frame
 
 
 @dcs.dataclass
@@ -85,45 +103,29 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
         is_rot = get_direction(self.seq_name)
 
         srcpaths = sorted((self.srcdir / "yuv").glob("*.yuv"))
-        width, height = size_from_filename(srcpaths[0].name)
-        ysize = width * height
-        uv_width = width // 2
-        uv_height = height // 2
-        uvsize = ysize // 4
-        frame_size = ysize + uvsize * 2
+        src_wdt, src_hgt = size_from_filename(srcpaths[0].name)
+
         OUTSIZE = (1920, 1080)
-        HALF_OUTSIZE = (OUTSIZE[0] // 2, OUTSIZE[1] // 2)
-
-        mkdir(self.dstdir)
         dst_fname = f"{self.tag}-{OUTSIZE[0]}x{OUTSIZE[1]}.yuv"
-        dstpath = self.dstdir / dst_fname
+        writer = yuvio.get_writer(self.dstdir / dst_fname, OUTSIZE[0], OUTSIZE[1], "yuv420p")
 
-        with dstpath.open("wb") as dstf:
-            frame_idx = 0
-            eof = False
-            while 1:
-                for view_idx in view_indices(views, is_rot):
-                    with srcpaths[view_idx].open("rb") as srcf:
-                        srcf.seek(frame_idx * frame_size)
-                        for _ in range(self.frame_per_view):
-                            ycomp = srcf.read(ysize)
-                            ucomp = srcf.read(uvsize)
-                            vcomp = srcf.read(uvsize)
+        frame_idx = 0
+        eof = False
+        while 1:
+            for view_idx in view_indices(views, is_rot):
+                reader = yuvio.get_reader(srcpaths[view_idx], src_wdt, src_hgt, "yuv420p")
+                for _ in range(self.frame_per_view):
+                    src = reader.read(frame_idx, 1)[0]
+                    dst = padding(src, OUTSIZE)
+                    writer.write(dst)
 
-                            padded_ycomp = padding_comp(ycomp, (width, height), OUTSIZE)
-                            dstf.write(padded_ycomp)
-                            padded_ucomp = padding_comp(ucomp, (uv_width, uv_height), HALF_OUTSIZE)
-                            dstf.write(padded_ucomp)
-                            padded_vcomp = padding_comp(vcomp, (uv_width, uv_height), HALF_OUTSIZE)
-                            dstf.write(padded_vcomp)
-
-                            frame_idx += 1
-                            if frame_idx == self.frames:
-                                eof = True
-                                break
-
-                    if eof:
+                    frame_idx += 1
+                    if frame_idx == self.frames:
+                        eof = True
                         break
 
                 if eof:
                     break
+
+            if eof:
+                break

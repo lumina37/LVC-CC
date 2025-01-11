@@ -4,7 +4,7 @@ from lvccc.task import CodecTask, ConvertTask, CopyTask
 
 update_config("config.toml")
 
-tcopy = CopyTask(seq_name="NagoyaFujita")
+tcopy = CopyTask(seq_name="Fujita")
 tcodec = CodecTask(qp=46).with_parent(tcopy)
 tconvert = ConvertTask(views=3).with_parent(tcodec)
 

@@ -102,7 +102,7 @@ convertor = "/path/to/tlct"  # 指向多视角转换工具的可执行文件
 
 移入yuv后，input文件夹的目录结构应符合`${path.input}/${sequence_name}/as_you_like.yuv`的形式
 
-例如：`/path/to/input/Boys/Boys_4080x3068_30fps_8bit.yuv`或`/path/to/input/NagoyaFujita/src.yuv`
+例如：`/path/to/input/Boys/Boys_4080x3068_30fps_8bit.yuv`或`/path/to/input/Fujita/src.yuv`
 
 yuv的文件名**可随意设置**！
 

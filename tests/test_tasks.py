@@ -2,7 +2,7 @@ from lvccc.task import Chain, CodecTask, ConvertTask, CopyTask, PostprocTask, Pr
 
 
 def test_tasks():
-    tcopy = CopyTask(seq_name="NagoyaFujita", frames=1)
+    tcopy = CopyTask(seq_name="Fujita", frames=1)
     tpre = PreprocTask().with_parent(tcopy)
     tcodec = CodecTask(qp=46).with_parent(tpre)
     tpost = PostprocTask().with_parent(tcodec)

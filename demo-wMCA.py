@@ -4,7 +4,7 @@ from lvccc.task import CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTa
 
 update_config("config.toml")
 
-tcopy = CopyTask(seq_name="NagoyaFujita")
+tcopy = CopyTask(seq_name="Fujita")
 tpre = PreprocTask().with_parent(tcopy)
 tcodec = CodecTask(qp=46).with_parent(tpre)
 tpost = PostprocTask().with_parent(tcodec)

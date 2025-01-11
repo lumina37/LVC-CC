@@ -10,7 +10,7 @@ config = update_config("config.toml")
 
 log = get_logger()
 
-summary_dir = config.path.output / "summary/tasks"
+summary_dir = config.dir.output / "summary/tasks"
 
 
 for seq_name in config.cases.seqs:

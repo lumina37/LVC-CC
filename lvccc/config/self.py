@@ -14,7 +14,7 @@ class _Cases(UpdateImpl):
 
 
 @dcs.dataclass
-class _Path(UpdateImpl):
+class _Dir(UpdateImpl):
     input: Path = dcs.field(default_factory=Path)
     output: Path = dcs.field(default_factory=Path)
 
@@ -37,10 +37,10 @@ class Config(UpdateImpl):
     frames: int = 1
     views: int = 5
     cases: _Cases = dcs.field(default_factory=_Cases)
-    path: _Path = dcs.field(default_factory=_Path)
+    dir: _Dir = dcs.field(default_factory=_Dir)
     app: _App = dcs.field(default_factory=_App)
-    default_pattern: str = ""
     QP: _QP = dcs.field(default_factory=_QP)
+    md5: dict[str, str] = dcs.field(default_factory=dict)
 
 
 def load(f: BinaryIO) -> Config:

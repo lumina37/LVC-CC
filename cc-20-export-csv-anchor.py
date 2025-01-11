@@ -7,7 +7,7 @@ from lvccc.task import CodecTask, ConvertTask, CopyTask, gen_infomap
 
 config = update_config("config.toml")
 
-summary_dir = config.path.output / "summary"
+summary_dir = config.dir.output / "summary"
 src_dir = summary_dir / "tasks"
 dst_dir = summary_dir / "csv"
 mkdir(dst_dir)

@@ -1,5 +1,6 @@
 import dataclasses as dcs
 import functools
+import hashlib
 import shutil
 from pathlib import Path
 from typing import ClassVar
@@ -8,6 +9,7 @@ import yuvio
 
 from ..config import CalibCfg, get_config
 from ..helper import get_any_file, mkdir
+from ..logging import get_logger
 from .base import RootTask
 
 
@@ -26,9 +28,23 @@ class CopyTask(RootTask["CopyTask"]):
     def _inner_run(self) -> None:
         config = get_config()
 
-        input_dir = config.path.input
+        input_dir = config.dir.input
         srcdir = input_dir / self.seq_name
         srcpath = get_any_file(srcdir, "*.yuv")
+
+        if self.seq_name not in config.md5:
+            logger = get_logger()
+            logger.warning(f"MD5 checksum of {self.seq_name} is not set")
+
+        md5_state = hashlib.md5(usedforsecurity=False)
+        with srcpath.open("rb") as yuvf:
+            while chunk := yuvf.read(4 * 1024):
+                md5_state.update(chunk)
+        md5_hex = md5_state.hexdigest()
+        if md5_hex != config.md5[self.seq_name]:
+            logger = get_logger()
+            logger.warning(f"MD5 checksum does not match for {srcpath}")
+
         mkdir(self.dstdir)
 
         cfg_srcdir = Path("config") / self.seq_name
@@ -37,14 +53,8 @@ class CopyTask(RootTask["CopyTask"]):
 
         width = calib_cfg.LensletWidth
         height = calib_cfg.LensletHeight
-        if width % 2:
-            raise ValueError(f"width={width} cannot be divided by 2")
-        if height % 2:
-            raise ValueError(f"height={height} cannot be divided by 2")
         yuvsize = srcpath.stat().st_size
         framesize = width * height // 2 * 3
-        if yuvsize % framesize:
-            raise ValueError(f"yuvsize={yuvsize} cannot be divided by framesize={framesize}")
         actual_frames = yuvsize // framesize
         dst_fname = f"{self.tag}-{width}x{height}.yuv"
         dstpath = self.dstdir / dst_fname
@@ -60,4 +70,4 @@ class CopyTask(RootTask["CopyTask"]):
                 writer.write(yuv_frame)
 
         else:
-            raise ValueError(f"start_idx+frames>actual_frames: {self.start_idx+self.frames}>{actual_frames}")
+            raise ValueError(f"start_idx+frames>actual_frames: {self.start_idx + self.frames}>{actual_frames}")

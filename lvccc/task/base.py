@@ -86,7 +86,7 @@ class RootTask(Generic[TSelfTask]):
     def dstdir(self) -> Path:
         config = get_config()
         real_dirname = f"{self.task}-{self.tag}-{self.shorthash}"
-        return config.path.output / "tasks" / real_dirname
+        return config.dir.output / "tasks" / real_dirname
 
     def dump_taskinfo(self, target: Path) -> None:
         with target.open("w", encoding="utf-8") as f:

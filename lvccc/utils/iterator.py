@@ -10,7 +10,7 @@ def tasks(
 ) -> Generator[TSelfTask]:
     config = get_config()
 
-    tasks_dir = config.path.output / "tasks"
+    tasks_dir = config.dir.output / "tasks"
     glob_pattern = f"{cls.task}*" if cls is not None else "*"
     for d in tasks_dir.glob(glob_pattern):
         if not d.is_dir():

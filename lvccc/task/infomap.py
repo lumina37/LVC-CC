@@ -31,7 +31,7 @@ def get_infomap() -> TypeInfomap:
 
     if _INFOMAP is None:
         config = get_config()
-        _INFOMAP = gen_infomap(config.path.output / "tasks")
+        _INFOMAP = gen_infomap(config.dir.output / "tasks")
 
     return _INFOMAP
 

@@ -1,6 +1,7 @@
 import dataclasses as dcs
 import enum
 import functools
+import shutil
 from pathlib import Path
 from typing import ClassVar
 
@@ -41,8 +42,13 @@ class CodecTask(NonRootTask["CodecTask"]):
         # Prepare
         config = get_config()
 
-        vtm_type_cfg_path = Path("config") / f"vtm_{self.vtm_type}.cfg"
-        vtm_type_cfg_path = vtm_type_cfg_path.absolute()
+        cfg_dstdir = self.dstdir / "cfg"
+        vtm_cfg_srcpath = Path("config") / f"vtm_{self.vtm_type}.cfg"
+        vtm_cfg_dstpath = cfg_dstdir / "type.cfg"
+        shutil.copy(vtm_cfg_srcpath, vtm_cfg_dstpath)
+        seq_cfg_srcpath = Path("config") / self.seq_name / "codec.cfg"
+        seq_cfg_dstpath = cfg_dstdir / "seq.cfg"
+        shutil.copy(seq_cfg_srcpath, seq_cfg_dstpath)
 
         srcpath = get_any_file(self.srcdir, "*.yuv")
         width, height = size_from_filename(srcpath.name)
@@ -55,18 +61,14 @@ class CodecTask(NonRootTask["CodecTask"]):
             cmds = [
                 config.app.encoder,
                 "-c",
-                vtm_type_cfg_path,
+                vtm_cfg_dstpath,
+                "-c",
+                seq_cfg_dstpath,
                 "-wdt",
                 width,
                 "-hgt",
                 height,
-                "-fr",
-                30,
-                "--InputBitDepth=8",
-                "--OutputBitDepth=8",
                 f"--FramesToBeEncoded={self.frames}",
-                "--Level=6.2",
-                "--ConformanceMode=1",
                 f"--QP={self.qp}",
                 "-i",
                 srcpath,

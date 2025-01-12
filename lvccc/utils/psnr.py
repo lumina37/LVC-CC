@@ -5,9 +5,9 @@ import numpy as np
 import yuvio
 
 from ..helper import get_any_file, size_from_filename
-from ..task import CodecTask, ConvertTask
+from ..task import CodecTask, ConvertTask, PostprocTask
 from ..task.infomap import query
-from .backtrack import get_ancestor
+from .backtrack import get_ancestor, is_anchor
 
 
 def calc_array_psnr(lhs: np.ndarray, rhs: np.ndarray) -> float:
@@ -62,10 +62,13 @@ def calc_mv_psnr(task: ConvertTask) -> np.ndarray:
 
 def calc_lenslet_psnr(task: ConvertTask) -> np.ndarray:
     copy_task = task.chain[0]
-    codec_task = get_ancestor(task, CodecTask)
+    if is_anchor(task):
+        cmp_task = get_ancestor(task, CodecTask)
+    else:
+        cmp_task = get_ancestor(task, PostprocTask)
 
     lhs = get_any_file(query(copy_task), "*.yuv")
-    rhs = get_any_file(query(codec_task), "*.yuv")
+    rhs = get_any_file(query(cmp_task), "*.yuv")
 
     width, height = size_from_filename(lhs.name)
 

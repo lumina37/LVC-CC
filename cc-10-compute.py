@@ -62,7 +62,8 @@ for seq_name in config.cases.seqs:
             log.info(f"Handling {tconvert.tag}")
 
             log_path = get_any_file(query(tcodec), "*.log")
-            enclog = read_enclog(log_path)
+            with log_path.open(encoding="utf-8") as logf:
+                enclog = read_enclog(logf)
 
             llpsnr = calc_lenslet_psnr(tconvert)
             mvpsnr = calc_mv_psnr(tconvert)

@@ -64,7 +64,7 @@ def padding_img(img: Image.Image, out_size: tuple[int, int]) -> Image:
         target_height = round(img.height * resize_factor)
         img = img.resize((target_width, target_height), Image.Resampling.BOX)
 
-    canvas = Image.new("L", out_size, 0)  # TODO: should be 127
+    canvas = Image.new("L", out_size, 127)
     paste_left = (out_size[0] - img.width) // 2
     paste_top = (out_size[1] - img.height) // 2
     canvas.paste(img, (paste_left, paste_top))

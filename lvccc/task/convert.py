@@ -46,11 +46,11 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         # Run
         cmds = [
             config.app.convertor,
-            calib_cfg_dstpath,
+            calib_cfg_dstpath.relative_to(self.dstdir),
             "-i",
             yuv_srcpath,
             "-o",
-            yuv_dstdir,
+            yuv_dstdir.relative_to(self.dstdir),
             "--end",
             self.frames,
             "--views",
@@ -58,7 +58,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
             *extra_args,
         ]
 
-        run_cmds(cmds)
+        run_cmds(cmds, cwd=self.dstdir)
 
         for yuv_path in list(yuv_dstdir.iterdir()):
             new_fname = f"{self.tag}-{yuv_path.name}"

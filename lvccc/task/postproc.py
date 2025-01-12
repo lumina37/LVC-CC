@@ -35,19 +35,19 @@ class PostprocTask(NonRootTask["PostprocTask"]):
         # Run
         cmds = [
             config.app.proccessor,
-            calib_cfg_dstpath,
+            calib_cfg_dstpath.relative_to(self.dstdir),
             "--post",
             "-i",
             yuv_srcpath,
             "-o",
-            self.dstdir,
+            ".",
             "--end",
             self.frames,
             "--cropRatio",
             self.crop_ratio,
         ]
 
-        run_cmds(cmds)
+        run_cmds(cmds, cwd=self.dstdir)
 
         yuv_dstpath = get_any_file(self.dstdir, "*.yuv")
         _, size = yuv_dstpath.name.rsplit("-", 1)

@@ -62,9 +62,9 @@ class CodecTask(NonRootTask["CodecTask"]):
             cmds = [
                 config.app.encoder,
                 "-c",
-                vtm_cfg_dstpath,
+                vtm_cfg_dstpath.relative_to(self.dstdir),
                 "-c",
-                seq_cfg_dstpath,
+                seq_cfg_dstpath.relative_to(self.dstdir),
                 "-wdt",
                 width,
                 "-hgt",

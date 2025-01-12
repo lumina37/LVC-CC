@@ -1,154 +1,106 @@
-## 简介
-
-本项目用于LVC相关的crosscheck
-
-## 安装依赖项
-
-以下为我们目前使用的Dockerfile指令，仅供参考
-
-```Dockerfile
-FROM silkeh/clang:19 AS builder
-
-RUN sed -i 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/debian.sources
-RUN apt update && \
-    apt install -y --no-install-recommends ca-certificates git && \
-    apt clean && \
-    rm -r /etc/apt/sources.list.d
-
-# VTM
-ADD VVCSoftware_VTM-VTM-11.0.tar.bz2 ./
-RUN cd VVCSoftware_VTM-VTM-11.0 && \
-    find . -type f -exec sed -i 's/-Werror//g' {} + && \
-    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && \
-    cmake --build build --config Release --parallel $($(nproc)-1) --target EncoderApp && \
-    cmake --install build
-
-# OpenCV
-ADD opencv-4.11.0.tar.xz ./
-RUN cd opencv-4.11.0 && \
-    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_LIST="imgproc" -DBUILD_SHARED_LIBS=OFF -DCV_TRACE=OFF -DCPU_BASELINE=AVX2 -DCPU_DISPATCH=AVX2 -DOPENCV_ENABLE_ALLOCATOR_STATS=OFF -DWITH_ADE=OFF -DWITH_FFMPEG=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IPP=OFF -DWITH_ITT=OFF -DWITH_JASPER=OFF -DWITH_JPEG=OFF -DWITH_LAPACK=OFF -DWITH_OPENCL=OFF -DWITH_OPENEXR=OFF -DWITH_OPENJPEG=OFF -DWITH_PNG=OFF -DWITH_PROTOBUF=OFF -DWITH_TIFF=OFF -DWITH_VA=OFF -DWITH_VA_INTEL=OFF -DWITH_WEBP=OFF && \
-    make -C build -j$($(nproc)-1) && \
-    make -C build install
-
-# argparse
-ADD argparse-3.1.tar.xz ./
-
-# TLCT
-RUN git clone --depth 1 https://github.com/lumina37/TLCT.git && \
-    cd TLCT && \
-    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DTLCT_ENABLE_LTO=ON -DTLCT_HEADER_ONLY=ON -DTLCT_ARGPARSE_PATH=/argparse-3.1 && \
-    cmake --build build --config Release --parallel $($(nproc)-1) --target tlct-bin
-
-# MCA
-RUN git clone --depth 1 https://github.com/lumina37/MCA.git && \
-    cd MCA && \
-    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMCA_ENABLE_LTO=ON -DTLCT_HEADER_ONLY=ON -DMCA_TLCT_PATH=/TLCT -DMCA_ARGPARSE_PATH=/argparse-3.1 && \
-    cmake --build build --config Release --parallel $($(nproc)-1) --target mca-bin
-
 # LVC-CC
-RUN mkdir LVC-CC-Wrap && \
-    cd LVC-CC-Wrap && \
-    git clone --depth 1 https://github.com/lumina37/LVC-CC.git && \
-    cd LVC-CC
 
+This project is designed for crosscheck of the MPEG WG/04 Lenslet Video Coding.
 
-FROM python:3.13-slim AS prod
+## Prerequisites
 
-COPY --from=builder VVCSoftware_VTM-VTM-11.0/bin/EncoderAppStatic /usr/bin
-COPY --from=builder TLCT/build/src/bin/tlct /usr/bin
-COPY --from=builder MCA/build/src/bin/mca /usr/bin
-COPY --from=builder LVC-CC-Wrap ./
+### Setup Python Env
 
-RUN cd LVC-CC && \
-    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip install -U pip && \
-    pip install .
+Run `pip install .`
 
-WORKDIR /LVC-CC
-CMD ["sh"]
-```
+Besides, LVC-CC also supports `uv sync` via [`uv`](https://docs.astral.sh/uv/).
 
-## 运行脚本
+### Build the Executables
 
-### 配置文件`config.toml`
+The comments in the following `config.toml` guide you download the source code and build the binaries.
 
-在当前目录下新建`config.toml`文件，并参考下面的注释填充`config.toml`中对应字段的内容
+## Configure the Workflow Through `config.toml`
+
+Create a `config.toml` in the project directory. Then follow the comment after each field to configure the workflow.
 
 ```toml
-frames = 30  # 跑30帧
-views = 5    # 跑5x5的视角
+frames = 30  # Run 30 frames
+views = 5    # Generate 5x5 views
 
 [cases]
-vtm_types = ["AI", "RA"]  # 填VTM编码模式，填什么跑什么
-seqs = ["Boys", "OiOiOi"]  # 填序列名称，填什么跑什么
+vtm_types = ["AI", "RA"]  # Only run the type you specified here
+seqs = ["Boys", "OiOiOi"]  # Only run the sequences you specified here
 
 [dir]
-input = "/path/to/input"  # 修改该路径字段以指向input文件夹。input文件夹下应有下载解压后的yuv文件
-output = "/path/to/output"  # 输出位置，随便设
+input = "/path/to/input"  # We should have yuv files inside this input directory
+output = "/path/to/output"  # Anywhere you like
 
 [app]
-encoder = "/path/to/EncoderAppStatic"  # 指向VTM-11.0的编码器EncoderApp
-processor = "/path/to/mca"  # 指向预处理和逆处理工具的可执行文件
-convertor = "/path/to/tlct"  # 指向多视角转换工具的可执行文件
+# Download the binary of [ffmpeg-7.0.2](https://johnvansickle.com/ffmpeg)
+ffmpeg = "/path/to/ffmpeg"
+# Download the source code of [VTM-11.0](https://vcgit.hhi.fraunhofer.de/jvet/VVCSoftware_VTM/-/tree/VTM-11.0)
+# And build the CMake target `EncoderApp`
+encoder = "/path/to/EncoderAppStatic"
+# Download the source code of [RLC-4.0](WIP)
+# And build the CMake target `RLC40`
+convertor = "/path/to/tlct"
 
 [QP.anchor]
-"Boys" = [48, 52]  # 序列名以及对应的需要跑的QP
-"OiOiOi" = [42, 44]  # 填什么跑什么，目前需要升序排序
+Boys = [48, 52]  # Mapping from sequence name to the QPs you wanna run
+Girls = [42, 44]  # Only run the QPs you specified here
+OiOiOi = [42, 44]  # Please place the QPs in ascending order (e.g. 1,2,3,4...)
 ```
 
-### 配置input文件夹
+### Configure the `input` Directory
 
-在任意位置创建一个input文件夹，并将yuv转移进input文件夹
+Create an `input` directory at anywhere you like and **put the yuv files into** it.
 
-移入yuv后，input文件夹的目录结构应符合`${path.input}/${sequence_name}/as_you_like.yuv`的形式
+Once the yuv files are ready, the structure of the `input` directory **should be something like** `${dir.input}/${sequence_name}/as_you_like.yuv`.
 
-例如：`/path/to/input/Boys/Boys_4080x3068_30fps_8bit.yuv`或`/path/to/input/Fujita/src.yuv`
+e.g. `/path/to/input/Boys/Boys_4080x3068_30fps_8bit.yuv` or `/path/to/input/Fujita/src.yuv`
 
-yuv的文件名**可随意设置**！
+The file name of the yuv files can be anything you like. But the name of the parent directory **should be the same as** the sequence name!
 
-### 启动大全套渲染（含编解码与多视角转换）
+### Launch the Workflow
 
-**执行前请确保output文件夹有几个TB的空闲空间**
+Please make sure the `output` directory **is sufficient for** several TeraBytes of data.
 
 ```shell
 python cc-00-convert-anchor.py
 ```
 
-### 计算PSNR指标
+### Compute PSNR
 
 ```shell
 python cc-10-compute.py
 ```
 
-指标会输出到`${output}/summary/tasks`下
+You can check the draft output in `${dir.output}/summary/tasks`.
 
-### 导出csv
+### Export to CSV
 
 ```shell
 python cc-20-export-csv-anchor.py
 ```
 
-包含Bitrate和PSNR的csv会输出到`${output}/summary/csv`下
+You can check the information of Bitrate and PSNR in the output csv files in `${dir.output}/summary/csv`.
 
-### 绘制RD-Curve
+### Draw the RD-Curve
 
 ```shell
 python cc-30-figure-anchor.py
 ```
 
-RD-Curve会输出到`${output}/summary/figure`下
+You can check the RD-Curve figures in `${dir.output}/summary/figure`.
 
-### 输出格式
+## Details of Design
 
-LVC-CC是一套以任务（`Task`）为单元的crosscheck框架，通过多个`Task`的串联来组织编码测试。
+This appendix is for the people who **wants to check** the intermediate output of any `Task`.
 
-每个`Task`都有一个目标文件夹。这个目标文件夹位于`${path.output}/tasks`文件夹下。目标文件夹的名称包含了该任务链路上所有前置任务的重点信息。
+The **basic unit of** LVC-CC is `Task`. We compose multiple `Task`s into a forest (a.k.a list of trees) to conduct the crosscheck workflow.
 
-一些输出任务文件夹的命名样例：
+Each `Task` has its own directory under `${dir.output}/tasks`. The name of the directory **involves all crucial informations** of all upstream `Task`s.
 
-- `copy-Boys-f1-58ea` - copy: 复制序列片段的任务 / Boys: 序列名 / f1: 帧数量为1 / 58ea: 自动生成的用于避免名称重复的hash
-- `codec-Boys-f1-anchor-RA-QP52-9014` - codec: VVC编解码任务 / anchor: 该任务链路仅包含VVC编解码而不包含额外的预处理及逆处理工具（如MCA等） / RA: VVC编码使用Random Access预设 / QP52: 编码QP为52
-- `convert-Boys-f1-anchor-RA-QP52-c637` - convert: 多视角转换任务
-- `convert-Boys-f1-base-2444` - base: 任务链路不含VVC编解码，作为基准参与Multi-view PSNR计算
+Some example of the naming rule of the `Task` directory:
 
-各yuv也使用了和目标文件夹相同的命名规则。
+- `copy-Boys-f1-58ea` - copy: copy a slice from the raw sequence / Boys: sequence name / f1: only run 1 frame / 58ea: the auto-generated hash to prevent duplicate name
+- `codec-Boys-f1-anchor-RA-QP52-9014` - codec: do VVC codec / anchor: the task chain involves VVC codec but excludes any pre/post process tool (e.g. MCA) / RA: VTM is using the Random Access preset / QP52: the codec QP is 52
+- `convert-Boys-f1-anchor-RA-QP52-c637` - convert: convert the lenslet to multi-view
+- `convert-Boys-f1-base-2444` - base: the task chain excludes VVC codec and it is the base reference of the multi-view PSNR computation
+
+Each output yuv file uses the same naming rule as the `Task` directory.

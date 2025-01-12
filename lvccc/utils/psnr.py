@@ -39,9 +39,9 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
 
 def calc_mv_psnr(task: ConvertTask) -> np.ndarray:
     copy_task = task.chain[0]
-    convert_task = ConvertTask(views=task.views).with_parent(copy_task)
+    base_task = task.__class__(views=task.views).with_parent(copy_task)
 
-    base_dir = query(convert_task) / "yuv"
+    base_dir = query(base_task) / "yuv"
     self_dir = query(task) / "yuv"
 
     width, height = size_from_filename(get_any_file(base_dir, "*.yuv").name)

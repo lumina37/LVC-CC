@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from ..config import get_config
-from ..helper import get_any_file, run_cmds, size_from_filename
+from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
 from .base import NonRootTask
 from .copy import CopyTask
 from .infomap import query
@@ -43,6 +43,7 @@ class CodecTask(NonRootTask["CodecTask"]):
         config = get_config()
 
         cfg_dstdir = self.dstdir / "cfg"
+        mkdir(cfg_dstdir)
         vtm_cfg_srcpath = Path("config") / f"vtm_{self.vtm_type}.cfg"
         vtm_cfg_dstpath = cfg_dstdir / "type.cfg"
         shutil.copy(vtm_cfg_srcpath, vtm_cfg_dstpath)

@@ -102,21 +102,21 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
         views = get_views(self)
         is_rot = get_direction(self.seq_name)
 
-        srcpaths = sorted((self.srcdir / "yuv").glob("*.yuv"))
-        src_wdt, src_hgt = size_from_filename(srcpaths[0].name)
+        src_paths = sorted((self.srcdir / "yuv").glob("*.yuv"))
+        src_wdt, src_hgt = size_from_filename(src_paths[0].name)
 
-        OUTSIZE = (1920, 1080)
-        dst_fname = f"{self.tag}-{OUTSIZE[0]}x{OUTSIZE[1]}.yuv"
-        writer = yuvio.get_writer(self.dstdir / dst_fname, OUTSIZE[0], OUTSIZE[1], "yuv420p")
+        dst_wdt, dst_hgt = 1920, 1080
+        dst_fname = f"{self.tag}-{dst_wdt}x{dst_hgt}.yuv"
+        writer = yuvio.get_writer(self.dstdir / dst_fname, dst_wdt, dst_hgt, "yuv420p")
 
         frame_idx = 0
         eof = False
         while 1:
             for view_idx in view_indices(views, is_rot):
-                reader = yuvio.get_reader(srcpaths[view_idx], src_wdt, src_hgt, "yuv420p")
+                reader = yuvio.get_reader(src_paths[view_idx], src_wdt, src_hgt, "yuv420p")
                 for _ in range(self.frame_per_view):
                     src = reader.read(frame_idx, 1)[0]
-                    dst = padding(src, OUTSIZE)
+                    dst = padding(src, (dst_wdt, dst_hgt))
                     writer.write(dst)
 
                     frame_idx += 1

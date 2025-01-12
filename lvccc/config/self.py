@@ -21,6 +21,7 @@ class _Dir(UpdateImpl):
 
 @dcs.dataclass
 class _App(UpdateImpl):
+    ffmpeg: str = ""
     encoder: str = ""
     proccessor: str = ""
     convertor: str = ""

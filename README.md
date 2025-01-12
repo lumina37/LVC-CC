@@ -6,15 +6,15 @@ This project is designed for crosscheck of the MPEG WG/04 Lenslet Video Coding.
 
 ### Setup Python Env
 
-Run `pip install .`
-
-Besides, LVC-CC also supports `uv sync` via [`uv`](https://docs.astral.sh/uv/).
+```shell
+pip install .
+```
 
 ### Build the Executables
 
-The comments in the following `config.toml` guide you download the source code and build the binaries.
+Follow the comments in the `config.toml` to download or build binaries.
 
-## Configure the Workflow Through `config.toml`
+### Setup `config.toml`
 
 Create a `config.toml` in the project directory. Then follow the comment after each field to configure the workflow.
 
@@ -23,11 +23,11 @@ frames = 30  # Run 30 frames
 views = 5    # Generate 5x5 views
 
 [cases]
-vtm_types = ["AI", "RA"]  # Only run the type you specified here
-seqs = ["Boys", "OiOiOi"]  # Only run the sequences you specified here
+vtm_types = ["AI", "RA"]    # Specify which VTM type to run (All Intra / Random Access)
+seqs = ["Boys2", "OiOiOi"]  # Specify which sequence to run
 
 [dir]
-input = "/path/to/input"  # We should have yuv files inside this input directory
+input = "/path/to/input"    # Put the lenslet yuv files into this directory
 output = "/path/to/output"  # Anywhere you like
 
 [app]
@@ -38,23 +38,22 @@ ffmpeg = "/path/to/ffmpeg"
 encoder = "/path/to/EncoderAppStatic"
 # Download the source code of [RLC-4.0](WIP)
 # And build the CMake target `RLC40`
-convertor = "/path/to/tlct"
+convertor = "/path/to/RLC40"
 
 [QP.anchor]
-Boys = [48, 52]  # Mapping from sequence name to the QPs you wanna run
-Girls = [42, 44]  # Only run the QPs you specified here
-OiOiOi = [42, 44]  # Please place the QPs in ascending order (e.g. 1,2,3,4...)
+Boys2 = [48, 52]   # Mapping from sequence name to the QPs you wanna run
+OiOiOi = [42, 44]  # Please order the QPs in ascending order (e.g. 42,44,46,48...)
 ```
 
-### Configure the `input` Directory
+### About the `input` Directory
 
-Create an `input` directory at anywhere you like and **put the yuv files into** it.
+Please **put the lenslet yuv files** into this directory.
 
-Once the yuv files are ready, the structure of the `input` directory **should be something like** `${dir.input}/${sequence_name}/as_you_like.yuv`.
+Once the lenslet yuv files are ready, the structure of the `input` directory **should be something like** `${dir.input}/${sequence_name}/as_you_like.yuv`.
 
-e.g. `/path/to/input/Boys/Boys_4080x3068_30fps_8bit.yuv` or `/path/to/input/Fujita/src.yuv`
+e.g. `/path/to/input/Boys2/Boys2_3976x2956_30fps_8bit.yuv` or `/path/to/input/Fujita/src.yuv`
 
-The file name of the yuv files can be anything you like. But the name of the parent directory **should be the same as** the sequence name!
+The file name of the yuv files can be anything you like. But make sure that the name of the parent directory **is identical to** the sequence name!
 
 ### Launch the Workflow
 
@@ -70,7 +69,7 @@ python cc-00-convert-anchor.py
 python cc-10-compute.py
 ```
 
-You can check the draft output in `${dir.output}/summary/tasks`.
+You can check the draft result in `${dir.output}/summary/tasks`.
 
 ### Export to CSV
 
@@ -78,7 +77,7 @@ You can check the draft output in `${dir.output}/summary/tasks`.
 python cc-20-export-csv-anchor.py
 ```
 
-You can check the information of Bitrate and PSNR in the output csv files in `${dir.output}/summary/csv`.
+You can check the bitrate, lenslet PSNR and multi-view PSNR in the output csv files in `${dir.output}/summary/csv`.
 
 ### Draw the RD-Curve
 
@@ -86,7 +85,7 @@ You can check the information of Bitrate and PSNR in the output csv files in `${
 python cc-30-figure-anchor.py
 ```
 
-You can check the RD-Curve figures in `${dir.output}/summary/figure`.
+You can check the RD-Curves in `${dir.output}/summary/figure`.
 
 ## Details of Design
 
@@ -94,13 +93,13 @@ This appendix is for the people who **wants to check** the intermediate output o
 
 The **basic unit of** LVC-CC is `Task`. We compose multiple `Task`s into a forest (a.k.a list of trees) to conduct the crosscheck workflow.
 
-Each `Task` has its own directory under `${dir.output}/tasks`. The name of the directory **involves all crucial informations** of all upstream `Task`s.
+Each `Task` is associated with an unique directory under `${dir.output}/tasks`. The name of the directory **involves all crucial informations** of all upstream `Task`s.
 
-Some example of the naming rule of the `Task` directory:
+The naming rule of the `Task` directory:
 
-- `copy-Boys-f1-58ea` - copy: copy a slice from the raw sequence / Boys: sequence name / f1: only run 1 frame / 58ea: the auto-generated hash to prevent duplicate name
-- `codec-Boys-f1-anchor-RA-QP52-9014` - codec: do VVC codec / anchor: the task chain involves VVC codec but excludes any pre/post process tool (e.g. MCA) / RA: VTM is using the Random Access preset / QP52: the codec QP is 52
-- `convert-Boys-f1-anchor-RA-QP52-c637` - convert: convert the lenslet to multi-view
-- `convert-Boys-f1-base-2444` - base: the task chain excludes VVC codec and it is the base reference of the multi-view PSNR computation
+- `copy-Boys2-f1-58ea` - copy: copy a slice from the raw sequence / Boys2: sequence name / f1: only run 1 frame / 58ea: the auto-generated hash to prevent duplicate names
+- `codec-Boys2-f1-anchor-RA-QP52-9014` - codec: do VVC codec / anchor: the task chain involves VVC codec but excludes any pre/post processing tools (e.g. MCA) / RA: VTM is using the Random Access preset / QP52: the codec QP is 52
+- `convert-Boys2-f1-anchor-RA-QP52-c637` - convert: convert the lenslet into multi-view
+- `convert-Boys2-f1-base-2444` - base: the task chain excludes VVC codec and it is the base reference of the multi-view PSNR computation
 
 Each output yuv file uses the same naming rule as the `Task` directory.

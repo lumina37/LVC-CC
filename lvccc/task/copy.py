@@ -34,7 +34,7 @@ class CopyTask(RootTask["CopyTask"]):
 
         if self.seq_name not in config.md5:
             logger = get_logger()
-            logger.warning(f"MD5 checksum of {self.seq_name} is not set")
+            logger.warning(f"MD5 checksum of `{self.seq_name}` is not set")
 
         md5_state = hashlib.md5(usedforsecurity=False)
         with srcpath.open("rb") as yuvf:
@@ -54,6 +54,10 @@ class CopyTask(RootTask["CopyTask"]):
         height = calib_cfg.LensletHeight
         framesize = width * height // 2 * 3
         yuvsize = srcpath.stat().st_size
+        if yuvsize % framesize:
+            raise ValueError(
+                f"The yuv-size `{yuvsize}` is not divisible by the frame-size `{framesize}` with src: {srcpath}"
+            )
         total_frames = yuvsize // framesize
         dst_fname = f"{self.tag}-{width}x{height}.yuv"
         dstpath = self.dstdir / dst_fname

@@ -4,7 +4,7 @@ from lvccc.task import ConvertTask, CopyTask
 
 update_config("config.toml")
 
-tcopy = CopyTask(seq_name="Fujita")
+tcopy = CopyTask(seq_name="Fujita2")
 tconvert = ConvertTask(views=3).with_parent(tcopy)
 
 if __name__ == "__main__":

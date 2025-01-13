@@ -8,7 +8,7 @@ from .base import AutoConvImpl
 
 @dcs.dataclass
 class RLC40Cfg(AutoConvImpl):
-    pipeline: int = 1
+    method: int = 2
     viewNum: int = 5
     Calibration_xml: str = ""
     RawImage_Path: str = ""

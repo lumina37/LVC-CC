@@ -41,7 +41,6 @@ class Config(UpdateImpl):
     dir: _Dir = dcs.field(default_factory=_Dir)
     app: _App = dcs.field(default_factory=_App)
     QP: _QP = dcs.field(default_factory=_QP)
-    md5: dict[str, str] = dcs.field(default_factory=dict)
 
 
 def load(f: BinaryIO) -> Config:

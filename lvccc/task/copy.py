@@ -32,21 +32,22 @@ class CopyTask(RootTask["CopyTask"]):
         srcdir = config.dir.input / self.seq_name
         srcpath = get_any_file(srcdir, "*.yuv")
 
-        if self.seq_name not in config.md5:
-            logger = get_logger()
-            logger.warning(f"MD5 checksum of `{self.seq_name}` is not set")
+        cfg_srcdir = Path("config") / self.seq_name
+        md5_path = cfg_srcdir / "checksum.md5"
+        with md5_path.open("r", encoding="utf-8") as md5f:
+            expect_md5 = md5f.read().strip(" \n")
 
         md5_state = hashlib.md5(usedforsecurity=False)
         with srcpath.open("rb") as yuvf:
             while chunk := yuvf.read(4 * 1024):
                 md5_state.update(chunk)
         md5_hex = md5_state.hexdigest()
-        if md5_hex != config.md5[self.seq_name]:
+        if md5_hex != expect_md5:
             logger = get_logger()
             logger.warning(f"MD5 checksum does not match for {srcpath}")
 
         # Prepare
-        cfg_srcdir = Path("config") / self.seq_name
+
         with (cfg_srcdir / "calib.cfg").open(encoding="utf-8") as f:
             calib_cfg = CalibCfg.load(f)
 

@@ -47,7 +47,6 @@ class CopyTask(RootTask["CopyTask"]):
             logger.warning(f"MD5 checksum does not match for {srcpath}")
 
         # Prepare
-
         with (cfg_srcdir / "calib.cfg").open(encoding="utf-8") as f:
             calib_cfg = CalibCfg.load(f)
 
@@ -56,9 +55,7 @@ class CopyTask(RootTask["CopyTask"]):
         framesize = width * height // 2 * 3
         yuvsize = srcpath.stat().st_size
         if yuvsize % framesize:
-            raise ValueError(
-                f"The yuv-size `{yuvsize}` is not divisible by the frame-size `{framesize}` with src: {srcpath}"
-            )
+            raise ValueError(f"yuvsize%framesize!=0: {yuvsize}%{framesize}!=0 for {srcpath}")
         total_frames = yuvsize // framesize
         dst_fname = f"{self.tag}-{width}x{height}.yuv"
         dstpath = self.dstdir / dst_fname
@@ -75,4 +72,4 @@ class CopyTask(RootTask["CopyTask"]):
                 writer.write(yuv_frame)
 
         else:
-            raise ValueError(f"start_idx+frames>actual_frames: {self.start_idx + self.frames}>{total_frames}")
+            raise ValueError(f"start_idx+frames>actual_frames: {self.start_idx}+{self.frames}>{total_frames}")

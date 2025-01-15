@@ -35,7 +35,7 @@ class CopyTask(RootTask["CopyTask"]):
         cfg_srcdir = Path("config") / self.seq_name
         md5_path = cfg_srcdir / "checksum.md5"
         with md5_path.open("r", encoding="utf-8") as md5f:
-            expect_md5 = md5f.read().strip(" \n")
+            expect_md5 = md5f.read()
 
         md5_state = hashlib.md5(usedforsecurity=False)
         with srcpath.open("rb") as yuvf:
@@ -62,7 +62,7 @@ class CopyTask(RootTask["CopyTask"]):
 
         # Run
         if self.start_idx == 0 and total_frames == self.frames:
-            shutil.copyfile(srcpath, dstpath)
+            dstpath.symlink_to(srcpath)
 
         elif (self.frames + self.start_idx) < total_frames:
             reader = yuvio.get_reader(srcpath, width, height, "yuv420p")

@@ -1,14 +1,12 @@
 import dataclasses as dcs
 import functools
-import hashlib
-import shutil
 from pathlib import Path
 from typing import ClassVar
 
 import yuvio
 
 from ..config import CalibCfg, get_config
-from ..helper import get_any_file
+from ..helper import MD5Cache, compute_md5, get_any_file, get_md5, mtime
 from ..logging import get_logger
 from .base import RootTask
 
@@ -34,17 +32,16 @@ class CopyTask(RootTask["CopyTask"]):
 
         cfg_srcdir = Path("config") / self.seq_name
         md5_path = cfg_srcdir / "checksum.md5"
-        with md5_path.open("r", encoding="utf-8") as md5f:
-            expect_md5 = md5f.read()
-
-        md5_state = hashlib.md5(usedforsecurity=False)
-        with srcpath.open("rb") as yuvf:
-            while chunk := yuvf.read(4 * 1024):
-                md5_state.update(chunk)
-        md5_hex = md5_state.hexdigest()
-        if md5_hex != expect_md5:
-            logger = get_logger()
-            logger.warning(f"MD5 checksum does not match for {srcpath}")
+        except_md5 = get_md5(md5_path)
+        md5_cache = MD5Cache()
+        cached_mtime = md5_cache[except_md5]
+        if (yuv_mtime := mtime(srcpath)) > cached_mtime:
+            md5 = compute_md5(srcpath)
+            if md5 != except_md5:
+                logger = get_logger()
+                logger.warning(f"MD5 checksum does not match for {srcpath}")
+            else:
+                md5_cache[md5] = yuv_mtime
 
         # Prepare
         with (cfg_srcdir / "calib.cfg").open(encoding="utf-8") as f:

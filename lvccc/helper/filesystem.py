@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 
 
-def mkdir(path: Path, mode: int = 0o777) -> None:
+def mkdir(path: Path, mode: int = 0o755) -> None:
     path = Path(path)
     path.mkdir(mode, parents=True, exist_ok=True)
 

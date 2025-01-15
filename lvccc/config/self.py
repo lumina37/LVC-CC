@@ -29,8 +29,8 @@ class _App(UpdateImpl):
 
 @dcs.dataclass
 class _QP(UpdateImpl):
-    wMCA: dict[str, list[int]] = dcs.field(default_factory=dict)
     anchor: dict[str, list[int]] = dcs.field(default_factory=dict)
+    proc: dict[str, list[int]] = dcs.field(default_factory=dict)
 
 
 @dcs.dataclass

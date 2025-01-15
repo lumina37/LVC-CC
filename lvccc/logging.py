@@ -11,7 +11,7 @@ logging.raiseExceptions = False
 _FORMATTER = logging.Formatter("<{asctime}> [{levelname}] [{funcName}] {message}", "%Y-%m-%d %H:%M:%S", style="{")
 
 
-class MCALogger(logging.Logger):
+class LvcccLogger(logging.Logger):
     def __init__(self, name: str = "", stream_log_level: int = logging.DEBUG) -> None:
         if name == "":
             name = Path(sys.argv[0]).stem
@@ -23,14 +23,14 @@ class MCALogger(logging.Logger):
         self.addHandler(stream_hd)
 
 
-LOGGER = MCALogger()
+LOGGER = LvcccLogger()
 
 
-def get_logger() -> MCALogger:
+def get_logger() -> LvcccLogger:
     global LOGGER
 
     if LOGGER is None:
-        LOGGER = MCALogger()
+        LOGGER = LvcccLogger()
 
     return LOGGER
 

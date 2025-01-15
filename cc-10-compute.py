@@ -49,10 +49,10 @@ for seq_name in config.cases.seqs:
                 json.dump(metrics, f, indent=4)
             tconvert.dump_taskinfo(case_dir / "task.json")
 
-    # W MCA
+    # With Pre/Postprocess
     tpreproc = PreprocTask().with_parent(tcopy)
     for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.wMCA.get(seq_name, []):
+        for qp in config.QP.proc.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
             tconvert = Convert40Task(views=config.views).with_parent(tpostproc)

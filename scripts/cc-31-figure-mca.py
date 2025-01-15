@@ -25,7 +25,7 @@ for seq_name in config.cases.seqs:
         bitrates = []
         psnrs = []
 
-        for qp in config.QP.wMCA.get(seq_name, []):
+        for qp in config.QP.proc.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
             tconvert = ConvertTask(views=config.views).with_parent(tpostproc)

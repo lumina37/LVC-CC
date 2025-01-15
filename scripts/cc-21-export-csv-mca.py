@@ -15,7 +15,7 @@ mkdir(dst_dir)
 infomap = gen_infomap(src_dir)
 
 
-with (dst_dir / "mca.csv").open("w", encoding="utf-8", newline="") as csv_file:
+with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
     csv_writer = csv.writer(csv_file)
     headers = [
         "Sequence",
@@ -35,7 +35,7 @@ with (dst_dir / "mca.csv").open("w", encoding="utf-8", newline="") as csv_file:
         tpreproc = PreprocTask().with_parent(tcopy)
 
         for vtm_type in config.cases.vtm_types:
-            for qp in config.QP.wMCA.get(seq_name, []):
+            for qp in config.QP.proc.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
                 tpostproc = PostprocTask().with_parent(tcodec)
                 tconvert = ConvertTask(views=config.views).with_parent(tpostproc)

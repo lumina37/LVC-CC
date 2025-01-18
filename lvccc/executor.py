@@ -28,7 +28,7 @@ class Executor:
                 task: ProtoTask = self.task_queue.get(block=False)
 
             except queue.Empty:  # noqa: PERF203
-                if self.task_cnt.is_null():
+                if not self.task_cnt:
                     return
                 with self.cond:
                     self.cond.wait()
@@ -46,7 +46,7 @@ class Executor:
 
                 self.task_cnt -= 1
 
-                if self.task_cnt.is_null():
+                if not self.task_cnt:
                     with self.cond:
                         self.cond.notify_all()
 

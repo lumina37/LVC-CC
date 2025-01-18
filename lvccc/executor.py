@@ -66,4 +66,5 @@ class Executor:
         workers = [threading.Thread(target=self._worker) for _ in range(self.process_num)]
         for worker in workers:
             worker.start()
+        for worker in workers:
             worker.join()

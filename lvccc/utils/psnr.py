@@ -10,11 +10,11 @@ from ..task.infomap import query
 from .backtrack import get_ancestor, is_anchor
 
 
-def calc_array_psnr(lhs: np.ndarray, rhs: np.ndarray) -> float:
-    mse = np.mean((lhs.astype(np.int16) - rhs.astype(np.int16)) ** 2)
-    if mse == 0:
-        return np.inf
-    return 20 * math.log10(255.0 / math.sqrt(mse))
+def calc_array_mse(lhs: np.ndarray, rhs: np.ndarray) -> int:
+    diff = lhs.astype(np.int16) - rhs.astype(np.int16)
+    sqrdiff = np.square(diff)
+    mse = np.mean(sqrdiff)
+    return mse
 
 
 def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
@@ -23,16 +23,16 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
     if len(lhs_reader) != len(rhs_reader):
         raise RuntimeError(f"Frame count not equal! lhs={lhs} rhs={rhs}")
 
-    psnr_acc = np.zeros(3)
+    mse_acc = np.zeros(3)
     count = 0
 
     for lhs_frame, rhs_frame in zip(lhs_reader, rhs_reader, strict=True):
-        psnr_acc[0] += calc_array_psnr(lhs_frame.y, rhs_frame.y)
-        psnr_acc[1] += calc_array_psnr(lhs_frame.u, rhs_frame.u)
-        psnr_acc[2] += calc_array_psnr(lhs_frame.v, rhs_frame.v)
+        mse_acc[0] += calc_array_mse(lhs_frame.y, rhs_frame.y)
+        mse_acc[1] += calc_array_mse(lhs_frame.u, rhs_frame.u)
+        mse_acc[2] += calc_array_mse(lhs_frame.v, rhs_frame.v)
         count += 1
 
-    psnr = psnr_acc / count
+    psnr = 20.0 * np.log10(255.0 / np.sqrt(mse_acc / count))
 
     return psnr
 

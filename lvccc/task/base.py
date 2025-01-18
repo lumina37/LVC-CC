@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 
 @dcs.dataclass
-class RootTask[TSelfTask]:
+class BaseTask[TSelfTask]:
     task: ClassVar[str] = ""
 
     children: list[ProtoTask] = dcs.field(default_factory=list, init=False, repr=False)
@@ -117,7 +117,11 @@ class RootTask[TSelfTask]:
             log.info(f"Task `{self.dstdir.name}` completed!")
 
 
-class NonRootTask[TSelfTask](RootTask[TSelfTask]):
+class RootTask[TSelfTask](BaseTask[TSelfTask]):
+    pass
+
+
+class NonRootTask[TSelfTask](BaseTask[TSelfTask]):
     @functools.cached_property
     def parent(self) -> ProtoTask:
         return self.chain[-1]

@@ -1,5 +1,5 @@
 import dataclasses as dcs
-from typing import get_origin
+from typing import Self, get_origin
 
 
 @dcs.dataclass
@@ -22,7 +22,7 @@ class AutoConvImpl:
 
 @dcs.dataclass
 class UpdateImpl(AutoConvImpl):
-    def update(self, rhs: "UpdateImpl") -> "UpdateImpl":
+    def update(self, rhs: Self) -> Self:
         for field in dcs.fields(rhs):
             rhs_value = getattr(rhs, field.name)
             if not rhs_value:

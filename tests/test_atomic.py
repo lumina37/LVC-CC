@@ -1,17 +1,17 @@
 import threading
 
-from lvccc.helper import ThreadAtomic
+from lvccc.helper import Atomic
 
 
 def test_tasks():
-    val = ThreadAtomic(0)
+    atomic = Atomic(0)
     addup_per_thread = 50000
     thread_num = 4
 
     def addup():
-        nonlocal val
+        nonlocal atomic
         for _ in range(addup_per_thread):
-            val += 1
+            atomic += 1
 
     threads = [threading.Thread(target=addup) for _ in range(thread_num)]
     for thread in threads:
@@ -19,4 +19,4 @@ def test_tasks():
     for thread in threads:
         thread.join()
 
-    assert val.val == thread_num * addup_per_thread
+    assert atomic.val == thread_num * addup_per_thread

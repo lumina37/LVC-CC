@@ -27,7 +27,7 @@ class SHA1Cache:
             f.write(mtime_str)
 
 
-def get_sha1(path: Path):
+def get_sha1(path: Path) -> str:
     with path.open("r", encoding="utf-8") as f:
         sha1 = f.read()
         return sha1

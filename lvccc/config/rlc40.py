@@ -44,7 +44,7 @@ class RLC40Cfg(AutoConvImpl):
         return RLC40Cfg(**dict(_items()))
 
     def to_file(self, path: Path) -> None:
-        with path.open("w") as f:
+        with path.open("w", encoding="utf-8") as f:
             self.dump(f)
 
     @staticmethod

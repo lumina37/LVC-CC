@@ -1,6 +1,6 @@
 from . import factory
 from .abc import ProtoChain, ProtoTask
-from .base import NonRootTask, RootTask
+from .base import BaseTask, NonRootTask, RootTask
 from .chain import Chain
 from .codec import CodecTask, VtmType
 from .convert import ConvertTask

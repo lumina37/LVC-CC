@@ -25,9 +25,8 @@ def get_direction(seq_name: str) -> bool:
     direction = False
 
     cfg_srcdir = Path("config") / seq_name
-    with (cfg_srcdir / "calib.cfg").open(encoding="utf-8") as f:
-        calib_cfg = CalibCfg.load(f)
-        direction = calib_cfg.MLADirection
+    calib_cfg = CalibCfg.from_file(cfg_srcdir / "calib.cfg")
+    direction = calib_cfg.MLADirection
 
     return direction
 

@@ -46,9 +46,7 @@ class CopyTask(RootTask["CopyTask"]):
                 sha1_cache[sha1] = yuv_mtime
 
         # Prepare
-        with (cfg_srcdir / "calib.cfg").open(encoding="utf-8") as f:
-            calib_cfg = CalibCfg.load(f)
-
+        calib_cfg = CalibCfg.from_file(cfg_srcdir / "calib.cfg")
         width = calib_cfg.LensletWidth
         height = calib_cfg.LensletHeight
         framesize = width * height // 2 * 3
@@ -56,6 +54,7 @@ class CopyTask(RootTask["CopyTask"]):
         if yuvsize % framesize:
             raise ValueError(f"yuvsize%framesize!=0: {yuvsize}%{framesize}!=0 for {srcpath}")
         total_frames = yuvsize // framesize
+
         dst_fname = f"{self.tag}-{width}x{height}.yuv"
         dstpath = self.dstdir / dst_fname
 

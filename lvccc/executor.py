@@ -6,7 +6,6 @@ import threading
 from typing import TYPE_CHECKING
 
 from .helper import Atomic
-from .task.infomap import TypeInfomap, get_infomap
 
 if TYPE_CHECKING:
     from .task.abc import ProtoTask
@@ -17,7 +16,6 @@ class Executor:
     root_tasks: list[ProtoTask]
     process_num: int = 1
 
-    infomap: TypeInfomap = dcs.field(init=False, default_factory=get_infomap)
     task_queue: queue.Queue = dcs.field(init=False, default_factory=queue.Queue)
     task_cnt: Atomic[int] = dcs.field(init=False, default_factory=lambda: Atomic(0))
     cond: threading.Condition = dcs.field(init=False, default_factory=threading.Condition)

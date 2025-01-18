@@ -20,7 +20,7 @@ class Atomic[TVal]:
 
     def __isub__(self, rhs: TVal) -> Self:
         with self.lock:
-            self.val += rhs
+            self.val -= rhs
         return self
 
     def is_null(self) -> bool:

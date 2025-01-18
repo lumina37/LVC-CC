@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from ..config import get_config
-from .abc import TVarTask
 from .chain import Chain
+
+if TYPE_CHECKING:
+    from .abc import ProtoTask
 
 TypeInfomap = dict[int, Path]
 
@@ -36,12 +41,12 @@ def get_infomap() -> TypeInfomap:
     return _INFOMAP
 
 
-def query(task: TVarTask) -> Path | None:
+def query(task: ProtoTask) -> Path | None:
     infomap = get_infomap()
     path = infomap.get(task.hash, None)
     return path
 
 
-def append(task: TVarTask, path: Path) -> None:
+def append(task: ProtoTask, path: Path) -> None:
     infomap = get_infomap()
     infomap[task.hash] = path

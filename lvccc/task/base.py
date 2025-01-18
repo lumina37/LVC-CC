@@ -1,27 +1,30 @@
+from __future__ import annotations
+
 import abc
 import dataclasses as dcs
 import functools
 import traceback
 import zlib
-from collections.abc import Callable
-from pathlib import Path
-from typing import ClassVar, Generic, TypeVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ..config import get_config
 from ..helper import mkdir, to_json
 from ..logging import get_logger
-from .abc import TRetTask, TSelfTask, TVarTask
 from .chain import Chain
 from .infomap import append, query
 
-TTask = TypeVar("TTask", bound="RootTask")
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from pathlib import Path
+
+    from .abc import ProtoTask
 
 
 @dcs.dataclass
-class RootTask(Generic[TSelfTask]):
+class RootTask[TSelfTask]:
     task: ClassVar[str] = ""
 
-    children: list[TTask] = dcs.field(default_factory=list, init=False, repr=False)
+    children: list[ProtoTask] = dcs.field(default_factory=list, init=False, repr=False)
     chain: Chain = dcs.field(default_factory=Chain, init=False, repr=False)
 
     @property
@@ -114,9 +117,9 @@ class RootTask(Generic[TSelfTask]):
             log.info(f"Task `{self.dstdir.name}` completed!")
 
 
-class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
+class NonRootTask[TSelfTask](RootTask[TSelfTask]):
     @functools.cached_property
-    def parent(self) -> TRetTask:
+    def parent(self) -> ProtoTask:
         return self.chain[-1]
 
     @functools.cached_property
@@ -135,7 +138,7 @@ class NonRootTask(Generic[TSelfTask], RootTask[TSelfTask]):
     def frames(self) -> int:
         return self.chain[0].frames
 
-    def with_parent(self, parent: TVarTask) -> TSelfTask:
+    def with_parent(self, parent: ProtoTask) -> TSelfTask:
         # Appending `parent.params` to chain
         chain = parent.chain.copy()
         chain.objs.append(parent.fields())

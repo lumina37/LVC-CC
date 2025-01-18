@@ -1,10 +1,10 @@
 [project]
 name = "lvccc"
-version = "0.11.0a2"
+version = "0.11.0a3"
 description = "A crosscheck framework designed for LVC"
 authors = [{ name = "lumina37", email = "tz23@mails.tsinghua.edu.cn" }]
 dependencies = ["yuvio", "pillow", "matplotlib"]
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.12,<3.14"
 readme = "README.md"
 license = { text = "MIT" }
 
@@ -21,7 +21,7 @@ dev-dependencies = ["pytest"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = [

@@ -1,8 +1,7 @@
 import dataclasses as dcs
+import tomllib
 from pathlib import Path
 from typing import BinaryIO
-
-import tomllib
 
 from .base import UpdateImpl
 

@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import dataclasses as dcs
 import functools
-from collections.abc import Iterator
 from pathlib import Path
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 import yuvio
@@ -10,9 +11,14 @@ from PIL import Image
 
 from ..config import CalibCfg
 from ..helper import size_from_filename
-from .base import NonRootTask, TVarTask
+from .base import NonRootTask
 from .convert import ConvertTask
 from .infomap import query
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from .abc import ProtoTask
 
 
 def get_direction(seq_name: str) -> bool:
@@ -26,7 +32,7 @@ def get_direction(seq_name: str) -> bool:
     return direction
 
 
-def get_views(task: TVarTask) -> int:
+def get_views(task: ProtoTask) -> int:
     views = 5
 
     for t in task.chain:

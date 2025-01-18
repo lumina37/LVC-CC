@@ -1,5 +1,6 @@
-import math
-from pathlib import Path
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 import yuvio
@@ -9,8 +10,11 @@ from ..task import CodecTask, ConvertTask, PostprocTask
 from ..task.infomap import query
 from .backtrack import get_ancestor, is_anchor
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
-def calc_array_mse(lhs: np.ndarray, rhs: np.ndarray) -> int:
+
+def calc_array_mse(lhs: np.ndarray, rhs: np.ndarray) -> float:
     diff = lhs.astype(np.int16) - rhs.astype(np.int16)
     sqrdiff = np.square(diff)
     mse = np.mean(sqrdiff)

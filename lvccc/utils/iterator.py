@@ -1,13 +1,18 @@
+from __future__ import annotations
+
 import json
-from collections.abc import Callable, Generator
+from typing import TYPE_CHECKING
 
 from ..config import get_config
-from ..task import Chain, TSelfTask
+from ..task import Chain, ProtoTask
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator
 
 
 def tasks(
-    cls: type[TSelfTask] | None = None, require: Callable[[TSelfTask], bool] | None = lambda _: True
-) -> Generator[TSelfTask]:
+    cls: type[ProtoTask] | None = None, require: Callable[[ProtoTask], bool] | None = lambda _: True
+) -> Generator[ProtoTask]:
     config = get_config()
 
     tasks_dir = config.dir.output / "tasks"

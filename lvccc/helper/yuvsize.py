@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def size_from_filename(filename: str) -> tuple[int, int]:
     filename = filename.removesuffix(".yuv")
     _, yuvsize = filename.rsplit("-", maxsplit=1)

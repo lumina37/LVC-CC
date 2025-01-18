@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 from collections.abc import Callable, Sequence
-from typing import TYPE_CHECKING, Protocol, TypeVar
+from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
     import dataclasses as dcs
@@ -18,16 +18,11 @@ class ProtoChain(Sequence):
     def copy(self) -> ProtoChain: ...
 
 
-TVarTask = TypeVar("TVarTask", bound="ProtoTask")
-TRetTask = TypeVar("TRetTask", bound="ProtoTask")
-TSelfTask = TypeVar("TSelfTask", bound="ProtoTask")
-
-
-class ProtoTask(Protocol):
+class ProtoTask[TSelfTask](Protocol):
     @property
     def task(self) -> str: ...
     @property
-    def children(self) -> list[TRetTask]: ...
+    def children(self) -> list[ProtoTask]: ...
     @property
     def chain(self) -> ProtoChain: ...
 
@@ -35,7 +30,7 @@ class ProtoTask(Protocol):
     def seq_name(self) -> str: ...
 
     @functools.cached_property
-    def parent(self) -> TRetTask | None: ...
+    def parent(self) -> ProtoTask | None: ...
 
     def fields(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict: ...
 

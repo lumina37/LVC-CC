@@ -1,6 +1,11 @@
+from __future__ import annotations
+
 import dataclasses as dcs
 import re
-from io import TextIOBase
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from io import TextIOBase
 
 
 @dcs.dataclass

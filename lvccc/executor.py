@@ -1,20 +1,25 @@
+from __future__ import annotations
+
 import dataclasses as dcs
 import queue
 import threading
+from typing import TYPE_CHECKING
 
-from .task.abc import TRetTask
+from .helper import ThreadAtomic
 from .task.infomap import TypeInfomap, get_infomap
+
+if TYPE_CHECKING:
+    from .task.abc import ProtoTask
 
 
 @dcs.dataclass
 class Executor:
-    root_tasks: list[TRetTask]
+    root_tasks: list[ProtoTask]
     process_num: int = 1
 
     infomap: TypeInfomap = dcs.field(init=False, default_factory=get_infomap)
     task_queue: queue.Queue = dcs.field(init=False, default_factory=queue.Queue)
-    task_cnt: int = dcs.field(init=False, default=0)
-    task_cnt_lock: threading.Lock = dcs.field(init=False, default_factory=threading.Lock)
+    task_cnt: ThreadAtomic = dcs.field(init=False, default=ThreadAtomic)
     cond: threading.Condition = dcs.field(init=False, default_factory=threading.Condition)
 
     def _exit_ready(self) -> bool:
@@ -26,16 +31,15 @@ class Executor:
             False if there might have some tasks to do and the executor is not ready for exit.
         """
 
-        with self.task_cnt_lock:
-            if self.task_cnt == 0:
-                return True
+        if not self.task_cnt:
+            return True
 
         return False
 
     def _worker(self):
         while 1:
             try:
-                task: TRetTask = self.task_queue.get(block=False)
+                task: ProtoTask = self.task_queue.get(block=False)
 
             except queue.Empty:  # noqa: PERF203
                 if self._exit_ready():
@@ -44,8 +48,7 @@ class Executor:
                     self.cond.wait()
 
             else:
-                with self.task_cnt_lock:
-                    self.task_cnt += len(task.children)
+                self.task_cnt += len(task.children)
 
                 task.run()
 
@@ -55,8 +58,7 @@ class Executor:
                     with self.cond:
                         self.cond.notify(len(task.children))
 
-                with self.task_cnt_lock:
-                    self.task_cnt -= 1
+                self.task_cnt -= 1
 
                 if self._exit_ready():
                     with self.cond:

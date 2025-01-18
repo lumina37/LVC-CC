@@ -12,7 +12,7 @@ output = ""
 [app]
 ffmpeg = "ffmpeg"
 encoder = "EncoderAppStatic"
-proccessor = "mca"
+processor = "mca"
 convertor = "tlct"
 
 [QP.anchor]

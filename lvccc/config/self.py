@@ -23,7 +23,7 @@ class _Dir(UpdateImpl):
 class _App(UpdateImpl):
     ffmpeg: str = ""
     encoder: str = ""
-    proccessor: str = ""
+    processor: str = ""
     convertor: str = ""
 
 

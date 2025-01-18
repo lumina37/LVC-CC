@@ -34,7 +34,7 @@ class PostprocTask(NonRootTask["PostprocTask"]):
 
         # Run
         cmds = [
-            config.app.proccessor,
+            config.app.processor,
             calib_cfg_dstpath.relative_to(self.dstdir),
             "--post",
             "-i",

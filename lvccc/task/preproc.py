@@ -38,7 +38,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
 
         # Run
         cmds = [
-            config.app.proccessor,
+            config.app.processor,
             calib_cfg_dstpath.relative_to(self.dstdir),
             "-i",
             yuv_srcpath,

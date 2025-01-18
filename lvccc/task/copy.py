@@ -8,7 +8,7 @@ from typing import ClassVar
 import yuvio
 
 from ..config import CalibCfg, get_config
-from ..helper import MD5Cache, compute_md5, get_any_file, get_md5, mtime
+from ..helper import SHA1Cache, compute_sha1, get_any_file, get_sha1, mtime
 from ..logging import get_logger
 from .base import RootTask
 
@@ -26,24 +26,24 @@ class CopyTask(RootTask["CopyTask"]):
         return f"{self.seq_name}-f{self.frames}"
 
     def _inner_run(self) -> None:
-        # Check MD5
+        # Check SHA1
         config = get_config()
 
         srcdir = config.dir.input / self.seq_name
         srcpath = get_any_file(srcdir, "*.yuv")
 
         cfg_srcdir = Path("config") / self.seq_name
-        md5_path = cfg_srcdir / "checksum.md5"
-        except_md5 = get_md5(md5_path)
-        md5_cache = MD5Cache()
-        cached_mtime = md5_cache[except_md5]
+        sha1_path = cfg_srcdir / "checksum.sha1"
+        except_sha1 = get_sha1(sha1_path)
+        sha1_cache = SHA1Cache()
+        cached_mtime = sha1_cache[except_sha1]
         if (yuv_mtime := mtime(srcpath)) > cached_mtime:
-            md5 = compute_md5(srcpath)
-            if md5 != except_md5:
+            sha1 = compute_sha1(srcpath)
+            if sha1 != except_sha1:
                 logger = get_logger()
-                logger.warning(f"MD5 checksum does not match for {srcpath}")
+                logger.warning(f"sha1 checksum does not match for {srcpath}")
             else:
-                md5_cache[md5] = yuv_mtime
+                sha1_cache[sha1] = yuv_mtime
 
         # Prepare
         with (cfg_srcdir / "calib.cfg").open(encoding="utf-8") as f:

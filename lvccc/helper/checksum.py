@@ -6,7 +6,7 @@ from pathlib import Path
 from .filesystem import mkdir
 
 
-class MD5Cache:
+class SHA1Cache:
     cache_dir = Path(".lvccc_cache")
 
     def __init__(self):
@@ -27,16 +27,16 @@ class MD5Cache:
             f.write(mtime_str)
 
 
-def get_md5(path: Path):
+def get_sha1(path: Path):
     with path.open("r", encoding="utf-8") as f:
-        md5 = f.read()
-        return md5
+        sha1 = f.read()
+        return sha1
 
 
-def compute_md5(path: Path) -> str:
-    md5_state = hashlib.md5(usedforsecurity=False)
+def compute_sha1(path: Path) -> str:
+    sha1_state = hashlib.sha1(usedforsecurity=False)
     with path.open("rb") as yuvf:
         while chunk := yuvf.read(4 * 1024):
-            md5_state.update(chunk)
-    md5_hex = md5_state.hexdigest()
-    return md5_hex
+            sha1_state.update(chunk)
+    sha1_hex = sha1_state.hexdigest()
+    return sha1_hex

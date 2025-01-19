@@ -4,7 +4,7 @@ from lvccc.config import update_config
 from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, query
-from lvccc.utils import calc_lenslet_psnr, calc_mv_psnr, read_enclog
+from lvccc.utils import CodecLog, calc_lenslet_psnr, calc_mv_psnr
 
 config = update_config("config.toml")
 
@@ -27,8 +27,7 @@ for seq_name in config.cases.seqs:
             log.info(f"Handling {tconvert.tag}")
 
             log_path = get_any_file(query(tcodec), "*.log")
-            with log_path.open(encoding="utf-8") as logf:
-                enclog = read_enclog(logf)
+            enclog = CodecLog.from_file(log_path)
 
             llpsnr = calc_lenslet_psnr(tconvert)
             mvpsnr = calc_mv_psnr(tconvert)
@@ -62,8 +61,7 @@ for seq_name in config.cases.seqs:
             log.info(f"Handling {tconvert.tag}")
 
             log_path = get_any_file(query(tcodec), "*.log")
-            with log_path.open(encoding="utf-8") as logf:
-                enclog = read_enclog(logf)
+            enclog = CodecLog.from_file(log_path)
 
             llpsnr = calc_lenslet_psnr(tconvert)
             mvpsnr = calc_mv_psnr(tconvert)

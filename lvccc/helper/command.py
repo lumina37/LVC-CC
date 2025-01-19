@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import subprocess
-import traceback
 from typing import TYPE_CHECKING
 
 from ..logging import get_logger

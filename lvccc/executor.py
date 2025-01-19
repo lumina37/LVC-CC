@@ -32,17 +32,16 @@ class Executor:
                     self.cond.wait()
 
             else:
-                task.run()
+                if task.run():
+                    if task.children:
+                        for child in task.children:
+                            self.task_queue.put(child, block=False)
 
-                if task.children:
-                    for child in task.children:
-                        self.task_queue.put(child, block=False)
+                        children_cnt = len(task.children)
+                        self.task_cnt += children_cnt
 
-                    children_cnt = len(task.children)
-                    self.task_cnt += children_cnt
-
-                    with self.cond:
-                        self.cond.notify(children_cnt)
+                        with self.cond:
+                            self.cond.notify(children_cnt)
 
                 self.task_cnt -= 1
 

@@ -18,8 +18,8 @@ def run_cmds(cmds: list, output: TextIOBase | None = None, cwd: Path | None = No
         strcmds = [str(cmd) for cmd in cmds]
         subprocess.run(strcmds, stdout=output, stderr=subprocess.STDOUT, cwd=cwd, text=True, check=True)
 
-    except Exception:
-        log.error(f"Failed! err={traceback.format_exc()}")
+    except Exception as err:
+        log.error(f"Failed! err={err!r}")
         raise
 
     else:

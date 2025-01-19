@@ -99,7 +99,7 @@ class BaseTask[TSelfTask]:
     @abc.abstractmethod
     def _inner_run(self) -> None: ...
 
-    def run(self) -> None:
+    def run(self) -> bool:
         if query(self):
             return
 
@@ -110,11 +110,12 @@ class BaseTask[TSelfTask]:
             self._inner_run()
         except Exception:
             log.error(f"Task `{self.dstdir.name}` failed! Reason: {traceback.format_exc()}")
-            raise
+            return False
         else:
             self.dump_taskinfo(self.dstdir / "task.json")
             append(self, self.dstdir.absolute())
             log.info(f"Task `{self.dstdir.name}` completed!")
+            return True
 
 
 class RootTask[TSelfTask](BaseTask[TSelfTask]):

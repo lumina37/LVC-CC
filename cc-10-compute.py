@@ -1,4 +1,5 @@
 import json
+import sys
 
 from lvccc.config import update_config
 from lvccc.helper import get_any_file, mkdir
@@ -6,9 +7,10 @@ from lvccc.logging import get_logger
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, query
 from lvccc.utils import CodecLog, calc_lenslet_psnr, calc_mv_psnr
 
-config = update_config("config.toml")
+config_fname = sys.argv[1] if len(sys.argv) > 1 else "config.toml"
+config = update_config(config_fname)
 
-log = get_logger()
+logger = get_logger()
 
 summary_dir = config.dir.output / "summary/tasks"
 
@@ -24,7 +26,7 @@ for seq_name in config.cases.seqs:
 
             if query(tconvert) is None:
                 continue
-            log.info(f"Handling {tconvert.tag}")
+            logger.info(f"Handling {tconvert.tag}")
 
             log_path = get_any_file(query(tcodec), "*.log")
             enclog = CodecLog.from_file(log_path)
@@ -58,7 +60,7 @@ for seq_name in config.cases.seqs:
 
             if query(tconvert) is None:
                 continue
-            log.info(f"Handling {tconvert.tag}")
+            logger.info(f"Handling {tconvert.tag}")
 
             log_path = get_any_file(query(tcodec), "*.log")
             enclog = CodecLog.from_file(log_path)

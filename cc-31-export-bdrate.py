@@ -1,11 +1,12 @@
 import csv
-import dataclasses as dcs
 import json
+import sys
 
 import numpy as np
 import scipy.interpolate
 
 from lvccc.config import update_config
+from lvccc.helper import mkdir
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask
 
 
@@ -82,23 +83,14 @@ def BD_RATE(R1, PSNR1, R2, PSNR2, piecewise=0):
     return avg_diff
 
 
-@dcs.dataclass
-class PSNR:
-    bitrate: float
-    qp: int
-    ypsnr: float
-    upsnr: float
-    vpsnr: float
-
-    def __lt__(self, rhs: "PSNR") -> bool:
-        return self.bitrate < rhs.bitrate
-
-
-config = update_config("config.toml")
+config_fname = sys.argv[1] if len(sys.argv) > 1 else "config.toml"
+config = update_config(config_fname)
 
 summary_dir = config.dir.output / "summary"
 src_dir = summary_dir / "tasks"
-csv_path = summary_dir / "csv/bdrate.csv"
+dst_dir = summary_dir / "csv"
+mkdir(dst_dir)
+csv_path = dst_dir / "bdrate.csv"
 
 with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
     csv_writer = csv.writer(csv_f)

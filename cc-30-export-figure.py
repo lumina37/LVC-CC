@@ -1,4 +1,5 @@
 import json
+import sys
 
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
@@ -7,7 +8,8 @@ from lvccc.config import update_config
 from lvccc.helper import mkdir
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, gen_infomap
 
-config = update_config("config.toml")
+config_fname = sys.argv[1] if len(sys.argv) > 1 else "config.toml"
+config = update_config(config_fname)
 
 summary_dir = config.dir.output / "summary"
 src_dir = summary_dir / "tasks"

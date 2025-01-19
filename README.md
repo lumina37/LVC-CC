@@ -31,12 +31,12 @@ input = "/path/to/input"    # Put the lenslet yuv files into this directory
 output = "/path/to/output"  # Anywhere you like
 
 [app]
-# Download the binary of [ffmpeg-7.0.2](https://johnvansickle.com/ffmpeg)
+# Download the binary of [ffmpeg](https://johnvansickle.com/ffmpeg)
 ffmpeg = "/path/to/ffmpeg"
 # Download the source code of [VTM-11.0](https://vcgit.hhi.fraunhofer.de/jvet/VVCSoftware_VTM/-/tree/VTM-11.0)
 # And build the CMake target `EncoderApp`
 encoder = "/path/to/EncoderAppStatic"
-# Download the source code of [RLC-4.0](WIP)
+# Download the source code of [RLC-4.0](https://gitlab.com/mpeg-dense-light-field/rlc/-/tree/version4.0)
 # And build the CMake target `RLC40`
 convertor = "/path/to/RLC40"
 

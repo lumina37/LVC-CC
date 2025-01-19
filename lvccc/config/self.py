@@ -31,6 +31,12 @@ class _QP(UpdateImpl):
     anchor: dict[str, list[int]] = dcs.field(default_factory=dict)
     proc: dict[str, list[int]] = dcs.field(default_factory=dict)
 
+    def __post_init__(self):
+        for field in dcs.fields(self):
+            qpdic: dict[str, list[int]] = getattr(self, field.name)
+            for qps in qpdic.values():
+                qps.sort()
+
 
 @dcs.dataclass
 class Config(UpdateImpl):

@@ -42,7 +42,7 @@ convertor = "/path/to/RLC40"
 
 [QP.anchor]
 Boys2 = [48, 52]   # Mapping from sequence name to the QPs you wanna run
-OiOiOi = [42, 44]  # Please order the QPs in ascending order (e.g. 42,44,46,48...)
+OiOiOi = [42, 44]  # The QPs will be auto-sorted into ascending order
 ```
 
 ### About the `input` Directory

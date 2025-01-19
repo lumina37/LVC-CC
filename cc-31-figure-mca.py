@@ -49,7 +49,7 @@ for seq_name in config.cases.seqs:
 
         ax.plot(bitrates, psnrs)
 
-        label = "anchor"
+        label = "proc"
         fname = f"{label}-{seq_name}-{vtm_type}"
         fig.savefig((dst_dir / fname).with_suffix(".png"))
         fig.savefig((dst_dir / fname).with_suffix(".svg"))

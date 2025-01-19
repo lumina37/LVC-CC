@@ -3,7 +3,7 @@ import json
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import CodecTask, ConvertTask, CopyTask, gen_infomap
+from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, gen_infomap
 
 config = update_config("config.toml")
 
@@ -15,7 +15,7 @@ mkdir(dst_dir)
 infomap = gen_infomap(src_dir)
 
 
-with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_file:
+with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
     csv_writer = csv.writer(csv_file)
     headers = [
         "Sequence",
@@ -32,11 +32,13 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_fil
 
     for seq_name in config.cases.seqs:
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
+        tpreproc = PreprocTask().with_parent(tcopy)
 
         for vtm_type in config.cases.vtm_types:
-            for qp in config.QP.anchor.get(seq_name, []):
-                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-                tconvert = ConvertTask(views=config.views).with_parent(tcodec)
+            for qp in config.QP.proc.get(seq_name, []):
+                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
+                tpostproc = PostprocTask().with_parent(tcodec)
+                tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
 
                 json_path = src_dir / tcodec.tag / "psnr.json"
                 if not json_path.exists():

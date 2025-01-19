@@ -5,7 +5,7 @@ from matplotlib.axes import Axes
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTask, gen_infomap
+from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, gen_infomap
 
 config = update_config("config.toml")
 
@@ -28,7 +28,7 @@ for seq_name in config.cases.seqs:
         for qp in config.QP.proc.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
-            tconvert = ConvertTask(views=config.views).with_parent(tpostproc)
+            tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
 
             json_path = src_dir / tcodec.tag / "psnr.json"
             if not json_path.exists():

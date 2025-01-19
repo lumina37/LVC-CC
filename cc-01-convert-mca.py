@@ -2,7 +2,7 @@ import os
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTask
+from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask
 
 config = update_config("config.toml")
 
@@ -12,7 +12,7 @@ for seq_name in config.cases.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    tconvert = ConvertTask(views=config.views).with_parent(tcopy)
+    tconvert = Convert40Task(views=config.views).with_parent(tcopy)
 
     if qps := config.QP.proc.get(seq_name, []):
         tpreproc = PreprocTask().with_parent(tcopy)
@@ -20,7 +20,7 @@ for seq_name in config.cases.seqs:
             for qp in qps:
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
                 tpostproc = PostprocTask().with_parent(tcodec)
-                tconvert = ConvertTask(views=config.views).with_parent(tpostproc)
+                tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
 
 
 if __name__ == "__main__":

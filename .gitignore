@@ -10,6 +10,6 @@ __pycache__/
 *.png
 *.txt
 *.csv
-config.toml
+*.toml
 
 misc*

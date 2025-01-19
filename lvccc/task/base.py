@@ -101,7 +101,7 @@ class BaseTask[TSelfTask]:
 
     def run(self) -> bool:
         if query(self):
-            return
+            return True
 
         log = get_logger()
 

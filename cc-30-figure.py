@@ -22,9 +22,24 @@ for seq_name in config.cases.seqs:
     tpreproc = PreprocTask().with_parent(tcopy)
 
     for vtm_type in config.cases.vtm_types:
-        bitrates = []
-        psnrs = []
+        anchor_bitrates = []
+        anchor_psnrs = []
+        for qp in config.QP.anchor.get(seq_name, []):
+            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
+            tconvert = Convert40Task(views=config.views).with_parent(tcodec)
 
+            json_path = src_dir / tcodec.tag / "psnr.json"
+            if not json_path.exists():
+                continue
+
+            with json_path.open(encoding="utf-8") as f:
+                metrics: dict = json.load(f)
+
+            anchor_bitrates.append(metrics["bitrate"])
+            anchor_psnrs.append(metrics["mvpsnr_y"])
+
+        proc_bitrates = []
+        proc_psnrs = []
         for qp in config.QP.proc.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
@@ -37,8 +52,8 @@ for seq_name in config.cases.seqs:
             with json_path.open(encoding="utf-8") as f:
                 metrics: dict = json.load(f)
 
-            bitrates.append(metrics["bitrate"])
-            psnrs.append(metrics["mvpsnr_y"])
+            proc_bitrates.append(metrics["bitrate"])
+            proc_psnrs.append(metrics["mvpsnr_y"])
 
         fig, ax = plt.subplots(figsize=(6, 6))
         ax: Axes = ax
@@ -47,9 +62,10 @@ for seq_name in config.cases.seqs:
         title = f"{seq_name}"
         ax.set_title(title)
 
-        ax.plot(bitrates, psnrs)
+        ax.plot(anchor_bitrates, anchor_psnrs, label="anchor")
+        ax.plot(proc_bitrates, proc_psnrs, label="proc")
+        ax.legend()
 
-        label = "proc"
-        fname = f"{label}-{seq_name}-{vtm_type}"
+        fname = f"{seq_name}-{vtm_type}"
         fig.savefig((dst_dir / fname).with_suffix(".png"))
         fig.savefig((dst_dir / fname).with_suffix(".svg"))

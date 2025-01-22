@@ -7,7 +7,7 @@ import scipy.interpolate
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask
+from lvccc.task import CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTask
 
 
 def BD_PSNR(R1, PSNR1, R2, PSNR2, piecewise=0):
@@ -109,7 +109,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
             anchor_psnrs = []
             for qp in config.QP.anchor.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-                tconvert = Convert40Task(views=config.views).with_parent(tcodec)
+                tconvert = ConvertTask(views=config.views).with_parent(tcodec)
 
                 json_path = src_dir / tcodec.tag / "psnr.json"
                 if not json_path.exists():
@@ -126,7 +126,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
             for qp in config.QP.proc.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
                 tpostproc = PostprocTask().with_parent(tcodec)
-                tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+                tconvert = ConvertTask(views=config.views).with_parent(tpostproc)
 
                 json_path = src_dir / tcodec.tag / "psnr.json"
                 if not json_path.exists():

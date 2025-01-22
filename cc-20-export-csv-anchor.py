@@ -4,7 +4,7 @@ import sys
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import CodecTask, Convert40Task, CopyTask, gen_infomap
+from lvccc.task import CodecTask, ConvertTask, CopyTask, gen_infomap
 
 config_fname = sys.argv[1] if len(sys.argv) > 1 else "config.toml"
 config = update_config(config_fname)
@@ -38,7 +38,7 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_fil
         for vtm_type in config.cases.vtm_types:
             for qp in config.QP.anchor.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-                tconvert = Convert40Task(views=config.views).with_parent(tcodec)
+                tconvert = ConvertTask(views=config.views).with_parent(tcodec)
 
                 json_path = src_dir / tcodec.tag / "psnr.json"
                 if not json_path.exists():

@@ -36,9 +36,9 @@ ffmpeg = "/path/to/ffmpeg"
 # Download the source code of [VTM-11.0](https://vcgit.hhi.fraunhofer.de/jvet/VVCSoftware_VTM/-/tree/VTM-11.0)
 # And build the CMake target `EncoderApp`
 encoder = "/path/to/EncoderAppStatic"
-# Download the source code of [RLC-4.0](https://gitlab.com/mpeg-dense-light-field/rlc/-/tree/version4.0)
-# And build the CMake target `RLC40`
-convertor = "/path/to/RLC40"
+# Download the source code of [TLCT](https://github.com/lumina37/TLCT)
+# And build the CMake target `tlct-bin`
+convertor = "/path/to/tlct"
 
 [QP.anchor]
 Boys2 = [48, 52]   # Mapping from sequence name to the QPs you wanna run

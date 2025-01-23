@@ -3,6 +3,7 @@ from __future__ import annotations
 import abc
 import dataclasses as dcs
 import functools
+import time
 import traceback
 import zlib
 from typing import TYPE_CHECKING, ClassVar
@@ -107,14 +108,17 @@ class BaseTask[TSelfTask]:
 
         try:
             mkdir(self.dstdir)
+            start_ns = time.monotonic_ns()
             self._inner_run()
+            end_ns = time.monotonic_ns()
         except Exception:
             log.error(f"Task `{self.dstdir.name}` failed! Reason: {traceback.format_exc()}")
             return False
         else:
             self.dump_taskinfo(self.dstdir / "task.json")
             append(self, self.dstdir.absolute())
-            log.info(f"Task `{self.dstdir.name}` completed!")
+            elasped_s = (end_ns - start_ns) / 1e9
+            log.info(f"Task `{self.dstdir.name}` completed! Elapsed time: {elasped_s:.3f}s")
             return True
 
 

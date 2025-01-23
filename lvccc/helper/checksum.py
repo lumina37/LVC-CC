@@ -10,25 +10,28 @@ class SHA1Cache:
     cache_dir = Path(".lvccc_cache")
 
     def __init__(self):
-        mkdir(self.cache_dir)
+        if not self.cache_dir.exists():
+            mkdir(self.cache_dir)
+            with (self.cache_dir / ".gitignore").open("w") as f:
+                f.write("*")
 
     def __getitem__(self, hsh: str) -> int:
         hsh_path = self.cache_dir / hsh
         if not hsh_path.exists():
             return 0
-        with hsh_path.open("r", encoding="utf-8") as f:
+        with hsh_path.open("r") as f:
             mtime_str = f.read()
             mtime = int(mtime_str)
             return mtime
 
     def __setitem__(self, hsh: str, mtime: int) -> None:
-        with (self.cache_dir / hsh).open("w", encoding="utf-8") as f:
+        with (self.cache_dir / hsh).open("w") as f:
             mtime_str = str(mtime)
             f.write(mtime_str)
 
 
 def get_sha1(path: Path) -> str:
-    with path.open("r", encoding="utf-8") as f:
+    with path.open("r") as f:
         sha1 = f.read()
         return sha1
 

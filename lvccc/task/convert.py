@@ -38,7 +38,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         calib_cfg_dstpath = self.dstdir / "calib.cfg"
         shutil.copyfile(cfg_srcdir / "calib.cfg", calib_cfg_dstpath)
 
-        with (cfg_srcdir / "convert.sh").open(encoding="utf-8") as f:
+        with (cfg_srcdir / "convert.sh").open() as f:
             extra_args = f.read().split(" ")
 
         yuv_srcpath = get_any_file(self.srcdir, "*.yuv")

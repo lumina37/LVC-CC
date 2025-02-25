@@ -15,6 +15,10 @@ from .infomap import query
 
 @dcs.dataclass
 class PreprocTask(NonRootTask["PreprocTask"]):
+    """
+    MCA preprocess.
+    """
+
     task: ClassVar[str] = "preproc"
 
     crop_ratio: float = 1 / math.sqrt(2)

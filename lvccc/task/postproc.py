@@ -15,6 +15,10 @@ from .infomap import query
 
 @dcs.dataclass
 class PostprocTask(NonRootTask["PostprocTask"]):
+    """
+    MCA postprocess.
+    """
+
     task: ClassVar[str] = "postproc"
 
     crop_ratio: float = 1 / math.sqrt(2)

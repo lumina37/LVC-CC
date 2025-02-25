@@ -17,6 +17,10 @@ IMG_PATTERN = "frame%03d"
 
 @dcs.dataclass
 class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
+    """
+    Multi-view conversion (with RLC-4.0).
+    """
+
     task: ClassVar[str] = "convert40"
 
     def _inner_run(self) -> None:

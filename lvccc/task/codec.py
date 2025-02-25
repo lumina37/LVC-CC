@@ -21,6 +21,10 @@ class VtmType(enum.StrEnum):
 
 @dcs.dataclass
 class CodecTask(NonRootTask["CodecTask"]):
+    """
+    VVC Codec (with VTM-11.0).
+    """
+
     task: ClassVar[str] = "codec"
 
     DEFAULT_QP: ClassVar[int] = -1

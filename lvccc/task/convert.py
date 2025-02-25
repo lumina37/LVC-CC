@@ -15,6 +15,10 @@ from .infomap import query
 
 @dcs.dataclass
 class ConvertTask(NonRootTask["ConvertTask"]):
+    """
+    Multi-view conversion (with TLCT).
+    """
+
     task: ClassVar[str] = "convert"
 
     views: int = 1

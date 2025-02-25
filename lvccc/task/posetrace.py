@@ -94,6 +94,10 @@ def padding(src: yuvio.core.YUVFrame, out_size: tuple[int, int]) -> bytes:
 
 @dcs.dataclass
 class PosetraceTask(NonRootTask["PosetraceTask"]):
+    """
+    Posetrace for subjective tests.
+    """
+
     task: ClassVar[str] = "posetrace"
 
     frame_per_view: int = 1

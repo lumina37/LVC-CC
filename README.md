@@ -57,7 +57,7 @@ The file name of the yuv files can be anything you like. But make sure that the 
 
 ### Launch the Workflow
 
-Please make sure the `output` directory **is sufficient for** several TeraBytes of data.
+Please make sure the `output` directory **is sufficient for** several **T**era**B**ytes of data.
 
 ```shell
 python cc-00-convert-anchor.py
@@ -97,9 +97,9 @@ Each `Task` is associated with an unique directory under `${dir.output}/tasks`. 
 
 The naming rule of the `Task` directory:
 
-- `copy-Boys2-f1-58ea` - copy: copy a slice from the raw sequence / Boys2: sequence name / f1: only run 1 frame / 58ea: the auto-generated hash to prevent duplicate names
-- `codec-Boys2-f1-anchor-RA-QP52-9014` - codec: do VVC codec / anchor: the task chain involves VVC codec but excludes any pre/post processing tools (e.g. MCA) / RA: VTM is using the Random Access preset / QP52: the codec QP is 52
-- `convert-Boys2-f1-anchor-RA-QP52-c637` - convert: convert the lenslet into multi-view
-- `convert-Boys2-f1-base-2444` - base: the task chain excludes VVC codec and it is the base reference of the multi-view PSNR computation
+- `copy-Boys2-f1-58ea` - copy: this is a `CopyTask` (copy a slice from the raw sequence) / Boys2: sequence name / f1: only run 1 frame / 58ea: the auto-generated hash to prevent duplicate names
+- `codec-Boys2-f1-anchor-RA-QP52-9014` - codec: this is a `CodecTask` (VVC Codec) / anchor: the task chain involves VVC codec but excludes any pre/post processing tools (e.g. MCA) / RA: VTM is using the Random Access preset / QP52: the codec QP is 52
+- `convert40-Boys2-f1-anchor-RA-QP52-c637` - convert: this is a `Convert40Task` (convert the lenslet into multi-view using `RLC40`)
+- `convert40-Boys2-f1-base-2444` - base: the task chain excludes VVC codec and it is the base reference of the multi-view PSNR computation
 
 Each output yuv file uses the same naming rule as the `Task` directory.

@@ -15,8 +15,8 @@ class RLC40Cfg(AutoConvImpl):
     Output_Path: str = ""
     start_frame: int = 1
     end_frame: int = 1
-    height: int = 2048
-    width: int = 2048
+    height: int = 1080
+    width: int = 1920
     upsample: int = 2
     psizeInflate: float = math.sqrt(3) * 1.5
     maxPsize: float = 0.5

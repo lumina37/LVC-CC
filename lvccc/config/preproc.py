@@ -6,18 +6,18 @@ from .base import AutoConvImpl
 
 
 @dcs.dataclass
-class CalibCfg(AutoConvImpl):
-    LensletWidth: int = 1920
-    LensletHeight: int = 1080
-    MLADirection: bool = False
+class PreprocCfg(AutoConvImpl):
+    FramesToBeEncoded: int = 30
+    SourceWidth: int = 1920
+    SourceHeight: int = 1080
 
     def dump(self, f: TextIO) -> None:
         f.writelines(f"{k} : {v}\n" for k, v in dcs.asdict(self).items())
         f.flush()
 
     @staticmethod
-    def load(f: TextIO) -> "CalibCfg":
-        fields = {field.name for field in dcs.fields(CalibCfg)}
+    def load(f: TextIO) -> "PreprocCfg":
+        fields = {field.name for field in dcs.fields(PreprocCfg)}
 
         def _items():
             for row in f:
@@ -28,13 +28,13 @@ class CalibCfg(AutoConvImpl):
                     continue
                 yield key, value
 
-        return CalibCfg(**dict(_items()))
+        return PreprocCfg(**dict(_items()))
 
     def to_file(self, path: Path) -> None:
         with path.open("w", encoding="utf-8") as f:
             self.dump(f)
 
     @staticmethod
-    def from_file(path: Path) -> "CalibCfg":
+    def from_file(path: Path) -> "PreprocCfg":
         with path.open(encoding="utf-8") as f:
-            return CalibCfg.load(f)
+            return PreprocCfg.load(f)

@@ -1,4 +1,4 @@
-from .backtrack import is_anchor, is_base
+from .backtrack import get_ancestor, is_anchor, is_base
 from .codeclog import CodecLog
 from .hardware import avaliable_cpu_count
 from .iterator import tasks

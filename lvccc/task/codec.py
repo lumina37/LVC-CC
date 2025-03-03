@@ -52,10 +52,10 @@ class CodecTask(NonRootTask["CodecTask"]):
         mkdir(cfg_dstdir)
         vtm_cfg_srcpath = Path("config") / f"vtm_{self.vtm_type}.cfg"
         vtm_cfg_dstpath = cfg_dstdir / "type.cfg"
-        shutil.copy(vtm_cfg_srcpath, vtm_cfg_dstpath)
+        shutil.copyfile(vtm_cfg_srcpath, vtm_cfg_dstpath)
         seq_cfg_srcpath = Path("config") / self.seq_name / "codec.cfg"
         seq_cfg_dstpath = cfg_dstdir / "seq.cfg"
-        shutil.copy(seq_cfg_srcpath, seq_cfg_dstpath)
+        shutil.copyfile(seq_cfg_srcpath, seq_cfg_dstpath)
 
         srcpath = get_any_file(self.srcdir, "*.yuv")
         width, height = size_from_filename(srcpath.name)

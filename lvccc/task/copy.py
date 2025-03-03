@@ -18,7 +18,7 @@ class CopyTask(RootTask["CopyTask"]):
     """
     Copy or symlink the source yuv file to ensure a uniform input.
     """
-    
+
     task: ClassVar[str] = "copy"
 
     seq_name: str = ""

@@ -51,6 +51,8 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         codec_cfg_dstpath = cfg_dstdir / "codec.cfg"
         preproc_cfg.to_file(codec_cfg_dstpath)
 
+        crop_size = round(calib_cfg.MIDiameter * self.crop_ratio)
+
         calib_cfg_dstpath = cfg_dstdir / "calib.xml"
         shutil.copyfile(cfg_srcdir / "calib.xml", calib_cfg_dstpath)
 
@@ -67,8 +69,8 @@ class PreprocTask(NonRootTask["PreprocTask"]):
             codec_cfg_dstpath.relative_to(self.dstdir),
             "-calib",
             calib_cfg_dstpath.relative_to(self.dstdir),
-            "-ratio",
-            self.crop_ratio,
+            "-patch",
+            crop_size,
             "-log",
             "proc.log",
         ]

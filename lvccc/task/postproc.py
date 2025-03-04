@@ -23,8 +23,6 @@ class PostprocTask(NonRootTask["PostprocTask"]):
 
     task: ClassVar[str] = "postproc"
 
-    crop_ratio: float = 1 / math.sqrt(2)
-
     @functools.cached_property
     def srcdir(self) -> Path:
         srcdir = query(self.parent)

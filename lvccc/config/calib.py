@@ -9,6 +9,7 @@ from .base import AutoConvImpl
 class CalibCfg(AutoConvImpl):
     LensletWidth: int = 1920
     LensletHeight: int = 1080
+    MIDiameter: float = 0.0
     MLADirection: bool = False
 
     def dump(self, f: TextIO) -> None:

@@ -27,7 +27,7 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
     if len(lhs_reader) != len(rhs_reader):
         raise RuntimeError(f"Frame count not equal! lhs={lhs} rhs={rhs}")
 
-    mse_acc = np.zeros(3)
+    mse_acc = np.zeros(3) + 1e-12
     count = 0
 
     for lhs_frame, rhs_frame in zip(lhs_reader, rhs_reader, strict=True):

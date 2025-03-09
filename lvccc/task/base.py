@@ -3,9 +3,9 @@ from __future__ import annotations
 import abc
 import dataclasses as dcs
 import functools
+import hashlib
 import time
 import traceback
-import zlib
 from typing import TYPE_CHECKING, ClassVar
 
 from ..config import get_config
@@ -69,14 +69,14 @@ class BaseTask[TSelfTask]:
         return json
 
     @functools.cached_property
-    def hash(self) -> int:
+    def hash(self) -> str:
         hashbytes = self.to_json().encode("utf-8")
-        hashint = zlib.adler32(hashbytes)
-        return hashint
+        hashstr = hashlib.sha1(hashbytes, usedforsecurity=False).hexdigest()
+        return hashstr
 
     @property
     def shorthash(self) -> str:
-        return hex(self.hash)[2:6]
+        return self.hash[:4]
 
     @property
     def self_tag(self) -> str:

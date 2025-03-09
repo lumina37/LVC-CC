@@ -2,17 +2,18 @@ from __future__ import annotations
 
 import dataclasses as dcs
 import functools
-import math
 import re
 import shutil
-from pathlib import Path
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ..config import get_config
 from ..helper import get_any_file, run_cmds
 from .base import NonRootTask
 from .infomap import query
 from .preproc import PreprocTask
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @dcs.dataclass

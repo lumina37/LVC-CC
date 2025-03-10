@@ -26,7 +26,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
 
     @functools.cached_property
     def self_tag(self) -> str:
-        return "proc"
+        return f"proc-c{self.crop_ratio:.2f}"
 
     @functools.cached_property
     def srcdir(self) -> Path:

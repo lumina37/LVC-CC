@@ -40,9 +40,17 @@ encoder = "/path/to/EncoderAppStatic"
 # And build the CMake target `RLC40`
 convertor = "/path/to/RLC40"
 
-[QP.anchor]
+[anchorQP]         # Specifies QPs for anchor generation
 Boys2 = [48, 52]   # Mapping from sequence name to the QPs you wanna run
 OiOiOi = [42, 44]  # The QPs will be auto-sorted into ascending order
+
+[proc.QP]          # Specifies QPs for pre/postproc
+Boys2 = [44, 48]
+OiOiOi = [39, 42]
+
+[proc.any_name]    # Extension for pre/postproc with any content you like
+sleep = 1
+work = 0
 ```
 
 ### About the `input` Directory

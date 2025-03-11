@@ -1,4 +1,4 @@
-frames = 300
+frames = 1
 views = 5
 
 [cases]
@@ -15,8 +15,11 @@ encoder = "EncoderAppStatic"
 processor = "mca"
 convertor = "tlct"
 
-[QP.anchor]
-"TBD" = []
+[anchorQP]
+TBD = []
 
-[QP.proc]
-"TBD" = []
+[proc.QP]
+TBD = []
+
+[proc.crop_sizes]
+TBD = 6

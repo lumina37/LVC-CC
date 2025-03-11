@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import dataclasses as dcs
 import functools
-import math
 import re
 import shutil
 from pathlib import Path
@@ -22,11 +21,11 @@ class PreprocTask(NonRootTask["PreprocTask"]):
 
     task: ClassVar[str] = "preproc"
 
-    crop_ratio: float = 1 / math.sqrt(2)
+    crop_size: int = 0
 
     @functools.cached_property
     def self_tag(self) -> str:
-        return f"proc-c{self.crop_ratio:.2f}"
+        return f"proc-c{self.crop_size}"
 
     @functools.cached_property
     def srcdir(self) -> Path:
@@ -51,8 +50,6 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         codec_cfg_dstpath = cfg_dstdir / "codec.cfg"
         preproc_cfg.to_file(codec_cfg_dstpath)
 
-        crop_size = round(calib_cfg.MIDiameter * self.crop_ratio)
-
         calib_cfg_dstpath = cfg_dstdir / "calib.xml"
         shutil.copyfile(cfg_srcdir / "calib.xml", calib_cfg_dstpath)
 
@@ -70,7 +67,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
             "-calib",
             calib_cfg_dstpath.relative_to(self.dstdir),
             "-patch",
-            crop_size,
+            self.crop_size,
             "-log",
             "proc.log",
         ]

@@ -20,7 +20,7 @@ for seq_name in config.cases.seqs:
 
     # Anchor
     for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.anchor.get(seq_name, []):
+        for qp in config.anchorQP.get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
             tconvert = Convert40Task(views=config.views).with_parent(tcodec)
 
@@ -53,7 +53,7 @@ for seq_name in config.cases.seqs:
     # With Pre/Postprocess
     tpreproc = PreprocTask().with_parent(tcopy)
     for vtm_type in config.cases.vtm_types:
-        for qp in config.QP.proc.get(seq_name, []):
+        for qp in config.proc["QP"].get(seq_name, []):
             tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
             tpostproc = PostprocTask().with_parent(tcodec)
             tconvert = Convert40Task(views=config.views).with_parent(tpostproc)

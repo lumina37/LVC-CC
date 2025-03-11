@@ -36,7 +36,7 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_fil
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
         for vtm_type in config.cases.vtm_types:
-            for qp in config.QP.anchor.get(seq_name, []):
+            for qp in config.anchorQP.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
                 tconvert = Convert40Task(views=config.views).with_parent(tcodec)
 

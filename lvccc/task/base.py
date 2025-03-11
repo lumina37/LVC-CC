@@ -134,8 +134,8 @@ class NonRootTask[TSelfTask](BaseTask[TSelfTask]):
         return self.chain[0]["frames"]
 
     def with_parent(self, parent: ProtoTask) -> TSelfTask:
-        # Appending `parent.params` to chain
-        chain = parent.chain[:-1]
+        # Appending `parent.fields()` to chain
+        chain = parent.chain[:]
         chain.append(parent.fields())
         self.chain = chain
 

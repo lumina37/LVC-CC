@@ -37,7 +37,7 @@ with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
         tpreproc = PreprocTask().with_parent(tcopy)
 
         for vtm_type in config.cases.vtm_types:
-            for qp in config.QP.proc.get(seq_name, []):
+            for qp in config.proc["QP"].get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
                 tpostproc = PostprocTask().with_parent(tcodec)
                 tconvert = Convert40Task(views=config.views).with_parent(tpostproc)

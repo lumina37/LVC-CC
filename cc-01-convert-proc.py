@@ -16,7 +16,7 @@ for seq_name in config.cases.seqs:
 
     tconvert = Convert40Task(views=config.views).with_parent(tcopy)
 
-    if qps := config.QP.proc.get(seq_name, []):
+    if qps := config.proc["QP"].get(seq_name, []):
         tpreproc = PreprocTask().with_parent(tcopy)
         for vtm_type in config.cases.vtm_types:
             for qp in qps:

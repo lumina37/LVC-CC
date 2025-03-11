@@ -107,7 +107,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
         for vtm_type in config.cases.vtm_types:
             anchor_bitrates = []
             anchor_psnrs = []
-            for qp in config.QP.anchor.get(seq_name, []):
+            for qp in config.anchorQP.get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
                 tconvert = Convert40Task(views=config.views).with_parent(tcodec)
 
@@ -123,7 +123,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
 
             proc_bitrates = []
             proc_psnrs = []
-            for qp in config.QP.proc.get(seq_name, []):
+            for qp in config.proc["QP"].get(seq_name, []):
                 tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
                 tpostproc = PostprocTask().with_parent(tcodec)
                 tconvert = Convert40Task(views=config.views).with_parent(tpostproc)

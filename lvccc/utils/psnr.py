@@ -8,7 +8,7 @@ import yuvio
 from ..helper import get_any_file, size_from_filename
 from ..task import CodecTask, ConvertTask, PostprocTask
 from ..task.infomap import query
-from .backtrack import get_ancestor, is_anchor
+from .backtrack import ancestor_with_spec_type, is_anchor
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -27,7 +27,7 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
     if len(lhs_reader) != len(rhs_reader):
         raise RuntimeError(f"Frame count not equal! lhs={lhs} rhs={rhs}")
 
-    mse_acc = np.zeros(3)
+    mse_acc = np.zeros(3) + 1e-12
     count = 0
 
     for lhs_frame, rhs_frame in zip(lhs_reader, rhs_reader, strict=True):
@@ -42,7 +42,7 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
 
 
 def calc_mv_psnr(task: ConvertTask) -> np.ndarray:
-    copy_task = task.chain[0]
+    copy_task = task.ancestor(0)
     base_task = task.__class__(views=task.views).with_parent(copy_task)
 
     base_dir = query(base_task) / "yuv"
@@ -65,11 +65,11 @@ def calc_mv_psnr(task: ConvertTask) -> np.ndarray:
 
 
 def calc_lenslet_psnr(task: ConvertTask) -> np.ndarray:
-    copy_task = task.chain[0]
+    copy_task = task.ancestor(0)
     if is_anchor(task):
-        cmp_task = get_ancestor(task, CodecTask)
+        cmp_task = ancestor_with_spec_type(task, CodecTask)
     else:
-        cmp_task = get_ancestor(task, PostprocTask)
+        cmp_task = ancestor_with_spec_type(task, PostprocTask)
 
     lhs = get_any_file(query(copy_task), "*.yuv")
     rhs = get_any_file(query(cmp_task), "*.yuv")

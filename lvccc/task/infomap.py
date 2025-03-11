@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ..config import get_config
-from .chain import Chain
+from .base import BaseTask
 
 if TYPE_CHECKING:
     from .abc import ProtoTask
@@ -23,9 +23,8 @@ def gen_infomap(tasks_dir: Path) -> TypeInfomap:
             if not taskinfo_path.exists():
                 continue
             with taskinfo_path.open(encoding="utf-8") as f:
-                objs = json.load(f)
-                chain = Chain(objs)
-                task = chain[-1]
+                chain = json.load(f)
+                task = BaseTask.from_dicts(chain)
                 infomap[task.hash] = task_dir.absolute()
 
     return infomap

@@ -34,9 +34,9 @@ def get_direction(seq_name: str) -> bool:
 def get_views(task: ProtoTask) -> int:
     views = 5
 
-    for t in task.chain:
-        if isinstance(t, ConvertTask):
-            views = t.views
+    for task_dict in task.chain:
+        if task_dict["task"] == ConvertTask.task:
+            views = task_dict["views"]
             break
 
     return views
@@ -107,7 +107,7 @@ class PosetraceTask(NonRootTask["PosetraceTask"]):
         srcdir = query(self.parent)
         return srcdir
 
-    def _inner_run(self) -> None:
+    def run(self) -> None:
         views = get_views(self)
         is_rot = get_direction(self.seq_name)
 

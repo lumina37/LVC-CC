@@ -10,7 +10,7 @@ config = update_config(config_fname)
 
 roots = []
 
-for seq_name in config.cases.seqs:
+for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
@@ -18,11 +18,10 @@ for seq_name in config.cases.seqs:
 
     if qps := config.proc["QP"].get(seq_name, []):
         tpreproc = PreprocTask().with_parent(tcopy)
-        for vtm_type in config.cases.vtm_types:
-            for qp in qps:
-                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
-                tpostproc = PostprocTask().with_parent(tcodec)
-                tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+        for qp in qps:
+            tcodec = CodecTask(qp=qp).with_parent(tpreproc)
+            tpostproc = PostprocTask().with_parent(tcodec)
+            tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
 
 
 if __name__ == "__main__":

@@ -7,12 +7,6 @@ from .base import UpdateImpl
 
 
 @dcs.dataclass
-class _Cases(UpdateImpl):
-    vtm_types: list[str] = dcs.field(default_factory=list)
-    seqs: list[str] = dcs.field(default_factory=list)
-
-
-@dcs.dataclass
 class _Dir(UpdateImpl):
     input: Path = dcs.field(default_factory=Path)
     output: Path = dcs.field(default_factory=Path)
@@ -30,7 +24,7 @@ class _App(UpdateImpl):
 class Config(UpdateImpl):
     frames: int = 1
     views: int = 5
-    cases: _Cases = dcs.field(default_factory=_Cases)
+    seqs: list[str] = dcs.field(default_factory=list)
     dir: _Dir = dcs.field(default_factory=_Dir)
     app: _App = dcs.field(default_factory=_App)
     anchorQP: dict[str, list[int]] = dcs.field(default_factory=dict)

@@ -94,57 +94,55 @@ csv_path = dst_dir / "bdrate.csv"
 
 with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
     csv_writer = csv.writer(csv_f)
-    headers = ["Sequence"]
-    headers.extend(f"{vtm_type}-BD-rate" for vtm_type in config.cases.vtm_types)
+    headers = ["Sequence", "BD-rate"]
     csv_writer.writerow(headers)
 
-    for seq_name in config.cases.seqs:
+    for seq_name in config.seqs:
         row = [seq_name]
 
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
         tpreproc = PreprocTask().with_parent(tcopy)
 
-        for vtm_type in config.cases.vtm_types:
-            anchor_bitrates = []
-            anchor_psnrs = []
-            for qp in config.anchorQP.get(seq_name, []):
-                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-                tconvert = Convert40Task(views=config.views).with_parent(tcodec)
+        anchor_bitrates = []
+        anchor_psnrs = []
+        for qp in config.anchorQP.get(seq_name, []):
+            tcodec = CodecTask(qp=qp).with_parent(tcopy)
+            tconvert = Convert40Task(views=config.views).with_parent(tcodec)
 
-                json_path = src_dir / tcodec.tag / "psnr.json"
-                if not json_path.exists():
-                    continue
+            json_path = src_dir / tcodec.tag / "psnr.json"
+            if not json_path.exists():
+                continue
 
-                with json_path.open(encoding="utf-8") as f:
-                    metrics: dict = json.load(f)
+            with json_path.open(encoding="utf-8") as f:
+                metrics: dict = json.load(f)
 
-                anchor_bitrates.append(metrics["bitrate"])
-                anchor_psnrs.append(metrics["mvpsnr_y"])
+            anchor_bitrates.append(metrics["bitrate"])
+            anchor_psnrs.append(metrics["mvpsnr_y"])
 
-            proc_bitrates = []
-            proc_psnrs = []
-            for qp in config.proc["QP"].get(seq_name, []):
-                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
-                tpostproc = PostprocTask().with_parent(tcodec)
-                tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+        proc_bitrates = []
+        proc_psnrs = []
+        for qp in config.proc["QP"].get(seq_name, []):
+            tcodec = CodecTask(qp=qp).with_parent(tpreproc)
+            tpostproc = PostprocTask().with_parent(tcodec)
+            tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
 
-                json_path = src_dir / tcodec.tag / "psnr.json"
-                if not json_path.exists():
-                    continue
+            json_path = src_dir / tcodec.tag / "psnr.json"
+            if not json_path.exists():
+                continue
 
-                with json_path.open(encoding="utf-8") as f:
-                    metrics: dict = json.load(f)
+            with json_path.open(encoding="utf-8") as f:
+                metrics: dict = json.load(f)
 
-                proc_bitrates.append(metrics["bitrate"])
-                proc_psnrs.append(metrics["mvpsnr_y"])
+            proc_bitrates.append(metrics["bitrate"])
+            proc_psnrs.append(metrics["mvpsnr_y"])
 
-            bdrate = BD_RATE(
-                anchor_bitrates,
-                anchor_psnrs,
-                proc_bitrates,
-                proc_psnrs,
-                piecewise=1,
-            )
-            row.append(f"{bdrate}%")
+        bdrate = BD_RATE(
+            anchor_bitrates,
+            anchor_psnrs,
+            proc_bitrates,
+            proc_psnrs,
+            piecewise=1,
+        )
+        row.append(f"{bdrate}%")
 
         csv_writer.writerow(row)

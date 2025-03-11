@@ -32,33 +32,32 @@ with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
     ]
     csv_writer.writerow(headers)
 
-    for seq_name in config.cases.seqs:
+    for seq_name in config.seqs:
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
         tpreproc = PreprocTask().with_parent(tcopy)
 
-        for vtm_type in config.cases.vtm_types:
-            for qp in config.proc["QP"].get(seq_name, []):
-                tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
-                tpostproc = PostprocTask().with_parent(tcodec)
-                tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+        for qp in config.proc["QP"].get(seq_name, []):
+            tcodec = CodecTask(qp=qp).with_parent(tpreproc)
+            tpostproc = PostprocTask().with_parent(tcodec)
+            tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
 
-                json_path = src_dir / tcodec.tag / "psnr.json"
-                if not json_path.exists():
-                    csv_writer.writerow(["Not Found"] + [0] * (len(headers) - 1))
+            json_path = src_dir / tcodec.tag / "psnr.json"
+            if not json_path.exists():
+                csv_writer.writerow(["Not Found"] + [0] * (len(headers) - 1))
 
-                with json_path.open(encoding="utf-8") as f:
-                    metrics: dict = json.load(f)
+            with json_path.open(encoding="utf-8") as f:
+                metrics: dict = json.load(f)
 
-                csv_writer.writerow(
-                    [
-                        seq_name,
-                        qp,
-                        metrics["bitrate"],
-                        metrics["llpsnr_y"],
-                        metrics["llpsnr_u"],
-                        metrics["llpsnr_v"],
-                        metrics["mvpsnr_y"],
-                        metrics["mvpsnr_u"],
-                        metrics["mvpsnr_v"],
-                    ]
-                )
+            csv_writer.writerow(
+                [
+                    seq_name,
+                    qp,
+                    metrics["bitrate"],
+                    metrics["llpsnr_y"],
+                    metrics["llpsnr_u"],
+                    metrics["llpsnr_v"],
+                    metrics["mvpsnr_y"],
+                    metrics["mvpsnr_u"],
+                    metrics["mvpsnr_v"],
+                ]
+            )

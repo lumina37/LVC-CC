@@ -1,7 +1,7 @@
 from . import factory
 from .abc import ProtoTask
 from .base import BaseTask, NonRootTask, RootTask
-from .codec import CodecTask, VtmType
+from .codec import CodecTask
 from .convert import ConvertTask
 from .convert40 import Convert40Task
 from .copy import CopyTask

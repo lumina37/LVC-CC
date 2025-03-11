@@ -1,8 +1,6 @@
 frames = 1
 views = 5
 
-[cases]
-vtm_types = ["AI", "RA"]
 seqs = []
 
 [dir]
@@ -17,9 +15,3 @@ convertor = "tlct"
 
 [anchorQP]
 TBD = []
-
-[proc.QP]
-TBD = []
-
-[proc.crop_sizes]
-TBD = 6

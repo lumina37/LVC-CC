@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import dataclasses as dcs
-import enum
 import functools
 import shutil
 from pathlib import Path
@@ -14,11 +13,6 @@ from .copy import CopyTask
 from .infomap import query
 
 
-class VtmType(enum.StrEnum):
-    AI = "AI"
-    RA = "RA"
-
-
 @dcs.dataclass
 class CodecTask(NonRootTask["CodecTask"]):
     """
@@ -29,7 +23,6 @@ class CodecTask(NonRootTask["CodecTask"]):
 
     DEFAULT_QP: ClassVar[int] = -1
 
-    vtm_type: VtmType = VtmType.RA
     qp: int = DEFAULT_QP
 
     @functools.cached_property
@@ -39,7 +32,7 @@ class CodecTask(NonRootTask["CodecTask"]):
 
     @functools.cached_property
     def self_tag(self) -> str:
-        tag = f"{self.vtm_type}-QP{self.qp}"
+        tag = f"QP{self.qp}"
         if isinstance(self.parent, CopyTask):
             return "anchor-" + tag
         return tag
@@ -50,8 +43,8 @@ class CodecTask(NonRootTask["CodecTask"]):
 
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
-        vtm_cfg_srcpath = Path("config") / f"vtm_{self.vtm_type}.cfg"
-        vtm_cfg_dstpath = cfg_dstdir / "type.cfg"
+        vtm_cfg_srcpath = Path("config") / "vtmRA.cfg"
+        vtm_cfg_dstpath = cfg_dstdir / "vtm.cfg"
         shutil.copyfile(vtm_cfg_srcpath, vtm_cfg_dstpath)
         seq_cfg_srcpath = Path("config") / self.seq_name / "codec.cfg"
         seq_cfg_dstpath = cfg_dstdir / "seq.cfg"

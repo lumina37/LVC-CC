@@ -15,71 +15,69 @@ logger = get_logger()
 summary_dir = config.dir.output / "summary/tasks"
 
 
-for seq_name in config.cases.seqs:
+for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
     # Anchor
-    for vtm_type in config.cases.vtm_types:
-        for qp in config.anchorQP.get(seq_name, []):
-            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tcopy)
-            tconvert = Convert40Task(views=config.views).with_parent(tcodec)
+    for qp in config.anchorQP.get(seq_name, []):
+        tcodec = CodecTask(qp=qp).with_parent(tcopy)
+        tconvert = Convert40Task(views=config.views).with_parent(tcodec)
 
-            if query(tconvert) is None:
-                continue
-            logger.info(f"Handling {tconvert.tag}")
+        if query(tconvert) is None:
+            continue
+        logger.info(f"Handling {tconvert.tag}")
 
-            log_path = get_any_file(query(tcodec), "*.log")
-            enclog = CodecLog.from_file(log_path)
+        log_path = get_any_file(query(tcodec), "*.log")
+        enclog = CodecLog.from_file(log_path)
 
-            llpsnr = calc_lenslet_psnr(tconvert)
-            mvpsnr = calc_mv_psnr(tconvert)
+        llpsnr = calc_lenslet_psnr(tconvert)
+        mvpsnr = calc_mv_psnr(tconvert)
 
-            metrics = {
-                "bitrate": enclog.bitrate,
-                "mvpsnr_y": mvpsnr[0],
-                "mvpsnr_u": mvpsnr[1],
-                "mvpsnr_v": mvpsnr[2],
-                "llpsnr_y": llpsnr[0],
-                "llpsnr_u": llpsnr[1],
-                "llpsnr_v": llpsnr[2],
-            }
+        metrics = {
+            "bitrate": enclog.bitrate,
+            "mvpsnr_y": mvpsnr[0],
+            "mvpsnr_u": mvpsnr[1],
+            "mvpsnr_v": mvpsnr[2],
+            "llpsnr_y": llpsnr[0],
+            "llpsnr_u": llpsnr[1],
+            "llpsnr_v": llpsnr[2],
+        }
 
-            case_dir = summary_dir / tcodec.tag
-            mkdir(case_dir)
-            with (case_dir / "psnr.json").open("w", encoding="utf-8") as f:
-                json.dump(metrics, f, indent=4)
-            tconvert.dump_taskinfo(case_dir / "task.json")
+        case_dir = summary_dir / tcodec.tag
+        mkdir(case_dir)
+        with (case_dir / "psnr.json").open("w", encoding="utf-8") as f:
+            json.dump(metrics, f, indent=4)
+        tconvert.dump_taskinfo(case_dir / "task.json")
 
     # With Pre/Postprocess
     tpreproc = PreprocTask().with_parent(tcopy)
-    for vtm_type in config.cases.vtm_types:
-        for qp in config.proc["QP"].get(seq_name, []):
-            tcodec = CodecTask(vtm_type=vtm_type, qp=qp).with_parent(tpreproc)
-            tpostproc = PostprocTask().with_parent(tcodec)
-            tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+    for qp in config.proc["QP"].get(seq_name, []):
+        tcodec = CodecTask(qp=qp).with_parent(tpreproc)
+        tpostproc = PostprocTask().with_parent(tcodec)
+        tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
 
-            if query(tconvert) is None:
-                continue
-            logger.info(f"Handling {tconvert.tag}")
+        if query(tconvert) is None:
+            continue
+        logger.info(f"Handling {tconvert.tag}")
 
-            log_path = get_any_file(query(tcodec), "*.log")
-            enclog = CodecLog.from_file(log_path)
+        log_path = get_any_file(query(tcodec), "*.log")
+        enclog = CodecLog.from_file(log_path)
 
-            llpsnr = calc_lenslet_psnr(tconvert)
-            mvpsnr = calc_mv_psnr(tconvert)
+        llpsnr = calc_lenslet_psnr(tconvert)
+        mvpsnr = calc_mv_psnr(tconvert)
 
-            metrics = {
-                "bitrate": enclog.bitrate,
-                "mvpsnr_y": mvpsnr[0],
-                "mvpsnr_u": mvpsnr[1],
-                "mvpsnr_v": mvpsnr[2],
-                "llpsnr_y": llpsnr[0],
-                "llpsnr_u": llpsnr[1],
-                "llpsnr_v": llpsnr[2],
-            }
+        metrics = {
+            "bitrate": enclog.bitrate,
+            "mvpsnr_y": mvpsnr[0],
+            "mvpsnr_u": mvpsnr[1],
+            "mvpsnr_v": mvpsnr[2],
+            "llpsnr_y": llpsnr[0],
+            "llpsnr_u": llpsnr[1],
+            "llpsnr_v": llpsnr[2],
+        }
 
-            case_dir = summary_dir / tcodec.tag
-            mkdir(case_dir)
-            with (case_dir / "psnr.json").open("w", encoding="utf-8") as f:
-                json.dump(metrics, f, indent=4)
-            tconvert.dump_taskinfo(case_dir / "task.json")
+        case_dir = summary_dir / tcodec.tag
+        mkdir(case_dir)
+        with (case_dir / "psnr.json").open("w", encoding="utf-8") as f:
+            json.dump(metrics, f, indent=4)
+        tconvert.dump_taskinfo(case_dir / "task.json")

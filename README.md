@@ -22,8 +22,6 @@ Create a `config.toml` in the project directory. Then follow the comment after e
 frames = 30  # Run 30 frames
 views = 5    # Generate 5x5 views
 
-[cases]
-vtm_types = ["AI", "RA"]    # Specify which VTM type to run (All Intra / Random Access)
 seqs = ["Boys2", "OiOiOi"]  # Specify which sequence to run
 
 [dir]
@@ -49,8 +47,8 @@ Boys2 = [44, 48]
 OiOiOi = [39, 42]
 
 [proc.any_name]    # Extension for pre/postproc with any content you like
-sleep = 1
-work = 0
+example0 = 1
+example1 = 0
 ```
 
 ### About the `input` Directory

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 from collections.abc import Callable, Sequence
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Protocol, SupportsIndex, overload
 
 if TYPE_CHECKING:
     import dataclasses as dcs
@@ -13,7 +13,11 @@ class ProtoChain(Sequence):
     @property
     def objs(self) -> list[dict]: ...
 
-    def __getitem__(self, idx) -> ProtoTask: ...
+    @overload
+    def __getitem__(self, idx: SupportsIndex) -> ProtoTask: ...
+
+    @overload
+    def __getitem__(self, idx: slice) -> ProtoChain: ...
 
     def copy(self) -> ProtoChain: ...
 

@@ -33,7 +33,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         srcdir = query(self.parent)
         return srcdir
 
-    def _inner_run(self) -> None:
+    def run(self) -> None:
         # Prepare
         config = get_config()
 

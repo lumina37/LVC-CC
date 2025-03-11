@@ -4,15 +4,11 @@ import abc
 import dataclasses as dcs
 import functools
 import hashlib
-import time
-import traceback
 from typing import TYPE_CHECKING, ClassVar
 
 from ..config import get_config
-from ..helper import mkdir, to_json
-from ..logging import get_logger
-from .chain import Chain
-from .infomap import append, query
+from ..helper import to_json
+from .factory import get_task_type
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -26,10 +22,13 @@ class BaseTask[TSelfTask]:
     task: ClassVar[str] = ""
 
     children: list[ProtoTask] = dcs.field(default_factory=list, init=False, repr=False)
-    chain: Chain = dcs.field(default_factory=Chain, init=False, repr=False)
+    chain: list[dict] = dcs.field(default_factory=list, init=False, repr=False)
 
     @property
     def parent(self) -> None:
+        return None
+
+    def ancestor(self, idx: int = -1) -> None:
         return None
 
     def fields(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict:
@@ -43,24 +42,25 @@ class BaseTask[TSelfTask]:
 
     def to_dicts(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> list[dict]:
         fields = self.fields(exclude_if)
-        objs = self.chain.objs.copy()
-        objs.append(fields)
-        return objs
+        chain = self.chain.copy()
+        chain.append(fields)
+        return chain
 
-    @classmethod
-    def from_dicts(cls, objs: list[dict]) -> TSelfTask:
-        fields = objs[-1]
+    @staticmethod
+    def from_dicts(chain: list[dict]) -> ProtoTask:
+        fields = chain[-1]
+        task_type = get_task_type(fields["task"])
 
         kwargs = {}
-        for field in dcs.fields(cls):
+        for field in dcs.fields(task_type):
             if not field.init:
                 continue
             if (val := fields.get(field.name, None)) is None:
                 continue
             kwargs[field.name] = val
 
-        self = cls(**kwargs)
-        self.chain.objs = objs[:-1]
+        self = task_type(**kwargs)
+        self.chain = chain[:-1]  # Copy for safety
 
         return self
 
@@ -98,28 +98,7 @@ class BaseTask[TSelfTask]:
             f.write(taskinfo)
 
     @abc.abstractmethod
-    def _inner_run(self) -> None: ...
-
-    def run(self) -> bool:
-        if query(self):
-            return True
-
-        log = get_logger()
-
-        try:
-            mkdir(self.dstdir)
-            start_ns = time.monotonic_ns()
-            self._inner_run()
-            end_ns = time.monotonic_ns()
-        except Exception:
-            log.error(f"Task `{self.dstdir.name}` failed! Reason: {traceback.format_exc()}")
-            return False
-        else:
-            self.dump_taskinfo(self.dstdir / "task.json")
-            append(self, self.dstdir.absolute())
-            elasped_s = (end_ns - start_ns) / 1e9
-            log.info(f"Task `{self.dstdir.name}` completed! Elapsed time: {elasped_s:.3f}s")
-            return True
+    def run(self) -> None: ...
 
 
 class RootTask[TSelfTask](BaseTask[TSelfTask]):
@@ -129,7 +108,14 @@ class RootTask[TSelfTask](BaseTask[TSelfTask]):
 class NonRootTask[TSelfTask](BaseTask[TSelfTask]):
     @functools.cached_property
     def parent(self) -> ProtoTask:
-        return self.chain[-1]
+        return self.ancestor()
+
+    def ancestor(self, idx: int = -1) -> ProtoTask:
+        end = idx + 1
+        if end == 0:
+            return BaseTask.from_dicts(self.chain)
+        else:
+            return BaseTask.from_dicts(self.chain[:idx])
 
     @functools.cached_property
     def tag(self) -> str:
@@ -141,16 +127,16 @@ class NonRootTask[TSelfTask](BaseTask[TSelfTask]):
 
     @functools.cached_property
     def seq_name(self) -> str:
-        return self.chain[0].seq_name
+        return self.chain[0]["seq_name"]
 
     @functools.cached_property
     def frames(self) -> int:
-        return self.chain[0].frames
+        return self.chain[0]["frames"]
 
     def with_parent(self, parent: ProtoTask) -> TSelfTask:
         # Appending `parent.params` to chain
-        chain = parent.chain.copy()
-        chain.objs.append(parent.fields())
+        chain = parent.chain[:-1]
+        chain.append(parent.fields())
         self.chain = chain
 
         # Appending reverse hooks to `parent`

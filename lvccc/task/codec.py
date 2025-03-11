@@ -44,7 +44,7 @@ class CodecTask(NonRootTask["CodecTask"]):
             return "anchor-" + tag
         return tag
 
-    def _inner_run(self) -> None:
+    def run(self) -> None:
         # Prepare
         config = get_config()
 

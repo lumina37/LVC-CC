@@ -3,12 +3,38 @@ from __future__ import annotations
 import dataclasses as dcs
 import queue
 import threading
+import time
+import traceback
 from typing import TYPE_CHECKING
 
-from .helper import Atomic
+from .helper import Atomic, mkdir
+from .logging import get_logger
+from .task.infomap import append, query
 
 if TYPE_CHECKING:
     from .task.abc import ProtoTask
+
+
+def run_task(task: ProtoTask) -> bool:
+    if query(task):
+        return True
+
+    log = get_logger()
+
+    try:
+        mkdir(task.dstdir)
+        start_ns = time.monotonic_ns()
+        task.run()
+        end_ns = time.monotonic_ns()
+    except Exception:
+        log.error(f"Task `{task.dstdir.name}` failed! Reason: {traceback.format_exc()}")
+        return False
+    else:
+        task.dump_taskinfo(task.dstdir / "task.json")
+        append(task, task.dstdir.absolute())
+        elasped_s = (end_ns - start_ns) / 1e9
+        log.info(f"Task `{task.dstdir.name}` completed! Elapsed time: {elasped_s:.3f}s")
+        return True
 
 
 @dcs.dataclass
@@ -32,7 +58,7 @@ class Executor:
                     self.cond.wait()
 
             else:
-                if task.run():
+                if run_task(task):
                     if task.children:
                         for child in task.children:
                             self.task_queue.put(child, block=False)

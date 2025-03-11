@@ -29,15 +29,15 @@ class PostprocTask(NonRootTask["PostprocTask"]):
         srcdir = query(self.parent)
         return srcdir
 
-    def _inner_run(self) -> None:
+    def run(self) -> None:
         # Prepare
         config = get_config()
 
         yuv_srcpath = get_any_file(self.srcdir, "*.yuv")
 
-        for task in self.chain:
-            if isinstance(task, PreprocTask):
-                preproc_task = task
+        for idx, task_dict in enumerate(self.chain):
+            if task_dict["task"] == PreprocTask.task:
+                preproc_task = self.ancestor(idx)
         proc_log_srcpath = preproc_task.dstdir / "proc.log"
         preproc_log_dstpath = self.dstdir / "proc.log"
         shutil.copyfile(proc_log_srcpath, preproc_log_dstpath)

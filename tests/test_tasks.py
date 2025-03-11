@@ -1,4 +1,4 @@
-from lvccc.task import Chain, CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTask
+from lvccc.task import BaseTask, CodecTask, ConvertTask, CopyTask, PostprocTask, PreprocTask
 
 
 def test_tasks():
@@ -8,8 +8,9 @@ def test_tasks():
     tpost = PostprocTask().with_parent(tcodec)
     tconvert = ConvertTask().with_parent(tpost)
 
-    chain = Chain(tconvert.to_dicts())
-    tconvert_rec = chain[-1]
-    assert tconvert_rec.chain[0].frames == tcopy.frames
-    assert tconvert_rec.chain[0].seq_name == tcopy.seq_name
-    assert tconvert_rec.chain[2].qp == tcodec.qp
+    chain = tconvert.to_dicts()
+
+    tconvert_rec: ConvertTask = BaseTask.from_dicts(chain)
+    assert tconvert_rec.ancestor(0).frames == tcopy.frames
+    assert tconvert_rec.ancestor(0).seq_name == tcopy.seq_name
+    assert tconvert_rec.ancestor(2).qp == tcodec.qp

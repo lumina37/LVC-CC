@@ -3,17 +3,17 @@ from __future__ import annotations
 from ..task import CodecTask, ConvertTask, ProtoTask
 
 
-def get_ancestor(task: ProtoTask, cls: type[ProtoTask]) -> ProtoTask:
-    for t in task.chain:
-        if isinstance(t, cls):
-            return t
+def ancestor_with_spec_type(task: ProtoTask, cls: type[ProtoTask]) -> ProtoTask:
+    for idx, task_dict in enumerate(task.chain):
+        if task_dict["task"] == cls.task:
+            return task.ancestor(idx)
 
     return cls()
 
 
 def is_anchor(task: ProtoTask) -> bool:
-    return len(task.chain) > 1 and isinstance(task.chain[1], CodecTask)
+    return len(task.chain) > 1 and task.chain[1]["task"] == CodecTask.task
 
 
 def is_base(task: ProtoTask) -> bool:
-    return len(task.chain) > 1 and isinstance(task.chain[1], ConvertTask)
+    return len(task.chain) > 1 and task.chain[1]["task"] == ConvertTask.task

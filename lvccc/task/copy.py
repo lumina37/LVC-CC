@@ -29,7 +29,7 @@ class CopyTask(RootTask["CopyTask"]):
     def self_tag(self) -> str:
         return f"{self.seq_name}-f{self.frames}"
 
-    def _inner_run(self) -> None:
+    def run(self) -> None:
         # Check SHA1
         config = get_config()
 

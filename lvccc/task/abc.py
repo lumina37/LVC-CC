@@ -1,25 +1,12 @@
 from __future__ import annotations
 
 import functools
-from collections.abc import Callable, Sequence
-from typing import TYPE_CHECKING, Protocol, SupportsIndex, overload
+from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
     import dataclasses as dcs
+    from collections.abc import Callable
     from pathlib import Path
-
-
-class ProtoChain(Sequence):
-    @property
-    def objs(self) -> list[dict]: ...
-
-    @overload
-    def __getitem__(self, idx: SupportsIndex) -> ProtoTask: ...
-
-    @overload
-    def __getitem__(self, idx: slice) -> ProtoChain: ...
-
-    def copy(self) -> ProtoChain: ...
 
 
 class ProtoTask(Protocol):
@@ -28,7 +15,7 @@ class ProtoTask(Protocol):
     @property
     def children(self) -> list[ProtoTask]: ...
     @property
-    def chain(self) -> ProtoChain: ...
+    def chain(self) -> list[dict]: ...
 
     @property
     def seq_name(self) -> str: ...
@@ -36,12 +23,14 @@ class ProtoTask(Protocol):
     @functools.cached_property
     def parent(self) -> ProtoTask | None: ...
 
+    def ancestor(self, idx: int = -1) -> ProtoTask | None: ...
+
     def fields(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> dict: ...
 
     def to_dicts(self, exclude_if: Callable[[dcs.Field], bool] = lambda f: not f.init) -> list[dict]: ...
 
-    @classmethod
-    def from_dicts(cls, objs: list[dict]) -> ProtoTask: ...
+    @staticmethod
+    def from_dicts(chain: list[dict]) -> ProtoTask: ...
 
     def to_json(self, pretty: bool = False) -> str: ...
 
@@ -62,4 +51,4 @@ class ProtoTask(Protocol):
 
     def dump_taskinfo(self, target: Path | None = None) -> None: ...
 
-    def run(self) -> bool: ...
+    def run(self) -> None: ...

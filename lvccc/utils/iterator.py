@@ -4,10 +4,12 @@ import json
 from typing import TYPE_CHECKING
 
 from ..config import get_config
-from ..task import Chain, ProtoTask
+from ..task import BaseTask
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Generator
+
+    from ..task import ProtoTask
 
 
 def tasks(
@@ -26,9 +28,8 @@ def tasks(
             continue
 
         with taskinfo_path.open(encoding="utf-8") as f:
-            taskinfo = json.load(f)
-            chain = Chain(taskinfo)
-            task = chain[-1]
+            chain = json.load(f)
+            task = BaseTask.from_dicts(chain)
             if not require(task):
                 continue
             yield task

@@ -23,7 +23,7 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
 
     task: ClassVar[str] = "convert40"
 
-    def _inner_run(self) -> None:
+    def run(self) -> None:
         config = get_config()
 
         # Yuv2img

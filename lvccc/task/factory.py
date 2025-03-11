@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 _TASKMAP = {}
 
 
-def reg_task_type(task_type: type[ProtoTask]):
+def reg_task_type(task_type: type[ProtoTask]) -> None:
     global _TASKMAP
     _TASKMAP[task_type.task] = task_type
 

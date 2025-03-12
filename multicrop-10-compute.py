@@ -1,5 +1,6 @@
+import argparse
 import json
-import sys
+from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.helper import get_any_file, mkdir
@@ -7,8 +8,21 @@ from lvccc.logging import get_logger
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, query
 from lvccc.utils import CodecLog, calc_lenslet_psnr, calc_mv_psnr
 
-config_fname = sys.argv[1] if len(sys.argv) > 1 else "config.toml"
-config = update_config(config_fname)
+parser = argparse.ArgumentParser(description="Compute metrics of all multicrop tasks")
+
+parser.add_argument("--configs", "-c", nargs="+", type=list, default=[], help="list of config file path")
+parser.add_argument(
+    "--base",
+    "-b",
+    type=str,
+    default="base.toml",
+    help="base config, recommend to store some immutable directory settings",
+)
+opt = parser.parse_args()
+
+config = update_config(Path(opt.base))
+for cpath in opt.configs:
+    config = update_config(Path(cpath))
 
 logger = get_logger()
 

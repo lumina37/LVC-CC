@@ -1,6 +1,7 @@
+import argparse
 import csv
 import json
-import sys
+from pathlib import Path
 
 import numpy as np
 import scipy.interpolate
@@ -83,8 +84,21 @@ def BD_RATE(R1, PSNR1, R2, PSNR2, piecewise=0):
     return avg_diff
 
 
-config_fname = sys.argv[1] if len(sys.argv) > 1 else "config.toml"
-config = update_config(config_fname)
+parser = argparse.ArgumentParser(description="Export BD-rate")
+
+parser.add_argument("--configs", "-c", nargs="+", type=list, default=[], help="list of config file path")
+parser.add_argument(
+    "--base",
+    "-b",
+    type=str,
+    default="base.toml",
+    help="base config, recommend to store some immutable directory settings",
+)
+opt = parser.parse_args()
+
+config = update_config(Path(opt.base))
+for cpath in opt.configs:
+    config = update_config(Path(cpath))
 
 summary_dir = config.dir.output / "summary"
 src_dir = summary_dir / "tasks"

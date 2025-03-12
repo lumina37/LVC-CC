@@ -1,13 +1,27 @@
+import argparse
 import csv
 import json
-import sys
+from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
 from lvccc.task import CodecTask, Convert40Task, CopyTask, gen_infomap
 
-config_fname = sys.argv[1] if len(sys.argv) > 1 else "config.toml"
-config = update_config(config_fname)
+parser = argparse.ArgumentParser(description="Export anchor metrics to csv")
+
+parser.add_argument("--configs", "-c", nargs="+", type=list, default=[], help="list of config file path")
+parser.add_argument(
+    "--base",
+    "-b",
+    type=str,
+    default="base.toml",
+    help="base config, recommend to store some immutable directory settings",
+)
+opt = parser.parse_args()
+
+config = update_config(Path(opt.base))
+for cpath in opt.configs:
+    config = update_config(Path(cpath))
 
 summary_dir = config.dir.output / "summary"
 src_dir = summary_dir / "tasks"

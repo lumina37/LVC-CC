@@ -1,12 +1,27 @@
-import sys
+
+import argparse
+from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask
 from lvccc.utils import avaliable_cpu_count
 
-config_fname = sys.argv[1] if len(sys.argv) > 1 else "config.toml"
-config = update_config(config_fname)
+parser = argparse.ArgumentParser(description="Proc with multi crop_sizes")
+
+parser.add_argument("--configs", "-c", nargs="+", type=list, default=[], help="list of config file path")
+parser.add_argument(
+    "--base",
+    "-b",
+    type=str,
+    default="base.toml",
+    help="base config, recommend to store some immutable directory settings",
+)
+opt = parser.parse_args()
+
+config = update_config(Path(opt.base))
+for cpath in opt.configs:
+    config = update_config(Path(cpath))
 
 roots = []
 

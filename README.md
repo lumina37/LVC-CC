@@ -66,7 +66,7 @@ The file name of the yuv files can be anything you like. But make sure that the 
 Please make sure the `output` directory **is sufficient for** several **T**era**B**ytes of data.
 
 ```shell
-python cc-00-convert-anchor.py
+python cc-00-run-anchor.py
 ```
 
 ### Compute PSNR
@@ -88,7 +88,7 @@ You can check the bitrate, lenslet PSNR and multi-view PSNR in the output csv fi
 ### Draw the RD-Curve
 
 ```shell
-python cc-30-figure-anchor.py
+python cc-30-export-figure.py
 ```
 
 You can check the RD-Curves in `${dir.output}/summary/figure`.

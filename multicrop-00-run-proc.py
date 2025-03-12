@@ -1,4 +1,3 @@
-
 import argparse
 from pathlib import Path
 
@@ -11,11 +10,7 @@ parser = argparse.ArgumentParser(description="Proc with multi crop_sizes")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(
-    "--base",
-    "-b",
-    type=str,
-    default="base.toml",
-    help="base config, recommend to store some immutable directory settings",
+    "--base", "-b", type=str, default="base.toml", help="base config, recommended for per-device settings"
 )
 opt = parser.parse_args()
 

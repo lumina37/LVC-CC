@@ -88,3 +88,5 @@ for seq_name in config.seqs:
 
         fig.savefig((dst_dir / tpreproc.tag).with_suffix(".png"))
         fig.savefig((dst_dir / tpreproc.tag).with_suffix(".svg"))
+
+        plt.close(fig)

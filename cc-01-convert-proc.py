@@ -14,14 +14,14 @@ for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    tconvert = Convert40Task(views=config.views).with_parent(tcopy)
+    tconvert = Convert40Task(views=config.views).follow(tcopy)
 
     if qps := config.proc["QP"].get(seq_name, []):
-        tpreproc = PreprocTask().with_parent(tcopy)
+        tpreproc = PreprocTask().follow(tcopy)
         for qp in qps:
-            tcodec = CodecTask(qp=qp).with_parent(tpreproc)
-            tpostproc = PostprocTask().with_parent(tcodec)
-            tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+            tcodec = CodecTask(qp=qp).follow(tpreproc)
+            tpostproc = PostprocTask().follow(tcodec)
+            tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
 
 if __name__ == "__main__":

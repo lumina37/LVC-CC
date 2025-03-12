@@ -36,8 +36,8 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_fil
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
         for qp in config.anchorQP.get(seq_name, []):
-            tcodec = CodecTask(qp=qp).with_parent(tcopy)
-            tconvert = Convert40Task(views=config.views).with_parent(tcodec)
+            tcodec = CodecTask(qp=qp).follow(tcopy)
+            tconvert = Convert40Task(views=config.views).follow(tcodec)
 
             json_path = src_dir / tcodec.tag / "psnr.json"
             if not json_path.exists():

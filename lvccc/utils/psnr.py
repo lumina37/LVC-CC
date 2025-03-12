@@ -43,7 +43,7 @@ def calc_yuv_psnr(lhs: Path, rhs: Path, width: int, height: int) -> np.ndarray:
 
 def calc_mv_psnr(task: ConvertTask) -> np.ndarray:
     copy_task = task.ancestor(0)
-    base_task = task.__class__(views=task.views).with_parent(copy_task)
+    base_task = task.__class__(views=task.views).follow(copy_task)
 
     base_dir = query(base_task) / "yuv"
     self_dir = query(task) / "yuv"

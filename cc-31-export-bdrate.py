@@ -101,13 +101,13 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
         row = [seq_name]
 
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
-        tpreproc = PreprocTask().with_parent(tcopy)
+        tpreproc = PreprocTask().follow(tcopy)
 
         anchor_bitrates = []
         anchor_psnrs = []
         for qp in config.anchorQP.get(seq_name, []):
-            tcodec = CodecTask(qp=qp).with_parent(tcopy)
-            tconvert = Convert40Task(views=config.views).with_parent(tcodec)
+            tcodec = CodecTask(qp=qp).follow(tcopy)
+            tconvert = Convert40Task(views=config.views).follow(tcodec)
 
             json_path = src_dir / tcodec.tag / "psnr.json"
             if not json_path.exists():
@@ -122,9 +122,9 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
         proc_bitrates = []
         proc_psnrs = []
         for qp in config.proc["QP"].get(seq_name, []):
-            tcodec = CodecTask(qp=qp).with_parent(tpreproc)
-            tpostproc = PostprocTask().with_parent(tcodec)
-            tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+            tcodec = CodecTask(qp=qp).follow(tpreproc)
+            tpostproc = PostprocTask().follow(tcodec)
+            tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
             json_path = src_dir / tcodec.tag / "psnr.json"
             if not json_path.exists():

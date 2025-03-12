@@ -34,12 +34,12 @@ with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
 
     for seq_name in config.seqs:
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
-        tpreproc = PreprocTask().with_parent(tcopy)
+        tpreproc = PreprocTask().follow(tcopy)
 
         for qp in config.proc["QP"].get(seq_name, []):
-            tcodec = CodecTask(qp=qp).with_parent(tpreproc)
-            tpostproc = PostprocTask().with_parent(tcodec)
-            tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+            tcodec = CodecTask(qp=qp).follow(tpreproc)
+            tpostproc = PostprocTask().follow(tcodec)
+            tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
             json_path = src_dir / tcodec.tag / "psnr.json"
             if not json_path.exists():

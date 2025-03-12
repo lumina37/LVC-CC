@@ -14,12 +14,12 @@ for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    tconvert = Convert40Task(views=config.views).with_parent(tcopy)
+    tconvert = Convert40Task(views=config.views).follow(tcopy)
 
     if qps := config.anchorQP.get(seq_name, []):
         for qp in qps:
-            tcodec = CodecTask(qp=qp).with_parent(tcopy)
-            tconvert = Convert40Task(views=config.views).with_parent(tcodec)
+            tcodec = CodecTask(qp=qp).follow(tcopy)
+            tconvert = Convert40Task(views=config.views).follow(tcodec)
 
 
 if __name__ == "__main__":

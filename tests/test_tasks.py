@@ -3,10 +3,10 @@ from lvccc.task import BaseTask, CodecTask, ConvertTask, CopyTask, PostprocTask,
 
 def test_tasks():
     tcopy = CopyTask(seq_name="Fujita2", frames=1)
-    tpre = PreprocTask().with_parent(tcopy)
-    tcodec = CodecTask(qp=46).with_parent(tpre)
-    tpost = PostprocTask().with_parent(tcodec)
-    tconvert = ConvertTask().with_parent(tpost)
+    tpre = PreprocTask().follow(tcopy)
+    tcodec = CodecTask(qp=46).follow(tpre)
+    tpost = PostprocTask().follow(tcodec)
+    tconvert = ConvertTask().follow(tpost)
 
     chain = tconvert.to_dicts()
 

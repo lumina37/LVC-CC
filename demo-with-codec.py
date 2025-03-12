@@ -5,8 +5,8 @@ from lvccc.task import CodecTask, ConvertTask, CopyTask
 update_config("config.toml")
 
 tcopy = CopyTask(seq_name="Fujita2")
-tcodec = CodecTask(qp=54).with_parent(tcopy)
-tconvert = ConvertTask(views=3).with_parent(tcodec)
+tcodec = CodecTask(qp=54).follow(tcopy)
+tconvert = ConvertTask(views=3).follow(tcodec)
 
 if __name__ == "__main__":
     executor = Executor([tcopy])

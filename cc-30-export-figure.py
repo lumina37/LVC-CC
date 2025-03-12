@@ -21,13 +21,13 @@ infomap = gen_infomap(src_dir)
 
 for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
-    tpreproc = PreprocTask().with_parent(tcopy)
+    tpreproc = PreprocTask().follow(tcopy)
 
     anchor_bitrates = []
     anchor_psnrs = []
     for qp in config.anchorQP.get(seq_name, []):
-        tcodec = CodecTask(qp=qp).with_parent(tcopy)
-        tconvert = Convert40Task(views=config.views).with_parent(tcodec)
+        tcodec = CodecTask(qp=qp).follow(tcopy)
+        tconvert = Convert40Task(views=config.views).follow(tcodec)
 
         json_path = src_dir / tcodec.tag / "psnr.json"
         if not json_path.exists():
@@ -42,9 +42,9 @@ for seq_name in config.seqs:
     proc_bitrates = []
     proc_psnrs = []
     for qp in config.proc["QP"].get(seq_name, []):
-        tcodec = CodecTask(qp=qp).with_parent(tpreproc)
-        tpostproc = PostprocTask().with_parent(tcodec)
-        tconvert = Convert40Task(views=config.views).with_parent(tpostproc)
+        tcodec = CodecTask(qp=qp).follow(tpreproc)
+        tpostproc = PostprocTask().follow(tcodec)
+        tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
         json_path = src_dir / tcodec.tag / "psnr.json"
         if not json_path.exists():

@@ -22,8 +22,8 @@ class _App(UpdateImpl):
 
 @dcs.dataclass
 class Config(UpdateImpl):
-    frames: int = 1
-    views: int = 5
+    frames: int = 0
+    views: int = 0
     seqs: list[str] = dcs.field(default_factory=list)
     dir: _Dir = dcs.field(default_factory=_Dir)
     app: _App = dcs.field(default_factory=_App)

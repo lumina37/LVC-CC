@@ -16,10 +16,9 @@ for seq_name in config.seqs:
 
     tconvert = Convert40Task(views=config.views).follow(tcopy)
 
-    if qps := config.anchorQP.get(seq_name, []):
-        for qp in qps:
-            tcodec = CodecTask(qp=qp).follow(tcopy)
-            tconvert = Convert40Task(views=config.views).follow(tcodec)
+    for qp in config.anchorQP.get(seq_name, []):
+        tcodec = CodecTask(qp=qp).follow(tcopy)
+        tconvert = Convert40Task(views=config.views).follow(tcodec)
 
 
 if __name__ == "__main__":

@@ -21,9 +21,7 @@ class CodecTask(NonRootTask["CodecTask"]):
 
     task: ClassVar[str] = "codec"
 
-    DEFAULT_QP: ClassVar[int] = -1
-
-    qp: int = DEFAULT_QP
+    qp: int = 0
 
     @functools.cached_property
     def srcdir(self) -> Path:

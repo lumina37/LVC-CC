@@ -9,7 +9,7 @@ from lvccc.task import CodecTask, Convert40Task, CopyTask, gen_infomap
 
 parser = argparse.ArgumentParser(description="Export anchor metrics to csv")
 
-parser.add_argument("--configs", "-c", nargs="+", type=list, default=[], help="list of config file path")
+parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(
     "--base",
     "-b",

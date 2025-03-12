@@ -8,7 +8,7 @@ from lvccc.utils import avaliable_cpu_count
 
 parser = argparse.ArgumentParser(description="Anchor: convert/codec+convert")
 
-parser.add_argument("--configs", "-c", nargs="+", type=list, default=[], help="list of config file path")
+parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(
     "--base",
     "-b",

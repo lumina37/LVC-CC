@@ -10,7 +10,7 @@ from lvccc.utils import CodecLog, calc_lenslet_psnr, calc_mv_psnr
 
 parser = argparse.ArgumentParser(description="Compute metrics of all multicrop tasks")
 
-parser.add_argument("--configs", "-c", nargs="+", type=list, default=[], help="list of config file path")
+parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(
     "--base",
     "-b",

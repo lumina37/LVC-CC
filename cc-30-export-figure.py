@@ -60,8 +60,7 @@ for seq_name in config.seqs:
     ax: Axes = ax
     ax.set_xlabel("Total bitrate (Kbps)")
     ax.set_ylabel("PSNR (dB)")
-    title = f"{seq_name}"
-    ax.set_title(title)
+    ax.set_title(seq_name)
 
     ax.plot(anchor_bitrates, anchor_psnrs, label="anchor")
     ax.plot(proc_bitrates, proc_psnrs, label="proc")

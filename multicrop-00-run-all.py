@@ -26,6 +26,10 @@ for seq_name in config.seqs:
 
     tconvert = Convert40Task(views=config.views).follow(tcopy)
 
+    for anchorQP in config.anchorQP.get(seq_name, []):
+        tcodec = CodecTask(qp=anchorQP).follow(tcopy)
+        tconvert = Convert40Task(views=config.views).follow(tcodec)
+
     offsetQP = config.proc.get("offsetQP", 0)
     for crop_size in config.proc["crop_size"].get(seq_name, []):
         tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)

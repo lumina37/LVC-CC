@@ -1,1 +1,1 @@
---upsample 2 --psizeInflate 1.2 --viewShiftRange 0.075 --patternSize 0.325
+--upsample 2 --psizeInflate 1.2 --viewShiftRange 0.075

@@ -14,6 +14,8 @@ class SHA1Cache:
             mkdir(self.cache_dir)
             with (self.cache_dir / ".gitignore").open("w") as f:
                 f.write("*")
+            with (self.cache_dir / "CACHEDIR.TAG").open("w") as f:
+                f.write("Signature: 8a477f597d28d172789f06886806bc55")
 
     def __getitem__(self, hsh: str) -> int:
         hsh_path = self.cache_dir / hsh

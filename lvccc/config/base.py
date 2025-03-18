@@ -1,5 +1,8 @@
 import dataclasses as dcs
+from pathlib import Path
 from typing import Self, get_origin
+
+NULL_PATH = Path()
 
 
 @dcs.dataclass
@@ -26,6 +29,9 @@ class UpdateImpl(AutoConvImpl):
         for field in dcs.fields(rhs):
             rhs_value = getattr(rhs, field.name)
             if not rhs_value:
+                continue
+            if NULL_PATH == rhs_value:
+                # ugly hook for `bool(Path()) == True`
                 continue
             if hasattr(rhs_value, "update"):
                 lhs_value = getattr(self, field.name)

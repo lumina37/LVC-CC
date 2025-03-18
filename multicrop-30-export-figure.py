@@ -49,32 +49,40 @@ for seq_name in config.seqs:
         anchor_bitrates.append(metrics["bitrate"])
         anchor_psnrs.append(metrics["mvpsnr_y"])
 
-    proc_bitrates = []
-    proc_psnrs = []
-    for qp in config.proc["QP"].get(seq_name, []):
-        tcodec = CodecTask(qp=qp).follow(tpreproc)
-        tpostproc = PostprocTask().follow(tcodec)
-        tconvert = Convert40Task(views=config.views).follow(tpostproc)
+    offsetQP = config.proc.get("offsetQP", 0)
+    for crop_size in config.proc["crop_size"].get(seq_name, []):
+        tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
 
-        json_path = src_dir / tcodec.tag / "psnr.json"
-        if not json_path.exists():
-            continue
+        proc_bitrates = []
+        proc_psnrs = []
+        for anchorQP in config.anchorQP.get(seq_name, []):
+            qp = anchorQP + offsetQP
+            tcodec = CodecTask(qp=qp).follow(tpreproc)
+            tpostproc = PostprocTask().follow(tcodec)
+            tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
-        with json_path.open(encoding="utf-8") as f:
-            metrics: dict = json.load(f)
+            json_path = src_dir / tcodec.tag / "psnr.json"
+            if not json_path.exists():
+                continue
 
-        proc_bitrates.append(metrics["bitrate"])
-        proc_psnrs.append(metrics["mvpsnr_y"])
+            with json_path.open(encoding="utf-8") as f:
+                metrics: dict = json.load(f)
 
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ax: Axes = ax
-    ax.set_xlabel("Total bitrate (Kbps)")
-    ax.set_ylabel("PSNR (dB)")
-    ax.set_title(seq_name)
+            proc_bitrates.append(metrics["bitrate"])
+            proc_psnrs.append(metrics["mvpsnr_y"])
 
-    ax.plot(anchor_bitrates, anchor_psnrs, label="anchor")
-    ax.plot(proc_bitrates, proc_psnrs, label="proc")
-    ax.legend()
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax: Axes = ax
+        ax.set_xlabel("Total bitrate (Kbps)")
+        ax.set_ylabel("PSNR (dB)")
+        title = tpreproc.tag
+        ax.set_title(title)
 
-    fig.savefig((dst_dir / seq_name).with_suffix(".png"))
-    fig.savefig((dst_dir / seq_name).with_suffix(".svg"))
+        ax.plot(anchor_bitrates, anchor_psnrs, label="anchor")
+        ax.plot(proc_bitrates, proc_psnrs, label="proc")
+        ax.legend()
+
+        fig.savefig((dst_dir / tpreproc.tag).with_suffix(".png"))
+        fig.savefig((dst_dir / tpreproc.tag).with_suffix(".svg"))
+
+        plt.close(fig)

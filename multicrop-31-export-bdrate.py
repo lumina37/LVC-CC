@@ -104,7 +104,7 @@ csv_path = dst_dir / "bdrate.csv"
 
 with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
     csv_writer = csv.writer(csv_f)
-    headers = ["Sequence", "BD-rate"]
+    headers = ["Sequence", "CropSize", "BD-rate"]
     csv_writer.writerow(headers)
 
     for seq_name in config.seqs:
@@ -128,7 +128,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
 
         offsetQP = config.proc.get("offsetQP", 0)
         for crop_size in config.proc["crop_size"].get(seq_name, []):
-            row = [seq_name]
+            row = [seq_name, str(crop_size)]
             tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
 
             proc_bitrates = []

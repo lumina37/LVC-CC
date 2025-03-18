@@ -115,7 +115,7 @@ class NonRootTask[TSelfTask](BaseTask[TSelfTask]):
         if end == 0:
             return BaseTask.from_dicts(self.chain)
         else:
-            return BaseTask.from_dicts(self.chain[:idx])
+            return BaseTask.from_dicts(self.chain[:end])
 
     @functools.cached_property
     def tag(self) -> str:

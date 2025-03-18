@@ -35,6 +35,8 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
 
         yuv2img_cmds = [
             config.app.ffmpeg,
+            "-f",
+            "rawvideo",
             "-s",
             f"{ll_wdt}x{ll_hgt}",
             "-i",

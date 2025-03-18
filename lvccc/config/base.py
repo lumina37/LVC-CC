@@ -2,7 +2,6 @@ import dataclasses as dcs
 from pathlib import Path
 from typing import Self, get_origin
 
-
 NULL_PATH = Path()
 
 

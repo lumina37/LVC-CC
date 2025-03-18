@@ -30,20 +30,20 @@ class Config(UpdateImpl):
     anchorQP: dict[str, list[int]] = dcs.field(default_factory=dict)
     proc: dict = dcs.field(default_factory=dict)
 
+    @staticmethod
+    def load(f: BinaryIO) -> "Config":
+        return Config(**tomllib.load(f))
 
-def load(f: BinaryIO) -> Config:
-    return Config(**tomllib.load(f))
+    @staticmethod
+    def from_file(path: Path) -> "Config":
+        with path.open("rb") as f:
+            return Config.load(f)
 
 
-def from_file(path: Path) -> Config:
-    path = Path(path)
-    with path.open("rb") as f:
-        return load(f)
-
-
-def update_config(path: Path) -> Config:
+def update_config(path: Path | str) -> Config:
     global _CFG
-    _CFG.update(from_file(path))
+    path = Path(path)
+    _CFG.update(Config.from_file(path))
     return _CFG
 
 
@@ -51,4 +51,4 @@ def get_config() -> Config:
     return _CFG
 
 
-_CFG = from_file(Path("config") / "default.toml")
+_CFG = Config.from_file(Path("config") / "default.toml")

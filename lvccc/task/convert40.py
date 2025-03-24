@@ -64,7 +64,7 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
         rlccfg.Calibration_xml = str(cfg_dstpath)
         rlccfg.RawImage_Path = str(img_src_pattern)
-        img_dstdir = self.dstdir / "img/dst"
+        img_dstdir = self.dstdir / "img" / "dst"
         mkdir(img_dstdir)
 
         rlccfg.Output_Path = str(img_dstdir / IMG_PATTERN)

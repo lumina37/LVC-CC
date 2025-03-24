@@ -16,4 +16,4 @@ def is_anchor(task: ProtoTask) -> bool:
 
 
 def is_base(task: ProtoTask) -> bool:
-    return len(task.chain) > 1 and task.chain[1]["task"] == ConvertTask.task
+    return len(task.chain) > 1 and task.chain[1]["task"].startswith("convert")

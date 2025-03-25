@@ -9,7 +9,7 @@ from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, Preproc
 from lvccc.utils import CodecLog, calc_lenslet_psnr, calc_mv_psnr
 
 # Config from CMD
-parser = argparse.ArgumentParser(description="Compute metrics of all multicrop tasks")
+parser = argparse.ArgumentParser(description="Compute metrics of all tasks")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(

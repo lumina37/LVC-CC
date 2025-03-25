@@ -38,7 +38,8 @@ for seq_name in config.seqs:
 
     anchor_bitrates = []
     anchor_psnrs = []
-    for qp in config.anchorQP.get(seq_name, []):
+    anchorQPs = config.anchorQP.get(seq_name, [])
+    for qp in anchorQPs:
         tcodec = CodecTask(qp=qp).follow(tcopy)
         tconvert = Convert40Task(views=config.views).follow(tcodec)
 
@@ -57,9 +58,17 @@ for seq_name in config.seqs:
     for crop_size in config.proc["crop_size"].get(seq_name, []):
         tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
 
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax: Axes = ax
+        ax.set_xlabel("Total bitrate (Kbps)")
+        ax.set_ylabel("PSNR (dB)")
+        title = tpreproc.tag
+        ax.set_title(title)
+
         proc_bitrates = []
         proc_psnrs = []
-        for anchorQP in config.anchorQP.get(seq_name, []):
+        procQPs = []
+        for anchorQP in anchorQPs:
             for offsetQP in range(startQP, endQP):
                 qp = anchorQP + offsetQP
                 tcodec = CodecTask(qp=qp).follow(tpreproc)
@@ -75,16 +84,28 @@ for seq_name in config.seqs:
 
                 proc_bitrates.append(metrics["bitrate"])
                 proc_psnrs.append(metrics["mvpsnr_y"])
+                procQPs.append(qp)
 
-        fig, ax = plt.subplots(figsize=(6, 6))
-        ax: Axes = ax
-        ax.set_xlabel("Total bitrate (Kbps)")
-        ax.set_ylabel("PSNR (dB)")
-        title = tpreproc.tag
-        ax.set_title(title)
+        ax.plot(anchor_bitrates, anchor_psnrs, label="anchor", color="blue")
+        for i in range(len(anchor_bitrates)):
+            ax.annotate(
+                str(anchorQPs[i]),
+                xy=(anchor_bitrates[i], anchor_psnrs[i]),
+                xytext=(-5, 0),
+                textcoords="offset points",
+                color="blue",
+            )
 
-        ax.plot(anchor_bitrates, anchor_psnrs, label="anchor")
-        ax.plot(proc_bitrates, proc_psnrs, label="proc")
+        ax.plot(proc_bitrates, proc_psnrs, label="proc", color="orange")
+        for i in range(len(proc_bitrates)):
+            ax.annotate(
+                str(procQPs[i]),
+                xy=(proc_bitrates[i], proc_psnrs[i]),
+                xytext=(-5, 0),
+                textcoords="offset points",
+                color="orange",
+            )
+
         ax.legend()
 
         fig.savefig((dst_dir / tpreproc.tag).with_suffix(".png"))

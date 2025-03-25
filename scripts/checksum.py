@@ -21,7 +21,12 @@ logger = get_logger()
 
 for seq_name in config.seqs:
     srcdir = config.dir.input / seq_name
-    srcpath = get_any_file(srcdir, "*.yuv")
+
+    try:
+        srcpath = get_any_file(srcdir, "*.yuv")
+    except Exception:
+        logger.warning(f"no sequence in {srcdir}")
+        continue
 
     cfg_srcdir = Path("config") / seq_name
     sha1_path = cfg_srcdir / "checksum.sha1"
@@ -31,7 +36,6 @@ for seq_name in config.seqs:
     if (yuv_mtime := mtime(srcpath)) > cached_mtime:
         sha1 = compute_sha1(srcpath)
         if sha1 != except_sha1:
-            logger = get_logger()
             DOWNLOAD_URL = "https://content.mpeg.expert/data/CfP/LVC/Sequences"
             logger.warning(f"sha1 checksum does not match for {srcpath}, try redownload from: {DOWNLOAD_URL}")
             continue

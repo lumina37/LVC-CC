@@ -77,4 +77,3 @@ for seq_name in config.seqs:
     ax.legend()
 
     fig.savefig((dst_dir / seq_name).with_suffix(".png"))
-    fig.savefig((dst_dir / seq_name).with_suffix(".svg"))

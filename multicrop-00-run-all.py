@@ -30,14 +30,16 @@ for seq_name in config.seqs:
         tcodec = CodecTask(qp=anchorQP).follow(tcopy)
         tconvert = Convert40Task(views=config.views).follow(tcodec)
 
-    offsetQP = config.proc.get("offsetQP", 0)
+    startQP = config.proc.get("startQP", 0)
+    endQP = config.proc.get("endQP", 0)
     for crop_size in config.proc["crop_size"].get(seq_name, []):
         tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
         for anchorQP in config.anchorQP.get(seq_name, []):
-            qp = anchorQP + offsetQP
-            tcodec = CodecTask(qp=qp).follow(tpreproc)
-            tpostproc = PostprocTask().follow(tcodec)
-            tconvert = Convert40Task(views=config.views).follow(tpostproc)
+            for offsetQP in range(startQP, endQP):
+                qp = anchorQP + offsetQP
+                tcodec = CodecTask(qp=qp).follow(tpreproc)
+                tpostproc = PostprocTask().follow(tcodec)
+                tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
 
 if __name__ == "__main__":

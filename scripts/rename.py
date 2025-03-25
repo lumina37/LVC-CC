@@ -6,7 +6,7 @@ from lvccc.logging import get_logger
 from lvccc.task import query
 from lvccc.utils import tasks
 
-parser = argparse.ArgumentParser(description="Anchor: convert/codec+convert")
+parser = argparse.ArgumentParser(description="Rename directories of all tasks")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(

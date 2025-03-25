@@ -6,6 +6,7 @@ from lvccc.executor import Executor
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask
 from lvccc.utils import avaliable_cpu_count
 
+# Config from CMD
 parser = argparse.ArgumentParser(description="Proc: convert/preproc+codec+postproc+convert")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
@@ -18,6 +19,8 @@ config = update_config(Path(opt.base))
 for cpath in opt.configs:
     config = update_config(Path(cpath))
 
+
+# Task forest
 roots = []
 
 for seq_name in config.seqs:

@@ -84,6 +84,7 @@ def BD_RATE(R1, PSNR1, R2, PSNR2, piecewise=0):
     return avg_diff
 
 
+# Config from CMD
 parser = argparse.ArgumentParser(description="Export BD-rate")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
@@ -96,6 +97,8 @@ config = update_config(Path(opt.base))
 for cpath in opt.configs:
     config = update_config(Path(cpath))
 
+
+# Export
 summary_dir = config.dir.output / "summary"
 src_dir = summary_dir / "tasks"
 dst_dir = summary_dir / "csv"

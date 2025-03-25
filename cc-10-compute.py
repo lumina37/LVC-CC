@@ -8,6 +8,7 @@ from lvccc.logging import get_logger
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, query
 from lvccc.utils import CodecLog, calc_lenslet_psnr, calc_mv_psnr
 
+# Config from CMD
 parser = argparse.ArgumentParser(description="Compute metrics of all tasks")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
@@ -22,6 +23,8 @@ for cpath in opt.configs:
 
 logger = get_logger()
 
+
+# Compute
 summary_dir = config.dir.output / "summary/tasks"
 
 

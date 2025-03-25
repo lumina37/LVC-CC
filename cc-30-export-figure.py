@@ -9,6 +9,7 @@ from lvccc.config import update_config
 from lvccc.helper import mkdir
 from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, gen_infomap
 
+# Config from CMD
 parser = argparse.ArgumentParser(description="Export RD-curve")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
@@ -21,6 +22,8 @@ config = update_config(Path(opt.base))
 for cpath in opt.configs:
     config = update_config(Path(cpath))
 
+
+# Export
 summary_dir = config.dir.output / "summary"
 src_dir = summary_dir / "tasks"
 dst_dir = summary_dir / "figure"

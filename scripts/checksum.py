@@ -5,7 +5,7 @@ from lvccc.config import update_config
 from lvccc.helper import SHA1Cache, compute_sha1, get_any_file, get_sha1, mtime
 from lvccc.logging import get_logger
 
-parser = argparse.ArgumentParser(description="Anchor: convert/codec+convert")
+parser = argparse.ArgumentParser(description="Check SHA1 for all input sequences")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(

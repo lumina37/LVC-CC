@@ -26,10 +26,10 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
     def run(self) -> None:
         config = get_config()
 
-        # Yuv2img
+        # Lenslet yuv to image
         srcpath = get_any_file(self.srcdir, "*.yuv")
         ll_wdt, ll_hgt = size_from_filename(srcpath.name)
-        img_srcdir = self.dstdir / "img/src"
+        img_srcdir = self.dstdir / "img" / "src"
         mkdir(img_srcdir)
         img_src_pattern = (img_srcdir / IMG_PATTERN).with_suffix(".png")
 
@@ -85,7 +85,7 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
 
         run_cmds(convert_cmds)
 
-        # Img2yuv
+        # Multi-view image to yuv
         yuv_dir = self.dstdir / "yuv"
         mkdir(yuv_dir)
 

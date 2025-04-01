@@ -1,6 +1,6 @@
 [project]
 name = "lvccc"
-version = "0.12.2a7"
+version = "0.12.2a8"
 description = "A crosscheck framework designed for LVC"
 authors = [{ name = "lumina37", email = "tz23@mails.tsinghua.edu.cn" }]
 dependencies = ["yuvio", "pillow", "numpy"]

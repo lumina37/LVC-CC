@@ -4,6 +4,7 @@ import dataclasses as dcs
 import functools
 import re
 import shutil
+import subprocess
 from pathlib import Path
 from typing import ClassVar
 
@@ -72,7 +73,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
             "proc.log",
         ]
 
-        run_cmds(cmds, cwd=self.dstdir)
+        run_cmds(cmds, output=subprocess.DEVNULL, cwd=self.dstdir)
 
         yuv_dstpath = get_any_file(self.dstdir, "*.yuv")
         size = re.search(r"_(\d+x\d+)_", yuv_dstpath.name).group(1)

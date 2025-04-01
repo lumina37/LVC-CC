@@ -70,7 +70,7 @@ for seq_name in config.seqs:
         proc_bitrates = []
         proc_psnrs = []
         procQPs = []
-        for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1]):
+        for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
             tcodec = CodecTask(qp=qp).follow(tpreproc)
             tpostproc = PostprocTask().follow(tcodec)
             tconvert = Convert40Task(views=config.views).follow(tpostproc)

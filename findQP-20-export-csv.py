@@ -56,7 +56,7 @@ with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
         extendQP = config.proc.get("extendQP", 0)
         for crop_size in config.proc["crop_size"].get(seq_name, []):
             tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
-            for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1]):
+            for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
                 tcodec = CodecTask(qp=qp).follow(tpreproc)
                 tpostproc = PostprocTask().follow(tcodec)
                 tconvert = Convert40Task(views=config.views).follow(tpostproc)

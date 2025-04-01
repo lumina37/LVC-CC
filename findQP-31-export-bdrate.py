@@ -140,7 +140,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
 
             proc_bitrates = []
             proc_psnrs = []
-            for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1]):
+            for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
                 tcodec = CodecTask(qp=qp).follow(tpreproc)
                 tpostproc = PostprocTask().follow(tcodec)
                 tconvert = Convert40Task(views=config.views).follow(tpostproc)

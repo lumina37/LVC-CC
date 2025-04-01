@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..task import CodecTask, ConvertTask, ProtoTask
+from ..task import CodecTask, ProtoTask
 
 
 def ancestor_with_spec_type[T](task: ProtoTask, cls: type[T]) -> T:

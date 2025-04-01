@@ -9,7 +9,7 @@ def mkdir(path: Path, mode: int = 0o755) -> None:
     path.mkdir(mode, parents=True, exist_ok=True)
 
 
-def rm(path: Path) -> None:
+def remove(path: Path) -> None:
     path = Path(path)
     if path.is_dir():
         shutil.rmtree(path, ignore_errors=True)

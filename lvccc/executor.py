@@ -7,7 +7,7 @@ import time
 import traceback
 from typing import TYPE_CHECKING
 
-from .helper import Atomic, mkdir
+from .helper import Atomic, mkdir, remove
 from .logging import get_logger
 from .task.infomap import append, query
 
@@ -22,6 +22,7 @@ def run_task(task: ProtoTask) -> bool:
     log = get_logger()
 
     try:
+        remove(task.dstdir)
         mkdir(task.dstdir)
         start_ns = time.monotonic_ns()
         task.run()

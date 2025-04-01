@@ -46,6 +46,7 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
             img_src_pattern,
             "-v",
             "error",
+            "-y",
         ]
 
         run_cmds(yuv2img_cmds)
@@ -105,6 +106,7 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
                 yuv_dir / f"{self.tag}-v{view:0>3}-{mv_wdt}x{mv_hgt}.yuv",
                 "-v",
                 "error",
+                "-y",
             ]
 
             run_cmds(img2yuv_cmds)

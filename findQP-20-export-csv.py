@@ -49,35 +49,36 @@ with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
     for seq_name in config.seqs:
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
-        startQP = config.proc.get("startQP", 0)
-        endQP = config.proc.get("endQP", 0)
+        anchorQPs = config.anchorQP.get(seq_name, None)
+        if not anchorQPs:
+            continue
+
+        extendQP = config.proc.get("extendQP", 0)
         for crop_size in config.proc["crop_size"].get(seq_name, []):
             tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
-            for anchorQP in config.anchorQP.get(seq_name, []):
-                for offsetQP in range(startQP, endQP):
-                    qp = anchorQP + offsetQP
-                    tcodec = CodecTask(qp=qp).follow(tpreproc)
-                    tpostproc = PostprocTask().follow(tcodec)
-                    tconvert = Convert40Task(views=config.views).follow(tpostproc)
+            for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1]):
+                tcodec = CodecTask(qp=qp).follow(tpreproc)
+                tpostproc = PostprocTask().follow(tcodec)
+                tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
-                    json_path = src_dir / tcodec.tag / "psnr.json"
-                    if not json_path.exists():
-                        csv_writer.writerow(["Not Found"] + [0] * (len(headers) - 1))
+                json_path = src_dir / tcodec.tag / "psnr.json"
+                if not json_path.exists():
+                    csv_writer.writerow(["Not Found"] + [0] * (len(headers) - 1))
 
-                    with json_path.open(encoding="utf-8") as f:
-                        metrics: dict = json.load(f)
+                with json_path.open(encoding="utf-8") as f:
+                    metrics: dict = json.load(f)
 
-                    csv_writer.writerow(
-                        [
-                            seq_name,
-                            crop_size,
-                            qp,
-                            metrics["bitrate"],
-                            metrics["llpsnr_y"],
-                            metrics["llpsnr_u"],
-                            metrics["llpsnr_v"],
-                            metrics["mvpsnr_y"],
-                            metrics["mvpsnr_u"],
-                            metrics["mvpsnr_v"],
-                        ]
-                    )
+                csv_writer.writerow(
+                    [
+                        seq_name,
+                        crop_size,
+                        qp,
+                        metrics["bitrate"],
+                        metrics["llpsnr_y"],
+                        metrics["llpsnr_u"],
+                        metrics["llpsnr_v"],
+                        metrics["mvpsnr_y"],
+                        metrics["mvpsnr_u"],
+                        metrics["mvpsnr_v"],
+                    ]
+                )

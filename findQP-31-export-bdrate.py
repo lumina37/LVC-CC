@@ -113,6 +113,10 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
     for seq_name in config.seqs:
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
+        anchorQPs = config.anchorQP.get(seq_name, None)
+        if not anchorQPs:
+            continue
+
         anchor_bitrates = []
         anchor_psnrs = []
         for qp in config.anchorQP.get(seq_name, []):
@@ -129,30 +133,27 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
             anchor_bitrates.append(metrics["bitrate"])
             anchor_psnrs.append(metrics["mvpsnr_y"])
 
-        startQP = config.proc.get("startQP", 0)
-        endQP = config.proc.get("endQP", 0)
+        extendQP = config.proc.get("extendQP", 0)
         for crop_size in config.proc["crop_size"].get(seq_name, []):
             row = [seq_name, str(crop_size)]
             tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
 
             proc_bitrates = []
             proc_psnrs = []
-            for anchorQP in config.anchorQP.get(seq_name, []):
-                for offsetQP in range(startQP, endQP):
-                    qp = anchorQP + offsetQP
-                    tcodec = CodecTask(qp=qp).follow(tpreproc)
-                    tpostproc = PostprocTask().follow(tcodec)
-                    tconvert = Convert40Task(views=config.views).follow(tpostproc)
+            for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1]):
+                tcodec = CodecTask(qp=qp).follow(tpreproc)
+                tpostproc = PostprocTask().follow(tcodec)
+                tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
-                    json_path = src_dir / tcodec.tag / "psnr.json"
-                    if not json_path.exists():
-                        continue
+                json_path = src_dir / tcodec.tag / "psnr.json"
+                if not json_path.exists():
+                    continue
 
-                    with json_path.open(encoding="utf-8") as f:
-                        metrics: dict = json.load(f)
+                with json_path.open(encoding="utf-8") as f:
+                    metrics: dict = json.load(f)
 
-                    proc_bitrates.append(metrics["bitrate"])
-                    proc_psnrs.append(metrics["mvpsnr_y"])
+                proc_bitrates.append(metrics["bitrate"])
+                proc_psnrs.append(metrics["mvpsnr_y"])
 
             bdrate = BD_RATE(
                 anchor_bitrates,

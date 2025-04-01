@@ -29,10 +29,14 @@ summary_dir = config.dir.output / "summary/tasks"
 
 
 for seq_name in config.seqs:
+    anchorQPs = config.anchorQP.get(seq_name, None)
+    if not anchorQPs:
+        continue
+
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
     # Anchor
-    for qp in config.anchorQP.get(seq_name, []):
+    for qp in anchorQPs:
         tcodec = CodecTask(qp=qp).follow(tcopy)
         tconvert = Convert40Task(views=config.views).follow(tcodec)
 
@@ -63,39 +67,36 @@ for seq_name in config.seqs:
         tconvert.dump_taskinfo(case_dir / "task.json")
 
     # With Pre/Postprocess
-    startQP = config.proc.get("startQP", 0)
-    endQP = config.proc.get("endQP", 0)
+    extendQP = config.proc.get("extendQP", 0)
     for crop_size in config.proc["crop_size"].get(seq_name, []):
         tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
-        for anchorQP in config.anchorQP.get(seq_name, []):
-            for offsetQP in range(startQP, endQP):
-                qp = anchorQP + offsetQP
-                tcodec = CodecTask(qp=qp).follow(tpreproc)
-                tpostproc = PostprocTask().follow(tcodec)
-                tconvert = Convert40Task(views=config.views).follow(tpostproc)
+        for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1]):
+            tcodec = CodecTask(qp=qp).follow(tpreproc)
+            tpostproc = PostprocTask().follow(tcodec)
+            tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
-                if query(tconvert) is None:
-                    continue
-                logger.info(f"Handling {tconvert.tag}")
+            if query(tconvert) is None:
+                continue
+            logger.info(f"Handling {tconvert.tag}")
 
-                log_path = get_any_file(query(tcodec), "*.log")
-                enclog = CodecLog.from_file(log_path)
+            log_path = get_any_file(query(tcodec), "*.log")
+            enclog = CodecLog.from_file(log_path)
 
-                llpsnr = calc_lenslet_psnr(tconvert)
-                mvpsnr = calc_mv_psnr(tconvert)
+            llpsnr = calc_lenslet_psnr(tconvert)
+            mvpsnr = calc_mv_psnr(tconvert)
 
-                metrics = {
-                    "bitrate": enclog.bitrate,
-                    "mvpsnr_y": mvpsnr[0],
-                    "mvpsnr_u": mvpsnr[1],
-                    "mvpsnr_v": mvpsnr[2],
-                    "llpsnr_y": llpsnr[0],
-                    "llpsnr_u": llpsnr[1],
-                    "llpsnr_v": llpsnr[2],
-                }
+            metrics = {
+                "bitrate": enclog.bitrate,
+                "mvpsnr_y": mvpsnr[0],
+                "mvpsnr_u": mvpsnr[1],
+                "mvpsnr_v": mvpsnr[2],
+                "llpsnr_y": llpsnr[0],
+                "llpsnr_u": llpsnr[1],
+                "llpsnr_v": llpsnr[2],
+            }
 
-                case_dir = summary_dir / tcodec.tag
-                mkdir(case_dir)
-                with (case_dir / "psnr.json").open("w", encoding="utf-8") as f:
-                    json.dump(metrics, f, indent=4)
-                tconvert.dump_taskinfo(case_dir / "task.json")
+            case_dir = summary_dir / tcodec.tag
+            mkdir(case_dir)
+            with (case_dir / "psnr.json").open("w", encoding="utf-8") as f:
+                json.dump(metrics, f, indent=4)
+            tconvert.dump_taskinfo(case_dir / "task.json")

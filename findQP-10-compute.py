@@ -42,6 +42,11 @@ for seq_name in config.seqs:
 
         if query(tconvert) is None:
             continue
+
+        case_dir = summary_dir / tcodec.tag
+        if (case_dir / "task.json").exists():
+            continue
+
         logger.info(f"Handling {tconvert.tag}")
 
         log_path = get_any_file(query(tcodec), "*.log")
@@ -60,7 +65,6 @@ for seq_name in config.seqs:
             "llpsnr_v": llpsnr[2],
         }
 
-        case_dir = summary_dir / tcodec.tag
         mkdir(case_dir)
         with (case_dir / "psnr.json").open("w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=4)
@@ -77,6 +81,11 @@ for seq_name in config.seqs:
 
             if query(tconvert) is None:
                 continue
+
+            case_dir = summary_dir / tcodec.tag
+            if (case_dir / "task.json").exists():
+                continue
+
             logger.info(f"Handling {tconvert.tag}")
 
             log_path = get_any_file(query(tcodec), "*.log")
@@ -95,7 +104,6 @@ for seq_name in config.seqs:
                 "llpsnr_v": llpsnr[2],
             }
 
-            case_dir = summary_dir / tcodec.tag
             mkdir(case_dir)
             with (case_dir / "psnr.json").open("w", encoding="utf-8") as f:
                 json.dump(metrics, f, indent=4)

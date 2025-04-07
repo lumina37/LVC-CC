@@ -24,25 +24,25 @@ for cpath in opt.configs:
 roots = []
 
 for seq_name in config.seqs:
+    anchorQPs = config.anchorQP.get(seq_name, None)
+    if not anchorQPs:
+        continue
+
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
-
     tconvert = Convert40Task(views=config.views).follow(tcopy)
 
-    for anchorQP in config.anchorQP.get(seq_name, []):
+    for anchorQP in anchorQPs:
         tcodec = CodecTask(qp=anchorQP).follow(tcopy)
         tconvert = Convert40Task(views=config.views).follow(tcodec)
 
-    startQP = config.proc.get("startQP", 0)
-    endQP = config.proc.get("endQP", 0)
+    extendQP = config.proc.get("extendQP", 0)
     for crop_size in config.proc["crop_size"].get(seq_name, []):
         tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
-        for anchorQP in config.anchorQP.get(seq_name, []):
-            for offsetQP in range(startQP, endQP):
-                qp = anchorQP + offsetQP
-                tcodec = CodecTask(qp=qp).follow(tpreproc)
-                tpostproc = PostprocTask().follow(tcodec)
-                tconvert = Convert40Task(views=config.views).follow(tpostproc)
+        for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
+            tcodec = CodecTask(qp=qp).follow(tpreproc)
+            tpostproc = PostprocTask().follow(tcodec)
+            tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
 
 if __name__ == "__main__":

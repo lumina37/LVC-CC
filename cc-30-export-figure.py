@@ -31,10 +31,13 @@ mkdir(dst_dir)
 
 infomap = gen_infomap(src_dir)
 
+anchor_color = "darkviolet"
+proc_color = "crimson"
 
 for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
-    tpreproc = PreprocTask().follow(tcopy)
+    crop_size = config.proc["crop_size"][seq_name]
+    tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
 
     fig, ax = plt.subplots(figsize=(6, 6))
     ax: Axes = ax
@@ -59,15 +62,9 @@ for seq_name in config.seqs:
         anchor_bitrates.append(metrics["bitrate"])
         anchor_psnrs.append(metrics["mvpsnr_y"])
 
-    ax.plot(anchor_bitrates, anchor_psnrs, label="anchor", color="blue")
+    ax.plot(anchor_bitrates, anchor_psnrs, label="anchor", color=anchor_color)
     for i in range(len(anchor_bitrates)):
-        ax.annotate(
-            str(anchorQPs[i]),
-            xy=(anchor_bitrates[i], anchor_psnrs[i]),
-            xytext=(-5, 0),
-            textcoords="offset points",
-            color="blue",
-        )
+        ax.annotate(str(anchorQPs[i]), xy=(anchor_bitrates[i], anchor_psnrs[i]), color=anchor_color)
 
     # With Pre/Postprocess
     proc_bitrates = []
@@ -88,16 +85,10 @@ for seq_name in config.seqs:
         proc_bitrates.append(metrics["bitrate"])
         proc_psnrs.append(metrics["mvpsnr_y"])
 
-    ax.plot(proc_bitrates, proc_psnrs, label="proc", color="orange")
+    ax.plot(proc_bitrates, proc_psnrs, label="proc", color=proc_color)
     for i in range(len(proc_bitrates)):
-        ax.annotate(
-            str(procQPs[i]),
-            xy=(proc_bitrates[i], proc_psnrs[i]),
-            xytext=(-5, 0),
-            textcoords="offset points",
-            color="orange",
-        )
+        ax.annotate(str(procQPs[i]), xy=(proc_bitrates[i], proc_psnrs[i]), color=proc_color)
 
     ax.legend()
 
-    fig.savefig((dst_dir / seq_name).with_suffix(".png"))
+    fig.savefig((dst_dir / seq_name).with_suffix(".svg"))

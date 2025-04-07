@@ -31,6 +31,8 @@ mkdir(dst_dir)
 
 infomap = gen_infomap(src_dir)
 
+anchor_color = "darkviolet"
+proc_color = "crimson"
 
 for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
@@ -59,70 +61,70 @@ for seq_name in config.seqs:
         anchor_llpsnrs.append(metrics["llpsnr_y"])
 
     extendQP = config.proc.get("extendQP", 0)
-    for crop_size in config.proc["crop_size"].get(seq_name, []):
-        tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
+    crop_size = config.proc["crop_size"][seq_name]
+    tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
 
-        proc_bitrates = []
-        proc_mvpsnrs = []
-        proc_llpsnrs = []
-        procQPs = []
-        for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
-            tcodec = CodecTask(qp=qp).follow(tpreproc)
-            tpostproc = PostprocTask().follow(tcodec)
-            tconvert = Convert40Task(views=config.views).follow(tpostproc)
+    proc_bitrates = []
+    proc_mvpsnrs = []
+    proc_llpsnrs = []
+    procQPs = []
+    for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
+        tcodec = CodecTask(qp=qp).follow(tpreproc)
+        tpostproc = PostprocTask().follow(tcodec)
+        tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
-            json_path = src_dir / tcodec.tag / "psnr.json"
-            if not json_path.exists():
-                continue
+        json_path = src_dir / tcodec.tag / "psnr.json"
+        if not json_path.exists():
+            continue
 
-            with json_path.open(encoding="utf-8") as f:
-                metrics: dict = json.load(f)
+        with json_path.open(encoding="utf-8") as f:
+            metrics: dict = json.load(f)
 
-            proc_bitrates.append(metrics["bitrate"])
-            proc_mvpsnrs.append(metrics["mvpsnr_y"])
-            proc_llpsnrs.append(metrics["llpsnr_y"])
-            procQPs.append(qp)
+        proc_bitrates.append(metrics["bitrate"])
+        proc_mvpsnrs.append(metrics["mvpsnr_y"])
+        proc_llpsnrs.append(metrics["llpsnr_y"])
+        procQPs.append(qp)
 
-        # Multi-view
-        mvfig, mvax = plt.subplots(figsize=(6, 6))
-        mvax: Axes = mvax
-        mvax.set_xlabel("Total bitrate (Kbps)")
-        mvax.set_ylabel("Multi-view PSNR (dB)")
-        mvtitle = f"{tpreproc.tag}-multiview"
-        mvax.set_title(mvtitle)
+    # Multi-view
+    mvfig, mvax = plt.subplots(figsize=(6, 6))
+    mvax: Axes = mvax
+    mvax.set_xlabel("Total bitrate (Kbps)")
+    mvax.set_ylabel("Multi-view PSNR (dB)")
+    mvtitle = f"{tpreproc.tag}-multiview"
+    mvax.set_title(mvtitle)
 
-        mvax.plot(anchor_bitrates, anchor_mvpsnrs, label="anchor", color="blue", marker="o", markersize=1)
-        for i in range(len(anchor_bitrates)):
-            mvax.annotate(str(anchorQPs[i]), xy=(anchor_bitrates[i], anchor_mvpsnrs[i]), color="blue")
+    mvax.plot(anchor_bitrates, anchor_mvpsnrs, label="anchor", color=anchor_color, marker="o", markersize=1)
+    for i in range(len(anchor_bitrates)):
+        mvax.annotate(str(anchorQPs[i]), xy=(anchor_bitrates[i], anchor_mvpsnrs[i]), color=anchor_color)
 
-        mvax.plot(proc_bitrates, proc_mvpsnrs, label="proc", color="orange", marker="o", markersize=1)
-        for i in range(len(proc_bitrates)):
-            mvax.annotate(str(procQPs[i]), xy=(proc_bitrates[i], proc_mvpsnrs[i]), color="orange")
+    mvax.plot(proc_bitrates, proc_mvpsnrs, label="proc", color=proc_color, marker="o", markersize=1)
+    for i in range(len(proc_bitrates)):
+        mvax.annotate(str(procQPs[i]), xy=(proc_bitrates[i], proc_mvpsnrs[i]), color=proc_color)
 
-        mvax.legend()
+    mvax.legend()
 
-        mvfig.savefig((dst_dir / mvtitle).with_suffix(".png"))
+    mvfig.savefig((dst_dir / mvtitle).with_suffix(".svg"))
 
-        plt.close(mvfig)
+    plt.close(mvfig)
 
-        # Multi-view
-        llfig, llax = plt.subplots(figsize=(6, 6))
-        llax: Axes = llax
-        llax.set_xlabel("Total bitrate (Kbps)")
-        llax.set_ylabel("Lenslet PSNR (dB)")
-        lltitle = f"{tpreproc.tag}-lenslet"
-        llax.set_title(lltitle)
+    # Lenslet
+    llfig, llax = plt.subplots(figsize=(6, 6))
+    llax: Axes = llax
+    llax.set_xlabel("Total bitrate (Kbps)")
+    llax.set_ylabel("Lenslet PSNR (dB)")
+    lltitle = f"{tpreproc.tag}-lenslet"
+    llax.set_title(lltitle)
 
-        llax.plot(anchor_bitrates, anchor_llpsnrs, label="anchor", color="blue", marker="o", markersize=1)
-        for i in range(len(anchor_bitrates)):
-            llax.annotate(str(anchorQPs[i]), xy=(anchor_bitrates[i], anchor_llpsnrs[i]), color="blue")
+    llax.plot(anchor_bitrates, anchor_llpsnrs, label="anchor", color=anchor_color, marker="o", markersize=1)
+    for i in range(len(anchor_bitrates)):
+        llax.annotate(str(anchorQPs[i]), xy=(anchor_bitrates[i], anchor_llpsnrs[i]), color=anchor_color)
 
-        llax.plot(proc_bitrates, proc_llpsnrs, label="proc", color="orange", marker="o", markersize=1)
-        for i in range(len(proc_bitrates)):
-            llax.annotate(str(procQPs[i]), xy=(proc_bitrates[i], proc_llpsnrs[i]), color="orange")
+    llax.plot(proc_bitrates, proc_llpsnrs, label="proc", color=proc_color, marker="o", markersize=1)
+    for i in range(len(proc_bitrates)):
+        llax.annotate(str(procQPs[i]), xy=(proc_bitrates[i], proc_llpsnrs[i]), color=proc_color)
 
-        llax.legend()
+    llax.legend()
 
-        llfig.savefig((dst_dir / lltitle).with_suffix(".png"))
+    llfig.savefig((dst_dir / lltitle).with_suffix(".svg"))
 
-        plt.close(llfig)
+    plt.close(llfig)

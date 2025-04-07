@@ -29,8 +29,9 @@ for seq_name in config.seqs:
 
     tconvert = Convert40Task(views=config.views).follow(tcopy)
 
+    crop_size = config.proc["crop_size"][seq_name]
     if qps := config.proc["QP"].get(seq_name, []):
-        tpreproc = PreprocTask().follow(tcopy)
+        tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
         for qp in qps:
             tcodec = CodecTask(qp=qp).follow(tpreproc)
             tpostproc = PostprocTask().follow(tcodec)

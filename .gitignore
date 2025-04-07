@@ -6,10 +6,7 @@ __pycache__/
 .python-version
 *.lock
 
-/figs
-*.png
-*.txt
-*.csv
 *.toml
+!pyproject.toml
 
 misc*

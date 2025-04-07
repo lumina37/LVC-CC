@@ -7,7 +7,7 @@ from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, Preproc
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD
-parser = argparse.ArgumentParser(description="Proc with multi crop_sizes")
+parser = argparse.ArgumentParser(description="Run all cases to find proper QP")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(
@@ -37,12 +37,12 @@ for seq_name in config.seqs:
         tconvert = Convert40Task(views=config.views).follow(tcodec)
 
     extendQP = config.proc.get("extendQP", 0)
-    for crop_size in config.proc["crop_size"].get(seq_name, []):
-        tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
-        for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
-            tcodec = CodecTask(qp=qp).follow(tpreproc)
-            tpostproc = PostprocTask().follow(tcodec)
-            tconvert = Convert40Task(views=config.views).follow(tpostproc)
+    crop_size = config.proc["crop_size"][seq_name]
+    tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
+    for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
+        tcodec = CodecTask(qp=qp).follow(tpreproc)
+        tpostproc = PostprocTask().follow(tcodec)
+        tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
 
 if __name__ == "__main__":

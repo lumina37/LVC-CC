@@ -107,7 +107,7 @@ csv_path = dst_dir / "bdrate.csv"
 
 with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
     csv_writer = csv.writer(csv_f)
-    headers = ["Sequence", "CropSize", "BD-rate"]
+    headers = ["Sequence", "BD-rate"]
     csv_writer.writerow(headers)
 
     for seq_name in config.seqs:
@@ -134,34 +134,34 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
             anchor_psnrs.append(metrics["mvpsnr_y"])
 
         extendQP = config.proc.get("extendQP", 0)
-        for crop_size in config.proc["crop_size"].get(seq_name, []):
-            row = [seq_name, str(crop_size)]
-            tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
+        crop_size = config.proc["crop_size"][seq_name]
+        row = [seq_name]
+        tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
 
-            proc_bitrates = []
-            proc_psnrs = []
-            for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
-                tcodec = CodecTask(qp=qp).follow(tpreproc)
-                tpostproc = PostprocTask().follow(tcodec)
-                tconvert = Convert40Task(views=config.views).follow(tpostproc)
+        proc_bitrates = []
+        proc_psnrs = []
+        for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
+            tcodec = CodecTask(qp=qp).follow(tpreproc)
+            tpostproc = PostprocTask().follow(tcodec)
+            tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
-                json_path = src_dir / tcodec.tag / "psnr.json"
-                if not json_path.exists():
-                    continue
+            json_path = src_dir / tcodec.tag / "psnr.json"
+            if not json_path.exists():
+                continue
 
-                with json_path.open(encoding="utf-8") as f:
-                    metrics: dict = json.load(f)
+            with json_path.open(encoding="utf-8") as f:
+                metrics: dict = json.load(f)
 
-                proc_bitrates.append(metrics["bitrate"])
-                proc_psnrs.append(metrics["mvpsnr_y"])
+            proc_bitrates.append(metrics["bitrate"])
+            proc_psnrs.append(metrics["mvpsnr_y"])
 
-            bdrate = BD_RATE(
-                anchor_bitrates,
-                anchor_psnrs,
-                proc_bitrates,
-                proc_psnrs,
-                piecewise=1,
-            )
-            row.append(f"{bdrate}%")
+        bdrate = BD_RATE(
+            anchor_bitrates,
+            anchor_psnrs,
+            proc_bitrates,
+            proc_psnrs,
+            piecewise=1,
+        )
+        row.append(f"{bdrate}%")
 
-            csv_writer.writerow(row)
+        csv_writer.writerow(row)

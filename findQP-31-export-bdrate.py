@@ -107,7 +107,7 @@ csv_path = dst_dir / "bdrate.csv"
 
 with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
     csv_writer = csv.writer(csv_f)
-    headers = ["Sequence", "BD-rate"]
+    headers = ["Sequence", "LL-BD-rate", "MV-BD-rate"]
     csv_writer.writerow(headers)
 
     for seq_name in config.seqs:
@@ -118,7 +118,8 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
             continue
 
         anchor_bitrates = []
-        anchor_psnrs = []
+        anchor_llpsnrs = []
+        anchor_mvpsnrs = []
         for qp in config.anchorQP.get(seq_name, []):
             tcodec = CodecTask(qp=qp).follow(tcopy)
             tconvert = Convert40Task(views=config.views).follow(tcodec)
@@ -131,7 +132,8 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
                 metrics: dict = json.load(f)
 
             anchor_bitrates.append(metrics["bitrate"])
-            anchor_psnrs.append(metrics["mvpsnr_y"])
+            anchor_mvpsnrs.append(metrics["mvpsnr_y"])
+            anchor_llpsnrs.append(metrics["llpsnr_y"])
 
         extendQP = config.proc.get("extendQP", 0)
         crop_size = config.proc["crop_size"][seq_name]
@@ -139,7 +141,8 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
         tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
 
         proc_bitrates = []
-        proc_psnrs = []
+        proc_mvpsnrs = []
+        proc_llpsnrs = []
         for qp in range(anchorQPs[0] - extendQP, anchorQPs[-1] + 1):
             tcodec = CodecTask(qp=qp).follow(tpreproc)
             tpostproc = PostprocTask().follow(tcodec)
@@ -153,15 +156,23 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
                 metrics: dict = json.load(f)
 
             proc_bitrates.append(metrics["bitrate"])
-            proc_psnrs.append(metrics["mvpsnr_y"])
+            proc_mvpsnrs.append(metrics["mvpsnr_y"])
+            proc_llpsnrs.append(metrics["llpsnr_y"])
 
-        bdrate = BD_RATE(
+        ll_bdrate = BD_RATE(
             anchor_bitrates,
-            anchor_psnrs,
+            anchor_llpsnrs,
             proc_bitrates,
-            proc_psnrs,
+            proc_llpsnrs,
             piecewise=1,
         )
-        row.append(f"{bdrate}%")
+        mv_bdrate = BD_RATE(
+            anchor_bitrates,
+            anchor_mvpsnrs,
+            proc_bitrates,
+            proc_mvpsnrs,
+            piecewise=1,
+        )
+        row += [f"{ll_bdrate}%", f"{mv_bdrate}%"]
 
         csv_writer.writerow(row)

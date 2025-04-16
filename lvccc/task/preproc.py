@@ -48,6 +48,9 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         calib_cfg = CalibCfg.from_file(cfg_srcdir / "calib.cfg")
         preproc_cfg.SourceWidth = calib_cfg.LensletWidth
         preproc_cfg.SourceHeight = calib_cfg.LensletHeight
+        preproc_cfg.InputFile = (
+            f"{self.seq_name}_{calib_cfg.LensletWidth}x{calib_cfg.LensletHeight}_300frames_8bit_yuv420.yuv"
+        )
         codec_cfg_dstpath = cfg_dstdir / "codec.cfg"
         preproc_cfg.to_file(codec_cfg_dstpath)
 

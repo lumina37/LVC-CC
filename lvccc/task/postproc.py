@@ -8,7 +8,7 @@ import subprocess
 from typing import TYPE_CHECKING, ClassVar
 
 from ..config import get_config
-from ..helper import get_any_file, run_cmds
+from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .infomap import query
 from .preproc import PreprocTask
@@ -39,8 +39,11 @@ class PostprocTask(NonRootTask["PostprocTask"]):
         for idx, task_dict in enumerate(self.chain):
             if task_dict["task"] == PreprocTask.task:
                 preproc_task = self.ancestor(idx)
+
+        cfg_dstdir = self.dstdir / "cfg"
+        mkdir(cfg_dstdir)
         proc_log_srcpath = preproc_task.dstdir / "proc.log"
-        preproc_log_dstpath = self.dstdir / "proc.log"
+        preproc_log_dstpath = cfg_dstdir / "proc.log"
         shutil.copyfile(proc_log_srcpath, preproc_log_dstpath)
 
         # Run

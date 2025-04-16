@@ -7,6 +7,7 @@ from .base import AutoConvImpl
 
 @dcs.dataclass
 class PreprocCfg(AutoConvImpl):
+    InputFile: str = ""  # For identification in MCA
     FramesToBeEncoded: int = 30
     SourceWidth: int = 1920
     SourceHeight: int = 1080

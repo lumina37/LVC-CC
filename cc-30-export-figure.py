@@ -36,7 +36,6 @@ proc_color = "crimson"
 
 for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
-    tpreproc = PreprocTask().follow(tcopy)
 
     anchorQPs = config.anchorQP.get(seq_name, None)
     if not anchorQPs:
@@ -82,7 +81,6 @@ for seq_name in config.seqs:
         proc_bitrates.append(metrics["bitrate"])
         proc_mvpsnrs.append(metrics["mvpsnr_y"])
         proc_llpsnrs.append(metrics["llpsnr_y"])
-        procQPs.append(qp)
 
     # Multi-view
     mvfig, mvax = plt.subplots(figsize=(8, 6))
@@ -102,7 +100,7 @@ for seq_name in config.seqs:
 
     mvax.legend()
 
-    mvfig.savefig((dst_dir / mvtitle).with_suffix(".svg"))
+    mvfig.savefig((dst_dir / mvtitle).with_suffix(".png"))
 
     plt.close(mvfig)
 
@@ -124,6 +122,6 @@ for seq_name in config.seqs:
 
     llax.legend()
 
-    llfig.savefig((dst_dir / lltitle).with_suffix(".svg"))
+    llfig.savefig((dst_dir / lltitle).with_suffix(".png"))
 
     plt.close(llfig)

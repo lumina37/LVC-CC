@@ -37,11 +37,11 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_fil
         "QP",
         "Bitrate",
         "LLPSNR-Y",
-        "LLPSNR-U",
-        "LLPSNR-V",
+        # "LLPSNR-U",
+        # "LLPSNR-V",
         "MVPSNR-Y",
-        "MVPSNR-U",
-        "MVPSNR-V",
+        # "MVPSNR-U",
+        # "MVPSNR-V",
     ]
     csv_writer.writerow(headers)
 
@@ -65,10 +65,10 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_fil
                     qp,
                     metrics["bitrate"],
                     metrics["llpsnr_y"],
-                    metrics["llpsnr_u"],
-                    metrics["llpsnr_v"],
+                    # metrics["llpsnr_u"],
+                    # metrics["llpsnr_v"],
                     metrics["mvpsnr_y"],
-                    metrics["mvpsnr_u"],
-                    metrics["mvpsnr_v"],
+                    # metrics["mvpsnr_u"],
+                    # metrics["mvpsnr_v"],
                 ]
             )

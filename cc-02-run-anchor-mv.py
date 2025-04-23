@@ -27,8 +27,6 @@ for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    tconvert = Convert40Task(views=config.views).follow(tcopy)
-
     for qp in config.anchorQP.get(seq_name, []):
         tcodec = CodecTask(qp=qp).follow(tcopy)
         tconvert = Convert40Task(views=config.views).follow(tcodec)

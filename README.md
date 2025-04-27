@@ -125,9 +125,9 @@ We compose multiple `Task`s into a **pipeline**. Then compose several **pipeline
 
 As for now, there are three acknowledged **pipeline**s:
 
-1. **base**: copy->convert40. Straight-forward multi-view conversion. Provides the **base** for PSNR computation.
-2. **anchor**: copy->codec->convert40. Pipeline appends with VVC codec. Provides the **anchor** to estimate the performance of pre/postprocess tools.
-3. **proc**: copy->preproc->codec->postproc->convert40. Pipeline appends with pre/postprocess procedure.
+1. **base**: `copy`->`convert40`. Straight-forward multi-view conversion. Provides the **base** for PSNR computation.
+2. **anchor**: `copy`->`codec`->`convert40`. Pipeline appends with VVC codec. Provides the **anchor** to estimate the performance of pre/postprocess tools.
+3. **proc**: `copy`->`preproc`->`codec`->`postproc`->`convert40`. Pipeline appends with pre/postprocess procedure.
 
 ### Naming Rules and Directory Structure
 
@@ -135,7 +135,9 @@ Each `Task` is associated with an unique directory under `${dir.output}/tasks`. 
 
 There are six pre-defined `Task`s:
 
-#### copy
+---
+
+#### `copy`
 
 Copy a certain range of the source yuv file to ensure a uniform input.
 
@@ -154,7 +156,9 @@ Directory structure:
 └── task.json  # metadata
 ```
 
-#### preproc
+---
+
+#### `preproc`
 
 Preprocess with the MCA.
 
@@ -163,7 +167,7 @@ Directory name `preproc-Boys2-f300-proc-d45a` can be spilt into:
 - **preproc**: This is a `PreprocTask`.
 - **Boys2**: The sequence name is Boys2.
 - **f300**: The pipeline involves 300 frames.
-- **proc**: The pipeline is tagged by **proc** (both VVC and MCA).
+- **proc**: The pipeline is tagged with **proc** (both VVC and MCA).
 - **d45a**: Hash for deduplication.
 
 Directory structure:
@@ -178,7 +182,9 @@ Directory structure:
 └── task.json  # metadata
 ```
 
-#### codec
+---
+
+#### `codec`
 
 VVC codec.
 
@@ -189,8 +195,8 @@ Directory name `codec-Boys2-f300-anchor-QP36-c445` can be spilt into:
 - **codec**: This is a `CodecTask`.
 - **Boys2**: The sequence name is Boys2.
 - **f300**: The pipeline involves 300 frames.
-- **anchor**: The pipeline is tagged by **anchor** (only VVC, no MCA).
-- **QP36**: Encoded by QP=36.
+- **anchor**: The pipeline is tagged with **anchor** (only VVC, no MCA).
+- **QP36**: Encoded with QP=36.
 - **c445**: Hash for deduplication.
 
 Directory structure:
@@ -215,13 +221,15 @@ Directory name `codec-Boys2-f300-proc-QP33-2776` can be spilt into:
 - **codec**: This is a `CodecTask`.
 - **Boys2**: The sequence name is Boys2.
 - **f300**: The pipeline involves 300 frames.
-- **proc**: The pipeline is tagged by **anchor** (only VVC, no MCA).
-- **QP33**: Encoded by QP=33.
+- **proc**: The pipeline is tagged with **anchor** (only VVC, no MCA).
+- **QP33**: Encoded with QP=33.
 - **2776**: Hash for deduplication.
 
 Directory structure: similiar to the **anchor** pipeline variant.
 
-#### postproc
+---
+
+#### `postproc`
 
 Postprocess with the MCA
 
@@ -230,7 +238,7 @@ Directory name `postproc-Boys2-f300-proc-QP33-3b24` can be spilt into:
 - **postproc**: This is a `PostprocTask`.
 - **Boys2**: The sequence name is Boys2.
 - **f300**: The pipeline involves 300 frames.
-- **proc**: The pipeline is tagged by **proc** (both VVC and MCA).
+- **proc**: The pipeline is tagged with **proc** (both VVC and MCA).
 - **QP33**: The QP of the upstream `CodecTask` is 33.
 - **3b24**: Hash for deduplication.
 
@@ -244,7 +252,9 @@ Directory structure:
 └── task.json  # metadata
 ```
 
-#### convert40
+---
+
+#### `convert40`
 
 Convert lenslet yuv into multi-view yuv using the RLC4.0.
 
@@ -255,7 +265,7 @@ Directory name `convert40-Boys2-f300-base-5982` can be spilt into:
 - **convert40**: This is a `Convert40Task`.
 - **Boys2**: The sequence name is Boys2.
 - **f300**: The pipeline involves 300 frames.
-- **base**: The pipeline is tagged by **base** (no VVC, no MCA).
+- **base**: The pipeline is tagged with **base** (no VVC, no MCA).
 - **5982**: Hash for deduplication.
 
 Directory structure:
@@ -273,9 +283,6 @@ Directory structure:
 │   │   │   └── image_025.png
 │   │   ├── ...
 │   │   └── frame300
-│   │       ├── image_001.png
-│   │       ├── ...
-│   │       └── image_025.png
 │   └── src  # lenslet png input
 │       ├── frame001.png  # each frame
 │       ├── ...
@@ -294,7 +301,7 @@ Directory name `convert40-Boys2-f300-anchor-QP36-fc31` can be spilt into:
 - **convert40**: This is a `Convert40Task`.
 - **Boys2**: The sequence name is Boys2.
 - **f300**: The pipeline involves 300 frames.
-- **anchor**: The pipeline is tagged by **anchor** (only VVC, no MCA).
+- **anchor**: The pipeline is tagged with **anchor** (only VVC, no MCA).
 - **QP36**: The QP of the upstream `CodecTask` is 36.
 - **fc31**: Hash for deduplication.
 
@@ -307,13 +314,15 @@ Directory name `convert40-Boys2-f300-proc-QP33-294f` can be spilt into:
 - **convert40**: This is a `Convert40Task`.
 - **Boys2**: The sequence name is Boys2.
 - **f300**: The pipeline involves 300 frames.
-- **proc**: The pipeline is tagged by **proc** (both VVC and MCA).
+- **proc**: The pipeline is tagged with **proc** (both VVC and MCA).
 - **QP33**: The QP of the upstream `CodecTask` is 33.
 - **294f**: Hash for deduplication.
 
 Directory structure: similiar to the **base** pipeline variant.
 
-#### posetrace
+---
+
+#### `posetrace`
 
 Generate posetrace video for subjective quality assessment.
 
@@ -355,15 +364,8 @@ frames = 1
 views = 1
 
 seqs = [  # Only enable 2 sequences
-    # "Boxer-IrishMan-Gladiator2",
     "Boys2",
-    # "HandTools",
-    # "Matryoshka",
-    # "MiniGarden2",
-    # "Motherboard2",
     "Fujita2",
-    # "Origami",
-    # "TempleBoatGiantR32",
 ]
 
 [dir]

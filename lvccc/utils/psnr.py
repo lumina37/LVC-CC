@@ -16,8 +16,7 @@ if TYPE_CHECKING:
 
 def calc_array_mse(lhs: np.ndarray, rhs: np.ndarray) -> float:
     diff = lhs.astype(np.int16) - rhs.astype(np.int16)
-    sqrdiff = np.square(diff)
-    mse = np.mean(sqrdiff)
+    mse = np.mean(np.square(diff, dtype=np.int32))
     return mse
 
 

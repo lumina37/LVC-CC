@@ -16,7 +16,7 @@ from .base import RootTask
 @dcs.dataclass
 class CopyTask(RootTask["CopyTask"]):
     """
-    Copy or symlink the source yuv file to ensure a uniform input.
+    Copy a certain range of the source yuv file to ensure a uniform input.
     """
 
     task: ClassVar[str] = "copy"

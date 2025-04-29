@@ -26,7 +26,7 @@ def get_direction(seq_name: str) -> bool:
 
     cfg_srcdir = Path("config") / seq_name
     calib_cfg = CalibCfg.from_file(cfg_srcdir / "calib.cfg")
-    direction = calib_cfg.MLADirection
+    direction = bool(calib_cfg.MLADirection)
 
     return direction
 
@@ -35,7 +35,8 @@ def get_views(task: ProtoTask) -> int:
     views = 5
 
     for task_dict in task.chain:
-        if task_dict["task"] == ConvertTask.task:
+        task_name: str = task_dict["task"]
+        if task_name.startswith("convert"):
             views = task_dict["views"]
             break
 

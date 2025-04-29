@@ -10,7 +10,7 @@ class CalibCfg(AutoConvImpl):
     LensletWidth: int = 1920
     LensletHeight: int = 1080
     MIDiameter: float = 0.0
-    MLADirection: bool = False
+    MLADirection: int = 0
 
     def dump(self, f: TextIO) -> None:
         f.writelines(f"{k} : {v}\n" for k, v in dcs.asdict(self).items())

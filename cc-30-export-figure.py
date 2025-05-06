@@ -31,8 +31,8 @@ mkdir(dst_dir)
 
 infomap = gen_infomap(src_dir)
 
-anchor_color = "darkviolet"
-proc_color = "crimson"
+anchor_color = "orange"
+proc_color = "darkviolet"
 
 for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
@@ -90,11 +90,13 @@ for seq_name in config.seqs:
     mvtitle = f"{tpreproc.tag}-multiview"
     mvax.set_title(mvtitle)
 
-    mvax.plot(anchor_bitrates, anchor_mvpsnrs, label="anchor", color=anchor_color, marker="o", markersize=1)
+    mvax.plot(
+        anchor_bitrates, anchor_mvpsnrs, label="anchor", color=anchor_color, linestyle="--", marker="o", markersize=2
+    )
     for i in range(len(anchor_bitrates)):
         mvax.annotate(str(anchorQPs[i]), xy=(anchor_bitrates[i], anchor_mvpsnrs[i]), color=anchor_color)
 
-    mvax.plot(proc_bitrates, proc_mvpsnrs, label="proc", color=proc_color, marker="o", markersize=1)
+    mvax.plot(proc_bitrates, proc_mvpsnrs, label="proc", color=proc_color, linewidth=2.0, marker="o", markersize=2)
     for i in range(len(proc_bitrates)):
         mvax.annotate(str(procQPs[i]), xy=(proc_bitrates[i], proc_mvpsnrs[i]), color=proc_color)
 
@@ -112,11 +114,13 @@ for seq_name in config.seqs:
     lltitle = f"{tpreproc.tag}-lenslet"
     llax.set_title(lltitle)
 
-    llax.plot(anchor_bitrates, anchor_llpsnrs, label="anchor", color=anchor_color, marker="o", markersize=1)
+    llax.plot(
+        anchor_bitrates, anchor_llpsnrs, label="anchor", color=anchor_color, linestyle="--", marker="o", markersize=2
+    )
     for i in range(len(anchor_bitrates)):
         llax.annotate(str(anchorQPs[i]), xy=(anchor_bitrates[i], anchor_llpsnrs[i]), color=anchor_color)
 
-    llax.plot(proc_bitrates, proc_llpsnrs, label="proc", color=proc_color, marker="o", markersize=1)
+    llax.plot(proc_bitrates, proc_llpsnrs, label="proc", color=proc_color, linewidth=2.0, marker="o", markersize=2)
     for i in range(len(proc_bitrates)):
         llax.annotate(str(procQPs[i]), xy=(proc_bitrates[i], proc_llpsnrs[i]), color=proc_color)
 

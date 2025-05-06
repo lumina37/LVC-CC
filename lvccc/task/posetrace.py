@@ -12,7 +12,6 @@ from PIL import Image
 from ..config import CalibCfg
 from ..helper import size_from_filename
 from .base import NonRootTask
-from .convert import ConvertTask
 from .infomap import query
 
 if TYPE_CHECKING:

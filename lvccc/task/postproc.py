@@ -36,12 +36,12 @@ class PostprocTask(NonRootTask["PostprocTask"]):
 
         yuv_srcpath = get_any_file(self.srcdir, "*.yuv")
 
+        cfg_dstdir = self.dstdir / "cfg"
+        mkdir(cfg_dstdir)
+
         for idx, task_dict in enumerate(self.chain):
             if task_dict["task"] == PreprocTask.task:
                 preproc_task = self.ancestor(idx)
-
-        cfg_dstdir = self.dstdir / "cfg"
-        mkdir(cfg_dstdir)
         proc_log_srcpath = preproc_task.dstdir / "proc.log"
         preproc_log_dstpath = cfg_dstdir / "proc.log"
         shutil.copyfile(proc_log_srcpath, preproc_log_dstpath)

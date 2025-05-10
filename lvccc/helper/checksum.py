@@ -45,3 +45,12 @@ def compute_sha1(path: Path) -> str:
             sha1_state.update(chunk)
     sha1_hex = sha1_state.hexdigest()
     return sha1_hex
+
+
+def compute_md5(path: Path) -> str:
+    md5_state = hashlib.md5(usedforsecurity=False)
+    with path.open("rb") as yuvf:
+        while chunk := yuvf.read(4 * 1024):
+            md5_state.update(chunk)
+    md5_hex = md5_state.hexdigest()
+    return md5_hex

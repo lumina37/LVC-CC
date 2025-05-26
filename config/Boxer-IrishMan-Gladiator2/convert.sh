@@ -1,1 +1,1 @@
---psizeInflate 2.15 --viewShiftRange 0.075
+--psizeInflate 2.15 --viewShiftRange 0.075 --psizeShortcutThreshold 6

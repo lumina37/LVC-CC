@@ -74,4 +74,4 @@ class EncodeTask(NonRootTask["EncodeTask"]):
                 f"{self.tag}.bin",
             ]
 
-            run_cmds(cmds, output=logf, cwd=self.dstdir)
+            # run_cmds(cmds, output=logf, cwd=self.dstdir)

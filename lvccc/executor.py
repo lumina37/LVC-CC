@@ -34,7 +34,7 @@ def run_task(task: ProtoTask) -> bool:
         task.dump_taskinfo(task.dstdir / "task.json")
         append(task, task.dstdir.absolute())
         elasped_s = (end_ns - start_ns) / 1e9
-        log.info(f"Task `{task.dstdir.name}` completed! Elapsed time: {elasped_s:.3f}s")
+        log.info(f"Task `{task.dstdir.name}` completed! Elapsed time: {elasped_s}s")
         return True
 
 

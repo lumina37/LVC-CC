@@ -7,7 +7,7 @@ from lvccc.task import CodecTask, Convert40Task, CopyTask, PosetraceTask, Postpr
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD
-parser = argparse.ArgumentParser(description="Proc: convert/preproc+codec+postproc+convert")
+parser = argparse.ArgumentParser(description="Proc: posetrace")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(

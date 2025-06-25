@@ -7,7 +7,7 @@ from lvccc.task import CodecTask, Convert40Task, CopyTask
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD
-parser = argparse.ArgumentParser(description="Anchor: convert/codec+convert")
+parser = argparse.ArgumentParser(description="Anchor: convert")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(

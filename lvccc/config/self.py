@@ -16,6 +16,7 @@ class _Dir(UpdateImpl):
 class _App(UpdateImpl):
     ffmpeg: str = ""
     encoder: str = ""
+    decoder: str = ""
     processor: str = ""
     convertor: str = ""
 

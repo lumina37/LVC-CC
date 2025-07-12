@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import dataclasses as dcs
 import functools
-import shutil
-from pathlib import Path
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ..config import get_config
-from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
+from ..helper import get_any_file, run_cmds
 from .base import NonRootTask
-from .copy import CopyTask
 from .infomap import query
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @dcs.dataclass

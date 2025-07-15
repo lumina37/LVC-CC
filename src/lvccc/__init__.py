@@ -8,7 +8,6 @@ from .task import (
     CopyTask,
     DecodeTask,
     EncodeTask,
-    OptimizeType,
     PosetraceTask,
     PostprocTask,
     PreprocTask,

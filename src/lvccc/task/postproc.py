@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import dataclasses as dcs
-import enum
 import functools
 import re
 import shutil
@@ -18,12 +17,6 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class OptimizeType(enum.Enum):
-    LINEAR = enum.auto()
-    AVERAGE = enum.auto()
-    NONE = enum.auto()
-
-
 @dcs.dataclass
 class PostprocTask(NonRootTask["PostprocTask"]):
     """
@@ -32,7 +25,7 @@ class PostprocTask(NonRootTask["PostprocTask"]):
 
     task: ClassVar[str] = "postproc"
 
-    optimize_type: OptimizeType = OptimizeType.LINEAR
+    optimize_type: str = "LINEAR"  # or AVERAGE/NONE
 
     @functools.cached_property
     def srcdir(self) -> Path:
@@ -56,7 +49,7 @@ class PostprocTask(NonRootTask["PostprocTask"]):
         shutil.copyfile(proc_log_srcpath, preproc_log_dstpath)
 
         with preproc_log_dstpath.open("a") as preproc_log_file:
-            preproc_log_file.write(f"\noptimization:{self.optimize_type.name.lower()}")
+            preproc_log_file.write(f"\noptimization:{self.optimize_type}")
 
         # Run
         cmds = [

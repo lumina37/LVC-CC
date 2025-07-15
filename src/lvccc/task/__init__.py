@@ -9,7 +9,7 @@ from .decode import DecodeTask
 from .encode import EncodeTask
 from .infomap import gen_infomap, get_infomap, query
 from .posetrace import PosetraceTask
-from .postproc import OptimizeType, PostprocTask
+from .postproc import PostprocTask
 from .preproc import PreprocTask
 
 factory.reg_task_type(CodecTask)

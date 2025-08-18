@@ -3,7 +3,7 @@ from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CodecTask, Convert40Task, CopyTask
+from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD
@@ -29,8 +29,9 @@ for seq_name in config.seqs:
     roots.append(tcopy)
 
     for qp in config.anchorQP.get(seq_name, []):
-        tcodec = CodecTask(qp=qp).follow(tcopy)
-        tconvert = Convert40Task(views=config.views).follow(tcodec)
+        tenc = EncodeTask(qp=qp).follow(tcopy)
+        tdec = DecodeTask().follow(tenc)
+        tconvert = Convert40Task(views=config.views).follow(tdec)
 
 
 if __name__ == "__main__":

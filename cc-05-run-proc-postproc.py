@@ -3,7 +3,7 @@ from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CodecTask, CopyTask, PostprocTask, PreprocTask
+from lvccc.task import CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD
@@ -32,8 +32,9 @@ for seq_name in config.seqs:
     if qps := config.proc["QP"].get(seq_name, []):
         tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
         for qp in qps:
-            tcodec = CodecTask(qp=qp).follow(tpreproc)
-            tpostproc = PostprocTask().follow(tcodec)
+            tenc = EncodeTask(qp=qp).follow(tpreproc)
+            tdec = DecodeTask().follow(tenc)
+            tpostproc = PostprocTask().follow(tdec)
 
 
 if __name__ == "__main__":

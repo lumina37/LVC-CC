@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..task import CodecTask, ProtoTask
+from ..task import EncodeTask, ProtoTask
 
 
 def ancestor_with_spec_type[T](task: ProtoTask, cls: type[T]) -> T:
@@ -12,7 +12,7 @@ def ancestor_with_spec_type[T](task: ProtoTask, cls: type[T]) -> T:
 
 
 def is_anchor(task: ProtoTask) -> bool:
-    return len(task.chain) > 1 and task.chain[1]["task"] == CodecTask.task
+    return len(task.chain) > 1 and task.chain[1]["task"] == EncodeTask.task
 
 
 def is_base(task: ProtoTask) -> bool:

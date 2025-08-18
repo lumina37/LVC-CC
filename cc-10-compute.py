@@ -5,7 +5,7 @@ from pathlib import Path
 from lvccc.config import update_config
 from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
-from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask, query
+from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask, query
 from lvccc.utils import CodecLog, calc_lenslet_psnr, calc_mv_psnr
 
 # Config from CMD
@@ -33,19 +33,20 @@ for seq_name in config.seqs:
 
     # Anchor
     for qp in config.anchorQP.get(seq_name, []):
-        tcodec = CodecTask(qp=qp).follow(tcopy)
-        tconvert = Convert40Task(views=config.views).follow(tcodec)
+        tenc = EncodeTask(qp=qp).follow(tcopy)
+        tdec = DecodeTask().follow(tenc)
+        tconvert = Convert40Task(views=config.views).follow(tdec)
 
         if query(tconvert) is None:
             continue
 
-        case_dir = summary_dir / tcodec.tag
+        case_dir = summary_dir / tenc.tag
         if (case_dir / "task.json").exists():
             continue
 
         logger.info(f"Handling {tconvert.tag}")
 
-        log_path = get_any_file(query(tcodec), "*.log")
+        log_path = get_any_file(query(tenc), "*.log")
         enclog = CodecLog.from_file(log_path)
 
         llpsnr = calc_lenslet_psnr(tconvert)
@@ -70,20 +71,21 @@ for seq_name in config.seqs:
     crop_size = config.proc["crop_size"][seq_name]
     tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
     for qp in config.proc["QP"].get(seq_name, []):
-        tcodec = CodecTask(qp=qp).follow(tpreproc)
-        tpostproc = PostprocTask().follow(tcodec)
+        tenc = EncodeTask(qp=qp).follow(tpreproc)
+        tdec = DecodeTask().follow(tenc)
+        tpostproc = PostprocTask().follow(tdec)
         tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
         if query(tconvert) is None:
             continue
 
-        case_dir = summary_dir / tcodec.tag
+        case_dir = summary_dir / tenc.tag
         if (case_dir / "task.json").exists():
             continue
 
         logger.info(f"Handling {tconvert.tag}")
 
-        log_path = get_any_file(query(tcodec), "*.log")
+        log_path = get_any_file(query(tenc), "*.log")
         enclog = CodecLog.from_file(log_path)
 
         llpsnr = calc_lenslet_psnr(tconvert)

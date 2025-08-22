@@ -49,8 +49,8 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
 
         rlccfg.Output_Path = str(yuv_dir)
         rlccfg.viewNum = self.views
-        rlccfg.start_frame = 1
-        rlccfg.end_frame = self.frames
+        rlccfg.start_frame = 0
+        rlccfg.end_frame = self.frames - 1
         rlccfg.width = ll_wdt
         rlccfg.height = ll_hgt
 

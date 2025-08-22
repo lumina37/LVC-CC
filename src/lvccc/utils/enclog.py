@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 
 
 @dcs.dataclass
-class CodecLog:
+class EncodeLog:
     bitrate: float = 0.0
     timecost: float = 0.0
 
     @staticmethod
-    def load(f: TextIO) -> CodecLog:
+    def load(f: TextIO) -> EncodeLog:
         is_completed = False
         for row in f:
             if row.startswith("LayerId"):
@@ -25,7 +25,7 @@ class CodecLog:
         if not is_completed:
             logger = get_logger()
             logger.warning(f"The codec log is incomplete: name={f.name}")
-            return CodecLog()
+            return EncodeLog()
 
         f.readline()  # skip the table header
 
@@ -41,9 +41,9 @@ class CodecLog:
             timecost_str = matchobj.group(1)
             timecost = float(timecost_str)
 
-        return CodecLog(bitrate, timecost)
+        return EncodeLog(bitrate, timecost)
 
     @staticmethod
-    def from_file(path: Path) -> CodecLog:
+    def from_file(path: Path) -> EncodeLog:
         with path.open(encoding="utf-8") as f:
-            return CodecLog.load(f)
+            return EncodeLog.load(f)

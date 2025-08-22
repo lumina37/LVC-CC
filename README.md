@@ -117,7 +117,7 @@ This appendix is for the people who **wants to check** the intermediate output o
 
 ### Task
 
-The **basic unit of** LVC-CC is `Task`. Each `Task` represents a signle operation, e.g. the VVC codec or the multi-view conversion.
+The **basic unit of** LVC-CC is `Task`. Each `Task` represents a signle operation, e.g. the VVC encode or the multi-view conversion.
 
 ### Task Based Pipeline
 
@@ -126,8 +126,8 @@ We compose multiple `Task`s into a **pipeline**. Then compose several **pipeline
 As for now, there are three acknowledged **pipeline**s:
 
 1. **base**: `copy`->`convert40`. Straight-forward multi-view conversion. Provides the **base** for PSNR computation.
-2. **anchor**: `copy`->`codec`->`convert40`. Pipeline appends with VVC codec. Provides the **anchor** to estimate the performance of pre/postprocess tools.
-3. **proc**: `copy`->`preproc`->`codec`->`postproc`->`convert40`. Pipeline appends with pre/postprocess procedure.
+2. **anchor**: `copy`->`encode`->`decode`->`convert40`. Pipeline appends with VVC codec. Provides the **anchor** to estimate the performance of pre/postprocess tools.
+3. **proc**: `copy`->`preproc`->`encode`->`decode`->`postproc`->`convert40`. Pipeline appends with pre/postprocess procedure.
 
 ### Naming Rules and Directory Structure
 

@@ -8,7 +8,7 @@ import scipy.interpolate
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import CodecTask, Convert40Task, CopyTask, PostprocTask, PreprocTask
+from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask
 
 
 def BD_PSNR(R1, PSNR1, R2, PSNR2, piecewise=0):
@@ -116,10 +116,11 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
         anchor_bitrates = []
         anchor_psnrs = []
         for qp in config.anchorQP.get(seq_name, []):
-            tcodec = CodecTask(qp=qp).follow(tcopy)
-            tconvert = Convert40Task(views=config.views).follow(tcodec)
+            tenc = EncodeTask(qp=qp).follow(tcopy)
+            tdec = DecodeTask().follow(tenc)
+            tconvert = Convert40Task(views=config.views).follow(tdec)
 
-            json_path = src_dir / tcodec.tag / "psnr.json"
+            json_path = src_dir / tenc.tag / "psnr.json"
             if not json_path.exists():
                 continue
 
@@ -136,11 +137,12 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
         proc_bitrates = []
         proc_psnrs = []
         for qp in config.proc["QP"].get(seq_name, []):
-            tcodec = CodecTask(qp=qp).follow(tpreproc)
-            tpostproc = PostprocTask().follow(tcodec)
+            tenc = EncodeTask(qp=qp).follow(tcopy)
+            tdec = DecodeTask().follow(tenc)
+            tpostproc = PostprocTask().follow(tdec)
             tconvert = Convert40Task(views=config.views).follow(tpostproc)
 
-            json_path = src_dir / tcodec.tag / "psnr.json"
+            json_path = src_dir / tenc.tag / "psnr.json"
             if not json_path.exists():
                 continue
 

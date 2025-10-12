@@ -5,14 +5,10 @@ import shutil
 from pathlib import Path
 from typing import ClassVar
 
-from PIL import Image
-
 from ..config import RLC45Cfg, get_config
 from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
 from .base import NonRootTask
 from .convert import ConvertTask
-
-IMG_PATTERN = "frame%03d"
 
 
 @dcs.dataclass
@@ -26,7 +22,6 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
     def run(self) -> None:
         config = get_config()
 
-        # Lenslet yuv to image
         srcpath = get_any_file(self.srcdir, "*.yuv")
         ll_wdt, ll_hgt = size_from_filename(srcpath.name)
 
@@ -59,7 +54,7 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
 
         # Convert
         convert_cmds = [
-            config.app.convertor,
+            config.app.convertor.RLC45,
             rlccfg_dstpath,
         ]
 

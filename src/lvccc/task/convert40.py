@@ -80,7 +80,7 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
 
         # Convert
         convert_cmds = [
-            config.app.convertor,
+            config.app.convertor.RLC40,
             rlccfg_dstpath,
         ]
 

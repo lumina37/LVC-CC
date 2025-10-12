@@ -13,12 +13,19 @@ class _Dir(UpdateImpl):
 
 
 @dcs.dataclass
+class _Convertor(UpdateImpl):
+    TLCT: str = ""
+    RLC40: str = ""
+    RLC45: str = ""
+
+
+@dcs.dataclass
 class _App(UpdateImpl):
     ffmpeg: str = ""
     encoder: str = ""
     decoder: str = ""
     processor: str = ""
-    convertor: str = ""
+    convertor: _Convertor = dcs.field(default_factory=_Convertor)
 
 
 @dcs.dataclass

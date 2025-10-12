@@ -33,7 +33,6 @@ for seq_name in config.seqs:
         tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
         for qp in qps:
             tenc = EncodeTask(qp=qp).follow(tpreproc)
-            tdec = DecodeTask().follow(tenc)
 
 
 if __name__ == "__main__":

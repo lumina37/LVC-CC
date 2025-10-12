@@ -53,7 +53,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
 
         # Run
         cmds = [
-            config.app.convertor,
+            config.app.convertor.TLCT,
             calib_cfg_dstpath,
             "-i",
             yuv_srcpath,

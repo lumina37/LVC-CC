@@ -7,8 +7,8 @@ from typing import ClassVar
 
 from PIL import Image
 
-from ..config import RLC40Cfg, get_config
-from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
+from ..config import CalibCfg, RLC40Cfg, get_config
+from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .convert import ConvertTask
 
@@ -26,9 +26,12 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
     def run(self) -> None:
         config = get_config()
 
+        cfg_srcdir = Path("config") / self.seq_name
+        tlct_cfg_srcpath = cfg_srcdir / "calib.cfg"
+        tlct_cfg = CalibCfg.from_file(tlct_cfg_srcpath)
+
         # Lenslet yuv to image
         srcpath = get_any_file(self.srcdir, "*.yuv")
-        ll_wdt, ll_hgt = size_from_filename(srcpath.name)
         img_srcdir = self.dstdir / "img" / "src"
         mkdir(img_srcdir)
         img_src_pattern = (img_srcdir / IMG_PATTERN).with_suffix(".png")
@@ -38,7 +41,7 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
             "-f",
             "rawvideo",
             "-s",
-            f"{ll_wdt}x{ll_hgt}",
+            f"{tlct_cfg.LensletWidth}x{tlct_cfg.LensletHeight}",
             "-i",
             srcpath,
             "-frames:v",
@@ -52,7 +55,6 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
         run_cmds(yuv2img_cmds)
 
         # Prepare
-        cfg_srcdir = Path("config") / self.seq_name
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
@@ -72,8 +74,8 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
         rlccfg.viewNum = self.views
         rlccfg.start_frame = 1
         rlccfg.end_frame = self.frames
-        rlccfg.width = ll_wdt
-        rlccfg.height = ll_hgt
+        rlccfg.width = tlct_cfg.LensletWidth
+        rlccfg.height = tlct_cfg.LensletHeight
 
         rlccfg_dstpath = cfg_dstdir / cfg_name
         rlccfg.to_file(rlccfg_dstpath)

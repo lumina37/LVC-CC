@@ -5,8 +5,8 @@ import shutil
 from pathlib import Path
 from typing import ClassVar
 
-from ..config import RLC45Cfg, get_config
-from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
+from ..config import CalibCfg, RLC45Cfg, get_config
+from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .convert import ConvertTask
 
@@ -22,8 +22,9 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
     def run(self) -> None:
         config = get_config()
 
-        srcpath = get_any_file(self.srcdir, "*.yuv")
-        ll_wdt, ll_hgt = size_from_filename(srcpath.name)
+        cfg_srcdir = Path("config") / self.seq_name
+        tlct_cfg_srcpath = cfg_srcdir / "calib.cfg"
+        tlct_cfg = CalibCfg.from_file(tlct_cfg_srcpath)
 
         # Prepare
         cfg_srcdir = Path("config") / self.seq_name
@@ -38,7 +39,7 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
         rlccfg.Calibration_xml = str(cfg_dstpath)
-        rlccfg.RawImage_Path = str(srcpath)
+        rlccfg.RawImage_Path = str(get_any_file(self.srcdir, "*.yuv"))
         yuv_dir = self.dstdir / "yuv"
         mkdir(yuv_dir)
 
@@ -46,8 +47,8 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
         rlccfg.viewNum = self.views
         rlccfg.start_frame = 0
         rlccfg.end_frame = self.frames - 1
-        rlccfg.width = ll_wdt
-        rlccfg.height = ll_hgt
+        rlccfg.width = tlct_cfg.LensletWidth
+        rlccfg.height = tlct_cfg.LensletHeight
 
         rlccfg_dstpath = cfg_dstdir / cfg_name
         rlccfg.to_file(rlccfg_dstpath)

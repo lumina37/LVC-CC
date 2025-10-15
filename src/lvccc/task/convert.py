@@ -39,10 +39,11 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         config = get_config()
 
         cfg_srcdir = Path("config") / self.seq_name
+        calib_cfg_srcpath = cfg_srcdir / "calib.cfg"
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
         calib_cfg_dstpath = cfg_dstdir / "calib.cfg"
-        shutil.copyfile(cfg_srcdir / "calib.cfg", calib_cfg_dstpath)
+        shutil.copyfile(calib_cfg_srcpath, calib_cfg_dstpath)
 
         with (cfg_srcdir / "convert.sh").open() as f:
             extra_args = f.read().split(" ")

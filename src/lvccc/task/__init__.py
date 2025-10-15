@@ -4,6 +4,7 @@ from .base import BaseTask, NonRootTask, RootTask
 from .convert import ConvertTask
 from .convert40 import Convert40Task
 from .convert45 import Convert45Task
+from .convert_dbg import ConvertDbgTask
 from .copy import CopyTask
 from .decode import DecodeTask
 from .encode import EncodeTask
@@ -18,6 +19,7 @@ factory.reg_task_type(CopyTask)
 factory.reg_task_type(PostprocTask)
 factory.reg_task_type(PreprocTask)
 factory.reg_task_type(ConvertTask)
+factory.reg_task_type(ConvertDbgTask)
 factory.reg_task_type(Convert40Task)
 factory.reg_task_type(Convert45Task)
 factory.reg_task_type(PosetraceTask)

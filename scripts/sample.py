@@ -7,7 +7,7 @@ import yuvio
 from lvccc.config import CalibCfg, update_config
 from lvccc.helper import get_any_file, mkdir
 
-parser = argparse.ArgumentParser(description="Rename directories of all tasks")
+parser = argparse.ArgumentParser(description="Sample Sequences for Demo")
 
 parser.add_argument("--configs", "-c", nargs="+", type=str, default="", help="list of config file path")
 parser.add_argument(

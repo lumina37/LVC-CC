@@ -41,12 +41,12 @@ class EncodeTask(NonRootTask["EncodeTask"]):
 
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
-        vtm_cfg_srcpath = Path("config") / "vtmRA.cfg"
-        vtm_cfg_dstpath = cfg_dstdir / "vtm.cfg"
-        shutil.copyfile(vtm_cfg_srcpath, vtm_cfg_dstpath)
-        seq_cfg_srcpath = Path("config") / self.seq_name / "codec.cfg"
-        seq_cfg_dstpath = cfg_dstdir / "seq.cfg"
-        shutil.copyfile(seq_cfg_srcpath, seq_cfg_dstpath)
+        vtm_ra_cfg_srcpath = Path("config") / "vtmRA.cfg"
+        vtm_ra_cfg_dstpath = cfg_dstdir / "vtm.cfg"
+        shutil.copyfile(vtm_ra_cfg_srcpath, vtm_ra_cfg_dstpath)
+        vtm_extra_cfg_srcpath = Path("config") / "vtmExtra.cfg"
+        vtm_extra_cfg_dstpath = cfg_dstdir / "vtmExtra.cfg"
+        shutil.copyfile(vtm_extra_cfg_srcpath, vtm_extra_cfg_dstpath)
 
         srcpath = get_any_file(self.srcdir, "*.yuv")
         width, height = size_from_filename(srcpath.name)
@@ -59,9 +59,9 @@ class EncodeTask(NonRootTask["EncodeTask"]):
             cmds = [
                 config.app.encoder,
                 "-c",
-                vtm_cfg_dstpath.relative_to(self.dstdir),
+                vtm_ra_cfg_dstpath.relative_to(self.dstdir),
                 "-c",
-                seq_cfg_dstpath.relative_to(self.dstdir),
+                vtm_extra_cfg_dstpath.relative_to(self.dstdir),
                 "-wdt",
                 width,
                 "-hgt",

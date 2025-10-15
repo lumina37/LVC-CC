@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from ..config import get_config
-from ..helper import get_any_file, mkdir, run_cmds, size_from_filename
+from ..helper import get_any_file, mkdir, remove, run_cmds, size_from_filename
 from .base import NonRootTask
 from .copy import CopyTask
 from .infomap import query
@@ -44,7 +44,7 @@ class EncodeTask(NonRootTask["EncodeTask"]):
         vtm_ra_cfg_srcpath = Path("config") / "vtmRA.cfg"
         vtm_ra_cfg_dstpath = cfg_dstdir / "vtm.cfg"
         shutil.copyfile(vtm_ra_cfg_srcpath, vtm_ra_cfg_dstpath)
-        vtm_extra_cfg_srcpath = Path("config") / "vtmExtra.cfg"
+        vtm_extra_cfg_srcpath = Path("config") / self.seq_name / "codec.cfg"
         vtm_extra_cfg_dstpath = cfg_dstdir / "vtmExtra.cfg"
         shutil.copyfile(vtm_extra_cfg_srcpath, vtm_extra_cfg_dstpath)
 
@@ -75,3 +75,5 @@ class EncodeTask(NonRootTask["EncodeTask"]):
             ]
 
             run_cmds(cmds, output=logf, cwd=self.dstdir)
+
+        remove(self.dstdir / "rec.yuv")

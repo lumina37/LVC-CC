@@ -39,8 +39,7 @@ class DecodeTask(NonRootTask["DecodeTask"]):
         with log_path.open("w", encoding="utf-8") as logf:
             cmds = [
                 config.app.decoder,
-                "--OutputBitDepth",
-                "8",
+                "--OutputBitDepth=8",
                 "-b",
                 srcpath,
                 "-o",

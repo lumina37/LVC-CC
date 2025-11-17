@@ -22,6 +22,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
     task: ClassVar[str] = "convert"
 
     views: int = 1
+    method: int = 1
 
     @functools.cached_property
     def self_tag(self) -> str:
@@ -64,6 +65,8 @@ class ConvertTask(NonRootTask["ConvertTask"]):
             self.frames,
             "--views",
             self.views,
+            "--method",
+            self.method,
             *extra_args,
         ]
 

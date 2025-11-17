@@ -14,7 +14,7 @@ from .convert import ConvertTask
 @dcs.dataclass
 class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
     """
-    Multi-view conversion (with RLC-4.5).
+    Multi-view conversion (with RLC-4.5, YUV420 I/O).
     """
 
     task: ClassVar[str] = "convert45"

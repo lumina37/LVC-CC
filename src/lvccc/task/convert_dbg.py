@@ -22,6 +22,7 @@ class ConvertDbgTask(NonRootTask["ConvertDbgTask"]):
     task: ClassVar[str] = "convertdbg"
 
     views: int = 1
+    method: int = 1
 
     @functools.cached_property
     def self_tag(self) -> str:
@@ -69,6 +70,8 @@ class ConvertDbgTask(NonRootTask["ConvertDbgTask"]):
             self.frames,
             "--views",
             self.views,
+            "--method",
+            self.method,
             *extra_args,
         ]
 
@@ -85,6 +88,8 @@ class ConvertDbgTask(NonRootTask["ConvertDbgTask"]):
             self.frames,
             "--views",
             self.views,
+            "--method",
+            self.method,
             *extra_args,
         ]
 

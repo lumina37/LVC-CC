@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import dataclasses as dcs
+import re
 import shutil
+import subprocess
 from pathlib import Path
 from typing import ClassVar
 
@@ -39,11 +41,12 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
         cfg_dstpath = cfg_dstdir / calib_cfg_name
         shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
         rlccfg.Calibration_xml = str(cfg_dstpath)
-        rlccfg.RawImage_Path = str(get_any_file(self.srcdir, "*.yuv"))
-        yuv_dir = self.dstdir / "yuv"
-        mkdir(yuv_dir)
+        yuv_srcpath = str(get_any_file(self.srcdir, "*.yuv"))
+        rlccfg.RawImage_Path = yuv_srcpath
+        yuv_dstdir = self.dstdir / "yuv"
+        mkdir(yuv_dstdir)
 
-        rlccfg.Output_Path = str(yuv_dir)
+        rlccfg.Output_Path = str(yuv_dstdir)
         rlccfg.viewNum = self.views
         rlccfg.start_frame = 0
         rlccfg.end_frame = self.frames - 1
@@ -59,4 +62,12 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
             rlccfg_dstpath,
         ]
 
-        run_cmds(convert_cmds)
+        cmd_result = run_cmds(convert_cmds, output=subprocess.PIPE)
+
+        mvsize_matchobj = re.search(r"(\d+) x (\d+)", cmd_result.stdout)
+        mv_wdt = int(mvsize_matchobj.group(1))
+        mv_hgt = int(mvsize_matchobj.group(2))
+
+        for view, yuv_path in enumerate(sorted(yuv_dstdir.iterdir())):
+            new_fname = f"{self.tag}-v{view:0>3}-{mv_wdt}x{mv_hgt}.yuv"
+            yuv_path.rename(yuv_path.with_name(new_fname))

@@ -12,7 +12,7 @@ class RLC45Cfg(AutoConvImpl):
     viewNum: int = 5
     Calibration_xml: str = ""
     RawImage_Path: str = ""
-    Output_format: str = "png"
+    Output_format: str = "yuv"
     Output_Path: str = ""
     start_frame: int = 1
     end_frame: int = 1

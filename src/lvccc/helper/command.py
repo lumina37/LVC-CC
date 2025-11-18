@@ -15,7 +15,7 @@ def run_cmds(cmds: list, output: TextIOBase | None = None, cwd: Path | None = No
 
     try:
         strcmds = [str(cmd) for cmd in cmds]
-        subprocess.run(strcmds, stdout=output, stderr=subprocess.STDOUT, cwd=cwd, text=True, check=True)
+        result = subprocess.run(strcmds, stdout=output, stderr=subprocess.STDOUT, cwd=cwd, text=True, check=True)
 
     except Exception as err:
         log.error(f"Failed! err={err!r}")
@@ -23,3 +23,4 @@ def run_cmds(cmds: list, output: TextIOBase | None = None, cwd: Path | None = No
 
     else:
         log.info(f"Completed! cmd={' '.join(strcmds)}")
+        return result

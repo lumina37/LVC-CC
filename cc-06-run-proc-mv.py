@@ -3,7 +3,7 @@ from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask
+from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD
@@ -35,7 +35,7 @@ for seq_name in config.seqs:
             tenc = EncodeTask(qp=qp).follow(tpreproc)
             tdec = DecodeTask().follow(tenc)
             tpostproc = PostprocTask().follow(tdec)
-            tconvert = Convert40Task(views=config.views).follow(tpostproc)
+            tconvert = Convert45Task(views=config.views).follow(tpostproc)
 
 
 if __name__ == "__main__":

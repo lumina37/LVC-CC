@@ -7,7 +7,7 @@ from matplotlib.axes import Axes
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask, gen_infomap
+from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask, gen_infomap
 
 # Config from CMD
 parser = argparse.ArgumentParser(description="Export RD-curve")
@@ -47,7 +47,7 @@ for seq_name in config.seqs:
     for qp in anchorQPs:
         tenc = EncodeTask(qp=qp).follow(tcopy)
         tdec = DecodeTask().follow(tenc)
-        tconvert = Convert40Task(views=config.views).follow(tdec)
+        tconvert = Convert45Task(views=config.views).follow(tdec)
 
         json_path = src_dir / tenc.tag / "psnr.json"
         if not json_path.exists():
@@ -71,7 +71,7 @@ for seq_name in config.seqs:
         tenc = EncodeTask(qp=qp).follow(tcopy)
         tdec = DecodeTask().follow(tenc)
         tpostproc = PostprocTask().follow(tdec)
-        tconvert = Convert40Task(views=config.views).follow(tpostproc)
+        tconvert = Convert45Task(views=config.views).follow(tpostproc)
 
         json_path = src_dir / tenc.tag / "psnr.json"
         if not json_path.exists():

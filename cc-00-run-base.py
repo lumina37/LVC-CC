@@ -3,7 +3,7 @@ from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import Convert40Task, CopyTask
+from lvccc.task import Convert45Task, CopyTask
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD
@@ -28,7 +28,7 @@ for seq_name in config.seqs:
     tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
     roots.append(tcopy)
 
-    tconvert = Convert40Task(views=config.views).follow(tcopy)
+    tconvert = Convert45Task(views=config.views).follow(tcopy)
 
 
 if __name__ == "__main__":

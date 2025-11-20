@@ -5,7 +5,7 @@ from pathlib import Path
 from lvccc.config import update_config
 from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
-from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask, query
+from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask, query
 from lvccc.utils import EncodeLog, calc_lenslet_psnr, calc_mv_psnr
 
 # Config from CMD
@@ -35,7 +35,7 @@ for seq_name in config.seqs:
     for qp in config.anchorQP.get(seq_name, []):
         tenc = EncodeTask(qp=qp).follow(tcopy)
         tdec = DecodeTask().follow(tenc)
-        tconvert = Convert40Task(views=config.views).follow(tdec)
+        tconvert = Convert45Task(views=config.views).follow(tdec)
 
         if query(tconvert) is None:
             continue
@@ -70,11 +70,11 @@ for seq_name in config.seqs:
     # With Pre/Postprocess
     crop_size = config.proc["crop_size"][seq_name]
     tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
-    for qp in config.proc["QP"].get(seq_name, []):
+    for qp in config.proc.get("QP", {}).get(seq_name, []):
         tenc = EncodeTask(qp=qp).follow(tpreproc)
         tdec = DecodeTask().follow(tenc)
         tpostproc = PostprocTask().follow(tdec)
-        tconvert = Convert40Task(views=config.views).follow(tpostproc)
+        tconvert = Convert45Task(views=config.views).follow(tpostproc)
 
         if query(tconvert) is None:
             continue

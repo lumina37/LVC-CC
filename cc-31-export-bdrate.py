@@ -8,7 +8,7 @@ import scipy.interpolate
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask
+from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask
 
 
 def BD_PSNR(R1, PSNR1, R2, PSNR2, piecewise=0):
@@ -118,7 +118,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
         for qp in config.anchorQP.get(seq_name, []):
             tenc = EncodeTask(qp=qp).follow(tcopy)
             tdec = DecodeTask().follow(tenc)
-            tconvert = Convert40Task(views=config.views).follow(tdec)
+            tconvert = Convert45Task(views=config.views).follow(tdec)
 
             json_path = src_dir / tenc.tag / "psnr.json"
             if not json_path.exists():
@@ -140,7 +140,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
             tenc = EncodeTask(qp=qp).follow(tcopy)
             tdec = DecodeTask().follow(tenc)
             tpostproc = PostprocTask().follow(tdec)
-            tconvert = Convert40Task(views=config.views).follow(tpostproc)
+            tconvert = Convert45Task(views=config.views).follow(tpostproc)
 
             json_path = src_dir / tenc.tag / "psnr.json"
             if not json_path.exists():

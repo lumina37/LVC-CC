@@ -5,7 +5,7 @@ from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask, gen_infomap
+from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask, gen_infomap
 
 # Config from CMD
 parser = argparse.ArgumentParser(description="Export proc metrics to csv")
@@ -55,7 +55,7 @@ with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
             tenc = EncodeTask(qp=qp).follow(tpreproc)
             tdec = DecodeTask().follow(tenc)
             tpostproc = PostprocTask().follow(tdec)
-            tconvert = Convert40Task(views=config.views).follow(tpostproc)
+            tconvert = Convert45Task(views=config.views).follow(tpostproc)
 
             json_path = src_dir / tenc.tag / "psnr.json"
             if not json_path.exists():

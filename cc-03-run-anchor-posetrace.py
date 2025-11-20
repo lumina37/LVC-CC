@@ -3,7 +3,7 @@ from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import Convert40Task, CopyTask, DecodeTask, EncodeTask, PosetraceTask
+from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, PosetraceTask
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD
@@ -31,7 +31,7 @@ for seq_name in config.seqs:
     for qp in config.anchorQP.get(seq_name, []):
         tenc = EncodeTask(qp=qp).follow(tcopy)
         tdec = DecodeTask().follow(tenc)
-        tconvert = Convert40Task(views=config.views).follow(tdec)
+        tconvert = Convert45Task(views=config.views).follow(tdec)
         tposetrace = PosetraceTask(frame_per_view=12).follow(tconvert)
 
 

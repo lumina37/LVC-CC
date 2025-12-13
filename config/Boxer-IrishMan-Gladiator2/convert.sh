@@ -1,1 +1,1 @@
---upsample 2 --psizeInflate 2.15 --viewShiftRange 0.075 --psizeShortcutThreshold 6
+--method 0 --upsample 2 --psizeInflate 2.15 --viewShiftRange 0.075

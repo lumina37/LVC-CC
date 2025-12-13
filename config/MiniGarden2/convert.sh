@@ -1,1 +1,1 @@
---minPsize 0.1 --psizeInflate 2.15 --viewShiftRange 0.1
+--method 1 --psizeInflate 2.15 --viewShiftRange 0.1 --psizeShortcutThreshold 0.4

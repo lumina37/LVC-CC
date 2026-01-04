@@ -8,7 +8,7 @@ import scipy.interpolate
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, PostprocTask, PreprocTask
+from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, PostprocTask
 
 
 def BD_PSNR(R1, PSNR1, R2, PSNR2, piecewise=0):
@@ -130,10 +130,7 @@ with csv_path.open("w", encoding="utf-8", newline="") as csv_f:
             anchor_bitrates.append(metrics["bitrate"])
             anchor_psnrs.append(metrics["mvpsnr_y"])
 
-        crop_size = config.proc["crop_size"][seq_name]
         row = [seq_name]
-        tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
-
         proc_bitrates = []
         proc_psnrs = []
         for qp in config.proc["QP"].get(seq_name, []):

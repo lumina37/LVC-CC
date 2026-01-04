@@ -48,10 +48,9 @@ with (dst_dir / "proc.csv").open("w", encoding="utf-8", newline="") as csv_file:
     for seq_name in config.seqs:
         tcopy = CopyTask(seq_name=seq_name, frames=config.frames)
 
-        crop_size = config.proc["crop_size"][seq_name]
-        tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
-
         for qp in config.proc["QP"].get(seq_name, []):
+            crop_size = config.proc["crop_size"][seq_name]
+            tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
             tenc = EncodeTask(qp=qp).follow(tpreproc)
             tdec = DecodeTask().follow(tenc)
             tpostproc = PostprocTask().follow(tdec)

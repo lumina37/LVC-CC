@@ -68,9 +68,9 @@ for seq_name in config.seqs:
         tconvert.dump_taskinfo(case_dir / "task.json")
 
     # With Pre/Postprocess
-    crop_size = config.proc["crop_size"][seq_name]
-    tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
     for qp in config.proc.get("QP", {}).get(seq_name, []):
+        crop_size = config.proc["crop_size"][seq_name]
+        tpreproc = PreprocTask(crop_size=crop_size).follow(tcopy)
         tenc = EncodeTask(qp=qp).follow(tpreproc)
         tdec = DecodeTask().follow(tenc)
         tpostproc = PostprocTask().follow(tdec)

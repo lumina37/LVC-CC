@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..task import EncodeTask, ProtoTask
+from ..task import EncodeTask, ProtoTask, is_convert_task
 
 
 def ancestor_with_spec_type[T](task: ProtoTask, cls: type[T]) -> T:
@@ -16,4 +16,4 @@ def is_anchor(task: ProtoTask) -> bool:
 
 
 def is_base(task: ProtoTask) -> bool:
-    return len(task.chain) > 1 and task.chain[1]["task"].startswith("convert")
+    return len(task.chain) > 1 and is_convert_task(task.chain[1]["task"])

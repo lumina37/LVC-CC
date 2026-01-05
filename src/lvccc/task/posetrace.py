@@ -12,6 +12,7 @@ from PIL import Image
 from ..config import CalibCfg
 from ..helper import size_from_filename
 from .base import NonRootTask
+from .category import is_convert_task
 from .infomap import query
 
 if TYPE_CHECKING:
@@ -35,7 +36,7 @@ def get_views(task: ProtoTask) -> int:
 
     for task_dict in task.chain:
         task_name: str = task_dict["task"]
-        if task_name.startswith("convert"):
+        if is_convert_task(task_name):
             views = task_dict["views"]
             break
 

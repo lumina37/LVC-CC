@@ -1,1 +1,1 @@
---method 0 --upsample 2 --viewShiftRange 0.1
+--method 0 --upsample 2

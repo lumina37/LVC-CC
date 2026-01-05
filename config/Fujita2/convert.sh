@@ -1,1 +1,1 @@
---method 2 --upsample 2 --psizeInflate 2.3 --viewShiftRange 0.1
+--method 2 --upsample 2 --psizeInflate 2.3

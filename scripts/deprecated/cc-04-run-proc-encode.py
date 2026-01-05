@@ -3,7 +3,7 @@ from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.executor import Executor
-from lvccc.task import CopyTask, DecodeTask, EncodeTask, PreprocTask
+from lvccc.task import CopyTask, EncodeTask, PreprocTask
 from lvccc.utils import avaliable_cpu_count
 
 # Config from CMD

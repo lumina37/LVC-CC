@@ -5,7 +5,7 @@ from pathlib import Path
 from lvccc.config import update_config
 from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
-from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, query
+from lvccc.task import ConvertTask, CopyTask, DecodeTask, EncodeTask, query
 from lvccc.utils import calc_lenslet_psnr, calc_mv_psnr
 
 # Config from CMD
@@ -35,7 +35,7 @@ for seq_name in config.seqs:
     for qp in config.anchorQP.get(seq_name, []):
         tenc = EncodeTask(qp=qp).follow(tcopy)
         tdec = DecodeTask().follow(tenc)
-        tconvert = Convert45Task(views=config.views).follow(tdec)
+        tconvert = ConvertTask(views=config.views).follow(tdec)
 
         if query(tconvert) is None:
             continue

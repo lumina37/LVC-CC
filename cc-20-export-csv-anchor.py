@@ -5,7 +5,7 @@ from pathlib import Path
 
 from lvccc.config import update_config
 from lvccc.helper import mkdir
-from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, gen_infomap
+from lvccc.task import ConvertTask, CopyTask, DecodeTask, EncodeTask, gen_infomap
 
 # Config from CMD
 parser = argparse.ArgumentParser(description="Export anchor metrics to csv")
@@ -51,7 +51,7 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_fil
         for qp in config.anchorQP.get(seq_name, []):
             tenc = EncodeTask(qp=qp).follow(tcopy)
             tdec = DecodeTask().follow(tenc)
-            tconvert = Convert45Task(views=config.views).follow(tdec)
+            tconvert = ConvertTask(views=config.views).follow(tdec)
 
             json_path = src_dir / tenc.tag / "psnr.json"
             if not json_path.exists():

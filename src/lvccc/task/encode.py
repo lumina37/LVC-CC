@@ -42,6 +42,7 @@ class EncodeTask(NonRootTask["EncodeTask"]):
         if self.frames == 300 and isinstance(self.parent, CopyTask):
             bitstream_bundled_path = Path("bitstream/vvc") / f"{self.seq_name}_qp{self.qp}.bin"
             if bitstream_bundled_path.exists():
+                mkdir(self.dstdir)
                 shutil.copyfile(bitstream_bundled_path, self.dstdir / bitstream_dstname)
                 return
 

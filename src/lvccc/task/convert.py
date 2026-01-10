@@ -49,17 +49,18 @@ class ConvertTask(NonRootTask["ConvertTask"]):
             extra_args = f.read().split(" ")
 
         yuv_srcpath = get_any_file(self.srcdir, "*.yuv")
-        yuv_dstdir = self.dstdir / "yuv"
+        yuv_reldir = "yuv"
+        yuv_dstdir = self.dstdir / yuv_reldir
         mkdir(yuv_dstdir)
 
         # Run
         cmds = [
             config.app.convertor.TLCT,
-            calib_cfg_dstpath,
+            calib_cfg_dstpath.relative_to(self.dstdir),
             "-i",
             yuv_srcpath,
             "-o",
-            yuv_dstdir,
+            yuv_reldir,
             "--end",
             self.frames,
             "--views",
@@ -67,7 +68,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
             *extra_args,
         ]
 
-        run_cmds(cmds)
+        run_cmds(cmds, cwd=self.dstdir)
 
         for yuv_path in list(yuv_dstdir.iterdir()):
             new_fname = f"{self.tag}-{yuv_path.name}"

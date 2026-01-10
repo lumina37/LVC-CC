@@ -35,7 +35,7 @@ with (dst_dir / "anchor.csv").open("w", encoding="utf-8", newline="") as csv_fil
     headers = [
         "Sequence",
         "QP",
-        "Bitrate",
+        "Bitrate (kb/s)",
         "LLPSNR-Y",
         "LLPSNR-U",
         "LLPSNR-V",

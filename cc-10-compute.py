@@ -6,7 +6,7 @@ from lvccc.config import update_config
 from lvccc.helper import get_any_file, mkdir
 from lvccc.logging import get_logger
 from lvccc.task import Convert45Task, CopyTask, DecodeTask, EncodeTask, query
-from lvccc.utils import EncodeLog, calc_lenslet_psnr, calc_mv_psnr
+from lvccc.utils import calc_lenslet_psnr, calc_mv_psnr
 
 # Config from CMD
 parser = argparse.ArgumentParser(description="Compute metrics of all tasks")
@@ -46,14 +46,16 @@ for seq_name in config.seqs:
 
         logger.info(f"Handling {tconvert.tag}")
 
-        log_path = get_any_file(query(tenc), "*.log")
-        enclog = EncodeLog.from_file(log_path)
+        bin_path = get_any_file(query(tenc), "*.bin")
+        bin_size = bin_path.stat().st_size
+        FPS = 30
+        bitrate = bin_size * 8 / 1000 / (tconvert.frames / FPS)
 
         llpsnr = calc_lenslet_psnr(tconvert)
         mvpsnr = calc_mv_psnr(tconvert)
 
         metrics = {
-            "bitrate": enclog.bitrate,
+            "bitrate": bitrate,
             "mvpsnr_y": mvpsnr[0],
             "mvpsnr_u": mvpsnr[1],
             "mvpsnr_v": mvpsnr[2],

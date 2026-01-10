@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses as dcs
 import functools
 import shutil
+import time
 from pathlib import Path
 from typing import ClassVar
 
@@ -44,6 +45,7 @@ class EncodeTask(NonRootTask["EncodeTask"]):
             if bitstream_bundled_path.exists():
                 mkdir(self.dstdir)
                 shutil.copyfile(bitstream_bundled_path, self.dstdir / bitstream_dstname)
+                time.sleep(1.0)  # To wait fs flush
                 return
 
         # Prepare

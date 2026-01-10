@@ -36,6 +36,14 @@ class EncodeTask(NonRootTask["EncodeTask"]):
         return tag
 
     def run(self) -> None:
+        # Fast path
+        bitstream_dstname = f"{self.tag}.bin"
+
+        if self.frames == 300 and isinstance(self.parent, CopyTask):
+            bitstream_bundled_path = Path("bitstream/vvc") / f"{self.seq_name}_qp{self.qp}.bin"
+            if bitstream_bundled_path.exists():
+                bitstream_bundled_path.copy(self.dstdir / bitstream_dstname)
+
         # Prepare
         config = get_config()
 
@@ -71,7 +79,7 @@ class EncodeTask(NonRootTask["EncodeTask"]):
                 "-i",
                 srcpath,
                 "-b",
-                f"{self.tag}.bin",
+                bitstream_dstname,
             ]
 
             run_cmds(cmds, output=logf, cwd=self.dstdir)

@@ -53,10 +53,6 @@ convertor = "/path/to/RLC40"
 [anchorQP]          # Specifies QPs for anchor generation
 Boys2 = [48, 52]    # Mapping from sequence name to the QPs you wanna run
 Fujita2 = [42, 44]  # The QPs will be auto-sorted into ascending order
-
-[proc.any_name]     # Extension for pre/postproc with any content you like
-example0 = 1
-example1 = 0
 ```
 
 ### About the `input` Directory
@@ -126,8 +122,7 @@ We compose multiple `Task`s into a **pipeline**. Then compose several **pipeline
 As for now, there are three acknowledged **pipeline**s:
 
 1. **base**: `copy`->`convert40`. Straight-forward multi-view conversion. Provides the **base** for PSNR computation.
-2. **anchor**: `copy`->`encode`->`decode`->`convert40`. Pipeline appends with VVC codec. Provides the **anchor** to estimate the performance of pre/postprocess tools.
-3. **proc**: `copy`->`preproc`->`encode`->`decode`->`postproc`->`convert40`. Pipeline appends with pre/postprocess procedure.
+2. **anchor**: `copy`->`encode`->`decode`->`convert40`. Pipeline appends with VVC codec. Provides the **anchor** to estimate the performance of codec tools.
 
 ### Naming Rules and Directory Structure
 
@@ -153,32 +148,6 @@ Directory structure:
 ```
 ./copy-Boys2-f300-e979
 ├── Boys2-f300-3976x2956.yuv  # copied yuv
-└── task.json  # metadata
-```
-
----
-
-#### `preproc`
-
-Preprocess with the MCA.
-
-Directory name `preproc-Boys2-f300-proc-d45a` can be spilt into:
-
-- **preproc**: This is a `PreprocTask`.
-- **Boys2**: The sequence name is Boys2.
-- **f300**: The pipeline involves 300 frames.
-- **proc**: The pipeline is tagged with **proc** (both VVC and MCA).
-- **d45a**: Hash for deduplication.
-
-Directory structure:
-
-```
-./preproc-Boys2-f300-proc-d45a
-├── Boys2-f300-proc-3250x2100.yuv  # preprocessed yuv
-├── cfg  # configs required by the MCA
-│   ├── calib.xml
-│   └── codec.cfg
-├── proc.log  # MCA log 
 └── task.json  # metadata
 ```
 
@@ -213,44 +182,6 @@ Directory structure:
 ```
 
 **Notice that all the output files use the same naming rule as the task directory!!!**
-
-For the **proc** pipeline variant:
-
-Directory name `codec-Boys2-f300-proc-QP33-2776` can be spilt into:
-
-- **codec**: This is a `CodecTask`.
-- **Boys2**: The sequence name is Boys2.
-- **f300**: The pipeline involves 300 frames.
-- **proc**: The pipeline is tagged with **anchor** (only VVC, no MCA).
-- **QP33**: Encoded with QP=33.
-- **2776**: Hash for deduplication.
-
-Directory structure: similiar to the **anchor** pipeline variant.
-
----
-
-#### `postproc`
-
-Postprocess with the MCA
-
-Directory name `postproc-Boys2-f300-proc-QP33-3b24` can be spilt into:
-
-- **postproc**: This is a `PostprocTask`.
-- **Boys2**: The sequence name is Boys2.
-- **f300**: The pipeline involves 300 frames.
-- **proc**: The pipeline is tagged with **proc** (both VVC and MCA).
-- **QP33**: The QP of the upstream `CodecTask` is 33.
-- **3b24**: Hash for deduplication.
-
-Directory structure:
-
-```
-./postproc-Boys2-f300-proc-QP33-3b24
-├── Boys2-f300-proc-QP33-3976x2956.yuv  # postprocessed yuv
-├── cfg  # configs required by the MCA
-│   └── proc.log
-└── task.json  # metadata
-```
 
 ---
 
@@ -306,27 +237,6 @@ Directory name `convert40-Boys2-f300-anchor-QP36-fc31` can be spilt into:
 - **fc31**: Hash for deduplication.
 
 Directory structure: similiar to the **base** pipeline variant.
-
-For the **proc** pipeline variant:
-
-Directory name `convert40-Boys2-f300-proc-QP33-294f` can be spilt into:
-
-- **convert40**: This is a `Convert40Task`.
-- **Boys2**: The sequence name is Boys2.
-- **f300**: The pipeline involves 300 frames.
-- **proc**: The pipeline is tagged with **proc** (both VVC and MCA).
-- **QP33**: The QP of the upstream `CodecTask` is 33.
-- **294f**: Hash for deduplication.
-
-Directory structure: similiar to the **base** pipeline variant.
-
----
-
-#### `posetrace`
-
-Generate posetrace video for subjective quality assessment.
-
-TODO
 
 ### Onion-like Configs
 

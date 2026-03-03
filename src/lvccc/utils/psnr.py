@@ -6,9 +6,9 @@ import numpy as np
 import yuvio
 
 from ..helper import get_any_file, size_from_filename
-from ..task import ConvertTask, DecodeTask, PostprocTask
+from ..task import ConvertTask, DecodeTask
 from ..task.infomap import query
-from .backtrack import ancestor_with_spec_type, is_anchor
+from .backtrack import ancestor_with_spec_type
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -66,10 +66,7 @@ def calc_mv_psnr(task: ConvertTask) -> np.ndarray:
 
 def calc_lenslet_psnr(task: ConvertTask) -> np.ndarray:
     copy_task = task.ancestor(0)
-    if is_anchor(task):
-        cmp_task = ancestor_with_spec_type(task, DecodeTask)
-    else:
-        cmp_task = ancestor_with_spec_type(task, PostprocTask)
+    cmp_task = ancestor_with_spec_type(task, DecodeTask)
 
     lhs = get_any_file(query(copy_task), "*.yuv")
     rhs = get_any_file(query(cmp_task), "*.yuv")

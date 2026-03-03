@@ -10,14 +10,10 @@ from .encode import EncodeTask
 from .factory import get_task_type, reg_task_type
 from .infomap import gen_infomap, get_infomap, query
 from .posetrace import PosetraceTask
-from .postproc import PostprocTask
-from .preproc import PreprocTask
 
 reg_task_type(EncodeTask)
 reg_task_type(DecodeTask)
 reg_task_type(CopyTask)
-reg_task_type(PostprocTask)
-reg_task_type(PreprocTask)
 reg_task_type(ConvertTask)
 reg_task_type(Convert40Task)
 reg_task_type(Convert45Task)

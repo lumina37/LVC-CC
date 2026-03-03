@@ -1,7 +1,7 @@
 <RayCalibData version="1.0">
 <offset units="pix">
-<x>-8.96</x>
-<y>-31.95</y>
+<x>29.5</x>
+<y>-16.6</y>
 </offset>
 <isReal>1</isReal>
 <diameter units="pix">70</diameter>

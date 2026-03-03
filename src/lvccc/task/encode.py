@@ -21,6 +21,7 @@ class EncodeTask(NonRootTask["EncodeTask"]):
     """
 
     task: ClassVar[str] = "encode"
+    vtm_ra_cfg_path: ClassVar[Path] = Path("config") / "vtmRA.cfg"
 
     qp: int = 0
 
@@ -36,6 +37,10 @@ class EncodeTask(NonRootTask["EncodeTask"]):
             return "anchor-" + tag
         return tag
 
+    @functools.cached_property
+    def vtm_extra_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "codec.cfg"
+
     def run(self) -> None:
         # Fast path
         bitstream_dstname = f"{self.tag}.bin"
@@ -45,7 +50,7 @@ class EncodeTask(NonRootTask["EncodeTask"]):
             if bitstream_bundled_path.exists():
                 mkdir(self.dstdir)
                 shutil.copyfile(bitstream_bundled_path, self.dstdir / bitstream_dstname)
-                time.sleep(1.0)  # To wait fs flush
+                time.sleep(1.0)  # wait filesystem flush
                 return
 
         # Prepare
@@ -53,12 +58,10 @@ class EncodeTask(NonRootTask["EncodeTask"]):
 
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
-        vtm_ra_cfg_srcpath = Path("config") / "vtmRA.cfg"
         vtm_ra_cfg_dstpath = cfg_dstdir / "vtm.cfg"
-        shutil.copyfile(vtm_ra_cfg_srcpath, vtm_ra_cfg_dstpath)
-        vtm_extra_cfg_srcpath = Path("config") / self.seq_name / "codec.cfg"
+        shutil.copyfile(self.vtm_ra_cfg_path, vtm_ra_cfg_dstpath)
         vtm_extra_cfg_dstpath = cfg_dstdir / "vtmExtra.cfg"
-        shutil.copyfile(vtm_extra_cfg_srcpath, vtm_extra_cfg_dstpath)
+        shutil.copyfile(self.vtm_extra_cfg_path, vtm_extra_cfg_dstpath)
 
         srcpath = get_any_file(self.srcdir, "*.yuv")
         width, height = size_from_filename(srcpath.name)

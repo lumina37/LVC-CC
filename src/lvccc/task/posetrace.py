@@ -24,8 +24,8 @@ if TYPE_CHECKING:
 def get_direction(seq_name: str) -> bool:
     direction = False
 
-    cfg_srcdir = Path("config") / seq_name
-    calib_cfg = CalibCfg.from_file(cfg_srcdir / "calib.cfg")
+    calib_cfg_path = Path("config") / seq_name / "calib.cfg"
+    calib_cfg = CalibCfg.from_file(calib_cfg_path)
     direction = bool(calib_cfg.MLADirection)
 
     return direction

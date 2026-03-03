@@ -28,8 +28,7 @@ for seq_name in config.seqs:
         logger.warning(f"no sequence in {srcdir}")
         continue
 
-    cfg_srcdir = Path("config") / seq_name
-    sha1_path = cfg_srcdir / "checksum.sha1"
+    sha1_path = Path("config") / seq_name / "checksum.sha1"
     except_sha1 = get_sha1(sha1_path)
     sha1_cache = SHA1Cache()
     cached_mtime = sha1_cache[except_sha1]

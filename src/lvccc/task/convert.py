@@ -34,19 +34,25 @@ class ConvertTask(NonRootTask["ConvertTask"]):
         srcdir = query(self.parent)
         return srcdir
 
+    @functools.cached_property
+    def calib_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "tlct" / "calib.cfg"
+
+    @functools.cached_property
+    def extra_args(self) -> list[str]:
+        extra_args_path = Path("config") / self.seq_name / "tlct" / "convert.sh"
+        with extra_args_path.open() as f:
+            extra_args = f.read().split(" ")
+            return extra_args
+
     def run(self) -> None:
         # Prepare
         config = get_config()
 
-        cfg_srcdir = Path("config") / self.seq_name
-        calib_cfg_srcpath = cfg_srcdir / "calib.cfg"
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
         calib_cfg_dstpath = cfg_dstdir / "calib.cfg"
-        shutil.copyfile(calib_cfg_srcpath, calib_cfg_dstpath)
-
-        with (cfg_srcdir / "convert.sh").open() as f:
-            extra_args = f.read().split(" ")
+        shutil.copyfile(self.calib_cfg_path, calib_cfg_dstpath)
 
         yuv_srcpath = get_any_file(self.srcdir, "*.yuv")
         yuv_reldir = "yuv"
@@ -65,7 +71,7 @@ class ConvertTask(NonRootTask["ConvertTask"]):
             self.frames,
             "--views",
             self.views,
-            *extra_args,
+            *self.extra_args,
         ]
 
         run_cmds(cmds, cwd=self.dstdir)

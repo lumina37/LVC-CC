@@ -29,6 +29,14 @@ class CopyTask(RootTask["CopyTask"]):
     def self_tag(self) -> str:
         return f"{self.seq_name}-f{self.frames}"
 
+    @functools.cached_property
+    def calib_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "tlct" / "calib.cfg"
+
+    @functools.cached_property
+    def checksum_path(self) -> Path:
+        return Path("config") / self.seq_name / "checksum.sha1"
+
     def run(self) -> None:
         # Check SHA1
         config = get_config()
@@ -36,9 +44,7 @@ class CopyTask(RootTask["CopyTask"]):
         srcdir = config.dir.input / self.seq_name
         srcpath = get_any_file(srcdir, "*.yuv")
 
-        cfg_srcdir = Path("config") / self.seq_name
-        sha1_path = cfg_srcdir / "checksum.sha1"
-        except_sha1 = get_sha1(sha1_path)
+        except_sha1 = get_sha1(self.checksum_path)
         sha1_cache = SHA1Cache()
         cached_mtime = sha1_cache[except_sha1]
         if (yuv_mtime := mtime(srcpath)) > cached_mtime:
@@ -50,7 +56,7 @@ class CopyTask(RootTask["CopyTask"]):
                 sha1_cache[sha1] = yuv_mtime
 
         # Prepare
-        calib_cfg = CalibCfg.from_file(cfg_srcdir / "calib.cfg")
+        calib_cfg = CalibCfg.from_file(self.calib_cfg_path)
         width = calib_cfg.LensletWidth
         height = calib_cfg.LensletHeight
         framesize = width * height // 2 * 3

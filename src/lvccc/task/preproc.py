@@ -33,6 +33,10 @@ class PreprocTask(NonRootTask["PreprocTask"]):
         srcdir = query(self.parent)
         return srcdir
 
+    @functools.cached_property
+    def calib_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "tlct" / "calib.cfg"
+
     def run(self) -> None:
         # Prepare
         config = get_config()
@@ -45,7 +49,7 @@ class PreprocTask(NonRootTask["PreprocTask"]):
 
         preproc_cfg = PreprocCfg()
         preproc_cfg.FramesToBeEncoded = self.frames
-        calib_cfg = CalibCfg.from_file(cfg_srcdir / "calib.cfg")
+        calib_cfg = CalibCfg.from_file(self.calib_cfg_path)
         preproc_cfg.SourceWidth = calib_cfg.LensletWidth
         preproc_cfg.SourceHeight = calib_cfg.LensletHeight
         preproc_cfg.InputFile = (

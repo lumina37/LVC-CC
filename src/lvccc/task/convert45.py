@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses as dcs
+import functools
 import re
 import shutil
 import subprocess
@@ -21,25 +22,31 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
 
     task: ClassVar[str] = "convert45"
 
+    @functools.cached_property
+    def tlct_calib_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "tlct" / "calib.cfg"
+
+    @functools.cached_property
+    def calib_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "rlc40" / "calib.xml"
+
+    @functools.cached_property
+    def param_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "rlc40" / "param.cfg"
+
     def run(self) -> None:
         config = get_config()
 
-        cfg_srcdir = Path("config") / self.seq_name
-        tlct_cfg_srcpath = cfg_srcdir / "calib.cfg"
-        tlct_cfg = CalibCfg.from_file(tlct_cfg_srcpath)
+        tlct_cfg = CalibCfg.from_file(self.tlct_calib_cfg_path)
 
         # Prepare
-        cfg_srcdir = Path("config") / self.seq_name
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        cfg_name = "param.cfg"
-        rlccfg_srcpath = cfg_srcdir / cfg_name
-        rlccfg = RLC45Cfg.from_file(rlccfg_srcpath)
+        rlccfg = RLC45Cfg.from_file(self.param_cfg_path)
 
-        calib_cfg_name = "calib.xml"
-        cfg_dstpath = cfg_dstdir / calib_cfg_name
-        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
+        cfg_dstpath = cfg_dstdir / "calib.xml"
+        shutil.copyfile(self.calib_cfg_path, cfg_dstpath)
         rlccfg.Calibration_xml = str(cfg_dstpath)
         yuv_srcpath = str(get_any_file(self.srcdir, "*.yuv"))
         rlccfg.RawImage_Path = yuv_srcpath
@@ -53,7 +60,7 @@ class Convert45Task(ConvertTask, NonRootTask["Convert45Task"]):
         rlccfg.width = tlct_cfg.LensletWidth
         rlccfg.height = tlct_cfg.LensletHeight
 
-        rlccfg_dstpath = cfg_dstdir / cfg_name
+        rlccfg_dstpath = cfg_dstdir / "param.cfg"
         rlccfg.to_file(rlccfg_dstpath)
 
         # Convert

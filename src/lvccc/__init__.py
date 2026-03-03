@@ -4,7 +4,6 @@ from .logging import get_logger
 from .task import (
     Convert40Task,
     Convert45Task,
-    ConvertDbgTask,
     ConvertTask,
     CopyTask,
     DecodeTask,

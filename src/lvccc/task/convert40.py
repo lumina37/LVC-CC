@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses as dcs
+import functools
 import shutil
 from pathlib import Path
 from typing import ClassVar
@@ -23,12 +24,22 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
 
     task: ClassVar[str] = "convert40"
 
+    @functools.cached_property
+    def tlct_calib_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "tlct" / "calib.cfg"
+
+    @functools.cached_property
+    def calib_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "rlc40" / "calib.xml"
+
+    @functools.cached_property
+    def param_cfg_path(self) -> Path:
+        return Path("config") / self.seq_name / "rlc40" / "param.cfg"
+
     def run(self) -> None:
         config = get_config()
 
-        cfg_srcdir = Path("config") / self.seq_name
-        tlct_cfg_srcpath = cfg_srcdir / "calib.cfg"
-        tlct_cfg = CalibCfg.from_file(tlct_cfg_srcpath)
+        tlct_cfg = CalibCfg.from_file(self.tlct_calib_cfg_path)
 
         # Lenslet yuv to image
         srcpath = get_any_file(self.srcdir, "*.yuv")
@@ -58,13 +69,10 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        cfg_name = "param.cfg"
-        rlccfg_srcpath = cfg_srcdir / cfg_name
-        rlccfg = RLC40Cfg.from_file(rlccfg_srcpath)
+        rlccfg = RLC40Cfg.from_file(self.param_cfg_path)
 
-        calib_cfg_name = "calib.xml"
-        cfg_dstpath = cfg_dstdir / calib_cfg_name
-        shutil.copyfile(cfg_srcdir / calib_cfg_name, cfg_dstpath)
+        cfg_dstpath = cfg_dstdir / "calib.xml"
+        shutil.copyfile(self.calib_cfg_path, cfg_dstpath)
         rlccfg.Calibration_xml = str(cfg_dstpath)
         rlccfg.RawImage_Path = str(img_src_pattern)
         img_dstdir = self.dstdir / "img" / "dst"
@@ -77,7 +85,7 @@ class Convert40Task(ConvertTask, NonRootTask["Convert40Task"]):
         rlccfg.width = tlct_cfg.LensletWidth
         rlccfg.height = tlct_cfg.LensletHeight
 
-        rlccfg_dstpath = cfg_dstdir / cfg_name
+        rlccfg_dstpath = cfg_dstdir / "param.cfg"
         rlccfg.to_file(rlccfg_dstpath)
 
         # Convert

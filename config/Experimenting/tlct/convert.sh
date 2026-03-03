@@ -1,0 +1,1 @@
+--method 1 --upsample 2 --resize 0.285 --psizeInflate 2.598

@@ -1,0 +1,59 @@
+import dataclasses as dcs
+import math
+from pathlib import Path
+from typing import TextIO
+
+from .base import AutoConvImpl
+
+
+@dcs.dataclass
+class RLC15Cfg(AutoConvImpl):
+    viewNum: int = 5
+    rmode: int = 1
+    pmode: int = 0
+    mmode: int = 2
+    lmode: int = 1
+    Calibration_xml: str = ""
+    RawImage_Path: str = ""
+    Output_Path: str = ""
+    Debayer_mode: int = 0
+    Isfiltering: int = 0
+    isCLAHE: int = 0
+    Gamma: float = 1.0
+    Lambda: float = 0.05
+    Sigma: int = 0
+    input_model: int = 0
+    output_model: int = 0
+    start_frame: int = 1
+    end_frame: int = 1
+    height: int = 2048
+    width: int = 2048
+
+    def dump(self, f: TextIO) -> None:
+        maxlen = 0
+        for field in dcs.fields(self):
+            if (flen := len(field.name)) > maxlen:
+                maxlen = flen
+
+        fstr = f"{{k:<{maxlen + 2}}}{{v}}\n"
+        f.writelines(fstr.format(k=k, v=v) for k, v in dcs.asdict(self).items())
+        f.flush()
+
+    @staticmethod
+    def load(f: TextIO) -> "RLC15Cfg":
+        def _items():
+            for row in f:
+                key, value = row.replace("\t", " ").split(" ", maxsplit=1)
+                value = value.lstrip().rstrip("\n")
+                yield key, value
+
+        return RLC15Cfg(**dict(_items()))
+
+    def to_file(self, path: Path) -> None:
+        with path.open("w", encoding="utf-8") as f:
+            self.dump(f)
+
+    @staticmethod
+    def from_file(path: Path) -> "RLC15Cfg":
+        with path.open(encoding="utf-8") as f:
+            return RLC15Cfg.load(f)

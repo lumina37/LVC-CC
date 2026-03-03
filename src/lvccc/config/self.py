@@ -15,6 +15,7 @@ class _Dir(UpdateImpl):
 @dcs.dataclass
 class _Convertor(UpdateImpl):
     TLCT: str = ""
+    RLC15: str = ""
     RLC40: str = ""
     RLC45: str = ""
 

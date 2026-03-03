@@ -3,20 +3,20 @@
   <rotation unit="rad">1.57079632679</rotation>
   <centers>
     <ltop>
-      <x>43.25</x>
-      <y>85.25</y>
+      <x>38.25</x>
+      <y>37.5</y>
     </ltop>
     <rtop>
-      <x>3946.5</x>
-      <y>108.25</y>
+      <x>3940.2</x>
+      <y>40</y>
     </rtop>
     <lbot>
-      <x>26.75</x>
-      <y>2966.25</y>
+      <x>36.25</x>
+      <y>2996.75</y>
     </lbot>
     <rbot>
-      <x>3927.75</x>
-      <y>2992</y>
+      <x>3941.05</x>
+      <y>2997</y>
     </rbot>
   </centers>
 </TSPCCalibData>

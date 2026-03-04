@@ -1,1 +1,1 @@
---method 3 --resize 0.285 --psizeInflate 1.7321
+--method 3 --resize 0.285 --psizeInflate 2.598

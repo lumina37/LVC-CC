@@ -6,6 +6,7 @@ from .task import (
     Convert40Task,
     Convert45Task,
     ConvertTask,
+    ConvertXufuTask,
     CopyTask,
     DecodeTask,
     EncodeTask,

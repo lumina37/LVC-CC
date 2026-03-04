@@ -37,7 +37,6 @@ class Config(UpdateImpl):
     dir: _Dir = dcs.field(default_factory=_Dir)
     app: _App = dcs.field(default_factory=_App)
     anchorQP: dict[str, list[int]] = dcs.field(default_factory=dict)
-    proc: dict = dcs.field(default_factory=dict)
 
     @staticmethod
     def load(f: BinaryIO) -> "Config":

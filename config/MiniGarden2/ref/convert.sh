@@ -1,0 +1,1 @@
+--method 0 --upsample 2 --resize 0.285

@@ -1,0 +1,1 @@
+--method 3 --upsample 2 --viewShiftRange 0.075

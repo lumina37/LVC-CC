@@ -18,6 +18,7 @@ class _Convertor(UpdateImpl):
     RLC15: str = ""
     RLC40: str = ""
     RLC45: str = ""
+    RLC50: str = ""
 
 
 @dcs.dataclass

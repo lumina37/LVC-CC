@@ -5,6 +5,7 @@ from .task import (
     Convert15Task,
     Convert40Task,
     Convert45Task,
+    Convert50Task,
     ConvertRefTask,
     ConvertTask,
     ConvertXufuTask,

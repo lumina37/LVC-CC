@@ -1,1 +1,0 @@
---method 2 --upsample 2 --viewShiftRange 0 --psizeShortcutThreshold 0.85

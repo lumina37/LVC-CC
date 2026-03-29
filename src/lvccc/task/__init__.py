@@ -6,8 +6,6 @@ from .convert15 import Convert15Task
 from .convert40 import Convert40Task
 from .convert45 import Convert45Task
 from .convert50 import Convert50Task
-from .convertref import ConvertRefTask
-from .convertxf import ConvertXufuTask
 from .copy import CopyTask
 from .decode import DecodeTask
 from .encode import EncodeTask
@@ -23,8 +21,6 @@ reg_task_type(Convert15Task)
 reg_task_type(Convert40Task)
 reg_task_type(Convert45Task)
 reg_task_type(Convert50Task)
-reg_task_type(ConvertXufuTask)
-reg_task_type(ConvertRefTask)
 reg_task_type(PosetraceTask)
 
 reg_convert_task_type(ConvertTask)
@@ -32,5 +28,3 @@ reg_convert_task_type(Convert15Task)
 reg_convert_task_type(Convert40Task)
 reg_convert_task_type(Convert45Task)
 reg_convert_task_type(Convert50Task)
-reg_convert_task_type(ConvertXufuTask)
-reg_convert_task_type(ConvertRefTask)

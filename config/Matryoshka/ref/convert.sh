@@ -1,1 +1,0 @@
---method 0 --resize 0.285 --psizeInflate 1.7321

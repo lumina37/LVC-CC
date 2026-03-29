@@ -1,1 +1,0 @@
---method 3 --resize 0.285

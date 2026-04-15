@@ -8,7 +8,9 @@ from .task import (
     Convert50Task,
     ConvertTask,
     CopyTask,
+    DecodeMockTask,
     DecodeTask,
+    EncodeMockTask,
     EncodeTask,
     PosetraceTask,
 )

@@ -8,13 +8,17 @@ from .convert45 import Convert45Task
 from .convert50 import Convert50Task
 from .copy import CopyTask
 from .decode import DecodeTask
+from .decode_mock import DecodeMockTask
 from .encode import EncodeTask
+from .encode_mock import EncodeMockTask
 from .factory import get_task_type, reg_task_type
 from .infomap import gen_infomap, get_infomap, query
 from .posetrace import PosetraceTask
 
 reg_task_type(EncodeTask)
 reg_task_type(DecodeTask)
+reg_task_type(EncodeMockTask)
+reg_task_type(DecodeMockTask)
 reg_task_type(CopyTask)
 reg_task_type(ConvertTask)
 reg_task_type(Convert15Task)

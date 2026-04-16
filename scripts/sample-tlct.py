@@ -29,7 +29,7 @@ for seq_name in config.seqs:
 
     yuv_srcdir = config.dir.input / seq_name
     yuv_srcpath = get_any_file(yuv_srcdir, "*.yuv")
-    dstdir = config.dir.output / "sample" / seq_name
+    dstdir = config.dir.output / "sample-tlct" / seq_name
     mkdir(dstdir)
     yuv_dstpath = dstdir / "src.yuv"
     shutil.copyfile(tlct_cfg_path, dstdir / "calib.cfg")

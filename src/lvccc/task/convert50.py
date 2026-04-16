@@ -8,7 +8,7 @@ import subprocess
 from pathlib import Path
 from typing import ClassVar
 
-from ..config import CalibCfg, RLC45Cfg, get_config
+from ..config import CalibCfg, RLC50Cfg, get_config
 from ..helper import get_any_file, mkdir, run_cmds
 from .base import NonRootTask
 from .convert import ConvertTask
@@ -43,7 +43,7 @@ class Convert50Task(ConvertTask, NonRootTask["Convert50Task"]):
         cfg_dstdir = self.dstdir / "cfg"
         mkdir(cfg_dstdir)
 
-        rlccfg = RLC45Cfg.from_file(self.param_cfg_path)
+        rlccfg = RLC50Cfg.from_file(self.param_cfg_path)
 
         cfg_dstpath = cfg_dstdir / "calib.xml"
         shutil.copyfile(self.calib_cfg_path, cfg_dstpath)

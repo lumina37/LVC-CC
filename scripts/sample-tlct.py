@@ -21,6 +21,7 @@ for cpath in opt.configs:
 
 for seq_name in config.seqs:
     tlct_cfg_path = Path("config") / seq_name / "tlct" / "calib.cfg"
+    tlct_cmd_path = Path("config") / seq_name / "tlct" / "convert.sh"
     calib_cfg = CalibCfg.from_file(tlct_cfg_path)
 
     width = calib_cfg.LensletWidth
@@ -33,6 +34,7 @@ for seq_name in config.seqs:
     mkdir(dstdir)
     yuv_dstpath = dstdir / "src.yuv"
     shutil.copyfile(tlct_cfg_path, dstdir / "calib.cfg")
+    shutil.copyfile(tlct_cmd_path, dstdir / "extra.sh")
 
     reader = yuvio.get_reader(yuv_srcpath, width, height, "yuv420p")
     writer = yuvio.get_writer(yuv_dstpath, width, height, "yuv420p")

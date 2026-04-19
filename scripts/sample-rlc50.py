@@ -39,17 +39,14 @@ for seq_name in config.seqs:
     cfg_dstdir = dstdir / "cfg"
     mkdir(cfg_dstdir)
 
-    yuv_dstdir = dstdir / "yuv"
-    mkdir(yuv_dstdir)
-
     calib_dst = cfg_dstdir / "calib.xml"
     shutil.copyfile(rlc50_calib_path, calib_dst)
 
     rlccfg = RLC45Cfg.from_file(rlc50_param_path)
 
-    rlccfg.Calibration_xml = "cfg/calib.xml"
-    rlccfg.RawImage_Path = "src.yuv"
-    rlccfg.Output_Path = "./yuv"
+    rlccfg.Calibration_xml = f"{seq_name}/calib.xml"
+    rlccfg.RawImage_Path = f"{seq_name}/src.yuv"
+    rlccfg.Output_Path = f"{seq_name}/yuv"
 
     rlccfg.viewNum = config.views
     rlccfg.start_frame = 0

@@ -27,7 +27,7 @@ class DecodeMockTask(NonRootTask["DecodeMockTask"]):
         mkdir(self.dstdir)
 
         srcpath = get_any_file(
-            Path("/workspace/mpeg/mpeg/zrb/xueshi-cc/output") / self.seq_name / f"qp{self.parent.qp}" / "dec"
+            Path("/workspace/mpeg/mpeg/zrb/xueshi-cc/output") / self.seq_name / f"qp{self.parent.qp}" / "dec", "*.yuv"
         )
         dstpath = self.dstdir / f"{self.tag}.yuv"
         dstpath.symlink_to(srcpath)

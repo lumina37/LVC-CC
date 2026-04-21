@@ -5,7 +5,7 @@ import functools
 from pathlib import Path
 from typing import ClassVar
 
-from ..helper import mkdir
+from ..helper import get_any_file, mkdir
 from .base import NonRootTask
 from .copy import CopyTask
 
@@ -29,5 +29,10 @@ class EncodeMockTask(NonRootTask["EncodeMockTask"]):
         return tag
 
     def run(self) -> None:
-        # Fast path
         mkdir(self.dstdir)
+
+        srcpath = get_any_file(
+            Path("/workspace/mpeg/mpeg/zrb/xueshi-cc/output") / self.seq_name / f"qp{self.parent.qp}" / "enc", "*.bin"
+        )
+        dstpath = self.dstdir / f"{self.tag}.bin"
+        dstpath.symlink_to(srcpath)

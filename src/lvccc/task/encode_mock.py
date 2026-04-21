@@ -32,7 +32,7 @@ class EncodeMockTask(NonRootTask["EncodeMockTask"]):
         mkdir(self.dstdir)
 
         srcpath = get_any_file(
-            Path("/workspace/mpeg/mpeg/zrb/xueshi-cc/output") / self.seq_name / f"qp{self.qp}" / "enc", "*.bin"
+            Path("/workspace/mpeg/mpeg/zrb/xueshi-cc/output") / self.seq_name / f"qp{self.qp}" / "enc", "*.lvc"
         )
         dstpath = self.dstdir / f"{self.tag}.bin"
         dstpath.symlink_to(srcpath)
